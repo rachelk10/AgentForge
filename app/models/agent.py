@@ -1,0 +1,27 @@
+import uuid
+
+from sqlalchemy import Boolean, Float, ForeignKey, Integer, String, Text
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.models.base import Base, TimestampMixin
+
+
+class Agent(Base, TimestampMixin):
+    __tablename__ = "agents"
+
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    system_prompt: Mapped[str | None] = mapped_column(Text, nullable=True)
+    model: Mapped[str] = mapped_column(String(100), default="gpt-4o-mini", nullable=False)
+    temperature: Mapped[float] = mapped_column(Float, default=0.7, nullable=False)
+    max_tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    owner_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
+    owner: Mapped["User"] = relationship("User", back_populates="agents")
+    conversations: Mapped[list["Conversation"]] = relationship(
+        "Conversation", back_populates="agent", cascade="all, delete-orphan"
+    )

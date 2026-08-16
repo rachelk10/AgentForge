@@ -1,0 +1,15 @@
+from fastapi import APIRouter
+
+from app.api import auth
+
+
+def create_router() -> APIRouter:
+    router = APIRouter()
+
+    @router.get("/health", tags=["Health"])
+    def health() -> dict[str, str]:
+        return {"status": "ok"}
+
+    router.include_router(auth.router, prefix="/api/v1")
+
+    return router

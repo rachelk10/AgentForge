@@ -1,0 +1,243 @@
+# AI Agent SaaS Platform – MVP Specification
+
+## Project Overview
+
+Build a backend-first SaaS platform that allows non-technical users to create, configure, and use AI Agents without writing code.
+
+The MVP should focus on the backend only (no frontend). All functionality should be available through a REST API with automatic Swagger/OpenAPI documentation.
+
+The architecture should be modular, scalable, and easy to extend in future versions.
+
+---
+
+# Main Goals
+
+Users should be able to:
+
+* Register and authenticate.
+* Create and manage multiple AI Agents.
+* Configure each Agent with its own instructions and settings.
+* Upload documents to build a private RAG knowledge base.
+* Attach Tools to an Agent.
+* Attach Skills to an Agent.
+* Connect MCP servers to an Agent.
+* Chat with each Agent.
+* Manage conversations and message history.
+
+---
+
+# Core Features
+
+## Authentication
+
+* User registration
+* Login
+* JWT authentication
+* User authorization
+
+---
+
+## Agent Management
+
+Allow users to:
+
+* Create Agent
+* Update Agent
+* Delete Agent
+* List Agents
+* Retrieve Agent details
+
+Each Agent should contain configurable settings such as:
+
+* Name
+* Description
+* System Prompt
+* Model
+* Temperature
+* Other LLM configuration options
+
+---
+
+## Chat
+
+Provide a chat endpoint that communicates with an Agent.
+
+The Agent should be able to decide whether to:
+
+* Answer directly
+* Use RAG
+* Call a Tool
+* Execute a Skill
+* Use an MCP server
+
+Conversation history should be maintained.
+
+---
+
+## RAG
+
+Each Agent owns its own knowledge base.
+
+Support uploading documents such as:
+
+* PDF
+* DOCX
+* TXT
+* Markdown
+
+The backend should automatically:
+
+* Extract text
+* Split into chunks
+* Generate embeddings
+* Store vectors
+* Retrieve relevant context during chat
+
+---
+
+## Tools
+
+Implement a Tool system.
+
+The platform should allow:
+
+* Registering tools
+* Enabling/disabling tools per Agent
+* Executing tools during conversations
+
+The system should be easily extensible so new tools can be added without changing the core architecture.
+
+---
+
+## Skills
+
+Implement reusable Skills.
+
+A Skill represents a predefined capability or prompt-based workflow that an Agent can execute.
+
+Skills should be attachable to individual Agents.
+
+---
+
+## MCP
+
+Implement support for MCP servers.
+
+Allow:
+
+* Registering MCP servers
+* Configuring them
+* Attaching them to Agents
+
+The internal implementation is flexible as long as it is designed to support future MCP expansion.
+
+---
+
+## Conversations
+
+Support multiple conversations per Agent.
+
+Each conversation should contain ordered messages and preserve history.
+
+---
+
+# API
+
+Expose REST endpoints for:
+
+* Authentication
+* Agent Management
+* Chat
+* Document Upload
+* Tool Management
+* Skill Management
+* MCP Management
+* Conversation Management
+
+Swagger/OpenAPI documentation should be automatically generated.
+
+---
+
+# Architecture
+
+Use a clean, modular architecture with clear separation of responsibilities.
+
+Suggested layers include:
+
+* API / Routers
+* Services
+* Models
+* Database
+* AI Components
+* RAG
+* Tool System
+* MCP Integration
+
+The codebase should be easy to maintain and extend.
+
+---
+
+# Database
+
+Design a relational database that supports:
+
+* Users
+* Agents
+* Documents
+* Conversations
+* Messages
+* Tools
+* Skills
+* MCP Servers
+
+The exact schema can be designed as needed.
+
+---
+
+# Technology Stack
+
+Preferred technologies:
+
+* FastAPI
+* PostgreSQL
+* SQLAlchemy
+* Docker
+* OpenAI API
+* Vector database (or PostgreSQL with vector support)
+
+The implementation should follow modern Python best practices.
+
+---
+
+# Non-Functional Requirements
+
+* Modular architecture
+* Clean code
+* Scalable design
+* Reusable components
+* Well-structured project
+* Type hints
+* Environment-based configuration
+* Logging
+* Error handling
+* Input validation
+
+---
+
+# Future Expansion
+
+The architecture should make it easy to add:
+
+* React/Next.js frontend
+* Multi-tenant support
+* Subscription and billing
+* Organizations and teams
+* Workflow Builder
+* Multi-Agent orchestration
+* Additional LLM providers
+* More Tools
+* More Skills
+* Additional MCP integrations
+* Monitoring and analytics
+
+The MVP should prioritize a solid backend foundation over advanced features.
