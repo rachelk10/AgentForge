@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api import auth
+from app.api import agents, auth
 
 
 def create_router() -> APIRouter:
@@ -11,5 +11,6 @@ def create_router() -> APIRouter:
         return {"status": "ok"}
 
     router.include_router(auth.router, prefix="/api/v1")
+    router.include_router(agents.router, prefix="/api/v1")
 
     return router
