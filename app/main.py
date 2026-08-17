@@ -4,6 +4,12 @@ from fastapi import FastAPI
 
 from app.api.routes import create_router
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
+)
+
 logger = logging.getLogger(__name__)
 
 
