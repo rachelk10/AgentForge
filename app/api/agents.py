@@ -28,7 +28,7 @@ async def list_agents(
     current_user: User = Depends(get_current_user),
 ) -> list[AgentResponse]:
     """List all agents owned by the current user."""
-    return await AgentService(db).list(current_user.id)
+    return await AgentService(db).get_agents(current_user.id)
 
 
 @router.get("/{agent_id}", response_model=AgentResponse)

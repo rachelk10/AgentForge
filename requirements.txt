@@ -10,3 +10,4 @@ passlib[bcrypt]
 python-multipart
 psycopg2-binary
 openai
+email-validator

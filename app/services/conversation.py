@@ -30,7 +30,7 @@ class ConversationService:
         await self.db.refresh(conversation)
         return conversation
 
-    async def list(
+    async def get_conversations(
         self,
         agent_id: uuid.UUID,
         user_id: uuid.UUID,

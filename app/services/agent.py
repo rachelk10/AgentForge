@@ -19,7 +19,7 @@ class AgentService:
         await self.db.refresh(agent)
         return agent
 
-    async def list(self, owner_id: uuid.UUID) -> list[Agent]:
+    async def get_agents(self, owner_id: uuid.UUID) -> list[Agent]:
         result = await self.db.execute(
             select(Agent).where(Agent.owner_id == owner_id).order_by(Agent.created_at.desc())
         )

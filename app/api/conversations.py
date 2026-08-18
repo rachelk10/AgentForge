@@ -38,7 +38,7 @@ async def list_conversations(
 ) -> list[ConversationResponse]:
     """List all conversations for an agent."""
     await AgentService(db).get(agent_id, current_user.id)
-    return await ConversationService(db).list(agent_id, current_user.id)
+    return await ConversationService(db).get_conversations(agent_id, current_user.id)
 
 
 @router.get("/{conversation_id}", response_model=ConversationWithMessages)
