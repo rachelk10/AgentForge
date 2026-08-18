@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api import agents, auth
+from app.api import agents, auth, chat, conversations
 
 
 def create_router() -> APIRouter:
@@ -12,5 +12,7 @@ def create_router() -> APIRouter:
 
     router.include_router(auth.router, prefix="/api/v1")
     router.include_router(agents.router, prefix="/api/v1")
+    router.include_router(conversations.router, prefix="/api/v1")
+    router.include_router(chat.router, prefix="/api/v1")
 
     return router
