@@ -10,4 +10,7 @@ passlib[bcrypt]
 python-multipart
 psycopg2-binary
 openai
+pgvector
+pypdf
+python-docx
 email-validator

@@ -31,6 +31,7 @@ from app.models.conversation import Conversation
 from app.models.message import Message, MessageRole
 from app.runtime.context import ConversationContext
 from app.runtime.llm import LLMComponent
+from app.runtime.rag import RAGKnowledgeBase
 
 logger = logging.getLogger(__name__)
 
@@ -106,10 +107,24 @@ class AgentRuntime:
             context.get_history_length(),
         )
 
-        # Step 4: Call LLM
+        # Step 4: Retrieve relevant RAG chunks for this agent and inject them into context
+        rag_context = await RAGKnowledgeBase(self.db).retrieve(
+            agent.id,
+            user_message,
+            limit=agent.rag_top_k,
+            similarity_threshold=agent.rag_similarity_threshold,
+        )
+        if rag_context:
+            knowledge_context = "\n\n".join(rag_context)
+            messages = [
+                {"role": "system", "content": f"Use the following knowledge base context when relevant:\n\n{knowledge_context}"},
+                *messages,
+            ]
+
+        # Step 5: Call LLM
         assistant_content = await self.llm.generate_response(agent, messages)
 
-        # Step 5: Persist messages
+        # Step 6: Persist messages
         assistant_msg = Message(
             conversation_id=conversation.id,
             role=MessageRole.ASSISTANT,
