@@ -12,5 +12,14 @@ Provides the central Agent Runtime layer that orchestrates:
 from app.runtime.agent_runtime import AgentRuntime
 from app.runtime.context import ConversationContext
 from app.runtime.llm import LLMComponent
+from app.runtime.tools import ToolRegistry, ToolResult, execute_tool, tool_registry
 
-__all__ = ["AgentRuntime", "ConversationContext", "LLMComponent"]
+__all__ = [
+	"AgentRuntime",
+	"ConversationContext",
+	"LLMComponent",
+	"ToolRegistry",
+	"ToolResult",
+	"execute_tool",
+	"tool_registry",
+]

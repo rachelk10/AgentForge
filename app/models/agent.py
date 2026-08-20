@@ -33,3 +33,6 @@ class Agent(Base, TimestampMixin):
     document_chunks: Mapped[list["DocumentChunk"]] = relationship(
         "DocumentChunk", back_populates="agent", cascade="all, delete-orphan"
     )
+    tool_links: Mapped[list["AgentTool"]] = relationship(
+        "AgentTool", back_populates="agent", cascade="all, delete-orphan"
+    )

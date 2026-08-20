@@ -4,6 +4,7 @@ from app.models.conversation import Conversation
 from app.models.document import Document, DocumentChunk
 from app.models.message import Message, MessageRole
 from app.models.user import User
+from app.models.tool import AgentTool, Tool
 
 __all__ = [
     "Base",
@@ -14,4 +15,6 @@ __all__ = [
     "MessageRole",
     "Document",
     "DocumentChunk",
+    "Tool",
+    "AgentTool",
 ]

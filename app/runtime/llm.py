@@ -4,7 +4,10 @@ Handles interaction with Large Language Models (currently OpenAI).
 Future: Will support multiple LLM providers.
 """
 
+import json
 import logging
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 from openai import AsyncOpenAI
 
@@ -30,12 +33,13 @@ class LLMComponent:
     async def generate_response(
         self,
         agent: Agent,
-        messages: list[dict[str, str]],
+        messages: list[dict[str, Any]],
+        tools: list[dict[str, Any]] | None = None,
+        tool_executor: Callable[[str, dict[str, Any]], Awaitable[Any]] | None = None,
     ) -> str:
         """Generate LLM response based on agent config and messages.
         
         Args:
-            agent: Agent configuration
             messages: Conversation messages in OpenAI format
             
         Returns:
@@ -63,7 +67,30 @@ class LLMComponent:
             len(messages),
         )
 
+        if tools:
+            call_kwargs["tools"] = tools
+
         response = await self.client.responses.create(**call_kwargs)
+        for _ in range(5):
+            calls = [item for item in response.output if getattr(item, "type", None) == "function_call"]
+            if not calls or tool_executor is None:
+                break
+            messages = [
+                *messages,
+                *[
+                    {
+                        "type": "function_call_output",
+                        "call_id": call.call_id,
+                        "output": json.dumps(
+                            await tool_executor(call.name, json.loads(call.arguments)),
+                            default=str,
+                        ),
+                    }
+                    for call in calls
+                ],
+            ]
+            call_kwargs["input"] = messages
+            response = await self.client.responses.create(**call_kwargs)
         assistant_content = response.output_text or ""
 
         logger.debug(

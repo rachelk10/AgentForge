@@ -22,6 +22,7 @@ This layer is designed to be easily extensible for future additions:
 
 import logging
 import uuid
+from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,9 +30,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.agent import Agent
 from app.models.conversation import Conversation
 from app.models.message import Message, MessageRole
+from app.models.tool import AgentTool, Tool
 from app.runtime.context import ConversationContext
 from app.runtime.llm import LLMComponent
 from app.runtime.rag import RAGKnowledgeBase
+from app.runtime.tools import execute_tool
 
 logger = logging.getLogger(__name__)
 
@@ -121,8 +124,40 @@ class AgentRuntime:
                 *messages,
             ]
 
+        enabled_tools_result = await self.db.execute(
+            select(Tool).join(AgentTool).where(
+                AgentTool.agent_id == agent.id,
+                AgentTool.enabled.is_(True),
+                Tool.enabled.is_(True),
+                Tool.owner_id == agent.owner_id,
+            )
+        )
+        enabled_tools = list(enabled_tools_result.scalars().all())
+        tool_definitions = [
+            {
+                "type": "function",
+                "name": tool.name,
+                "description": tool.description,
+                "parameters": tool.input_schema,
+            }
+            for tool in enabled_tools
+        ]
+        tools_by_name = {tool.name: tool for tool in enabled_tools}
+
+        async def execute_agent_tool(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+            tool = tools_by_name.get(name)
+            if tool is None:
+                return {"success": False, "error": "Tool is not enabled for this agent"}
+            result = await execute_tool(tool, arguments)
+            return result.model_dump()
+
         # Step 5: Call LLM
-        assistant_content = await self.llm.generate_response(agent, messages)
+        assistant_content = await self.llm.generate_response(
+            agent,
+            messages,
+            tools=tool_definitions or None,
+            tool_executor=execute_agent_tool if enabled_tools else None,
+        )
 
         # Step 6: Persist messages
         assistant_msg = Message(
