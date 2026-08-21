@@ -1,0 +1,167 @@
+{
+  "operation": "PATCH /api/v1/tools/{tool_id}",
+  "method": "PATCH",
+  "path_template": "/api/v1/tools/{tool_id}",
+  "fingerprint": "2bade9c5",
+  "case_id": "sbhd6V",
+  "code_sample": "curl -X GET -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' http://localhost:8000/api/v1/tools\ncurl -X PATCH -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"\\u00e2\\u008c\": [], \"\": -2.5006724018621036e+16, \"g\\u00aeO\\ud943\\udf2c\\ud9d8\\udf23\\u00f2\\u00d9px\": 7005698530704417.0, \"o\\u00d6D\\u0018\\udaf2\\udf62\\ud86e\\ude37\": [[null], {\"\\u0082\\ud8ab\\udc52\\udb28\\uddba\\ud8d9\\udcac\": null}, [false]], \"\\ud91f\\udea4\\ud97e\\udfea\\u00bbU'\"'\"'\": true, \"execution_logic\": null}' http://localhost:8000/api/v1/tools/dbd06159-0803-4ce2-820f-6682e0bc4424",
+  "sequence": [
+    {
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/tools",
+      "url_template": "http://localhost:8000/api/v1/tools",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "15kPdn"
+      },
+      "response": {
+        "status_code": 200,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:02:54 GMT",
+          "server": "uvicorn",
+          "content-length": "3796",
+          "content-type": "application/json"
+        },
+        "body": "[{\"name\":\"KPsGlW9\",\"description\":\"0\",\"input_schema\":{\"\":{\"\ud8d3\udf2a\u00d8\ud9c7\ude74O\u00e39}\u00ab\\u000f\u00ae\\u001b\u00a3\":null,\"None\":-19428,\"\udb79\udc64t\":\"\u00ad\udb06\udcca\u00c5\u00e0\u4c3b\u00a7\"}},\"output_schema\":{\">\ud9ff\udcean\ud89c\udce1+\ud8ff\udc1f\u0094\udb58\udfd5\ud9fd\udeeb6\\u0014\udb93\udd14>\\u0006\":[],\"g\u00f8\u009aw\u00e3\u00f3\u6852)\":[null,\"b\\u0018;\u00da\"],\"\u0098Vbt4\\u0003[\udbda\udfd7\u00c14\u00c1-l\u00e3z\udacb\udeeb\udb3f\uded7M\\u0000t\ud90e\udf47H\":[1328064589965870497792,-19891356,-74806948],\"\ud8c4\udd6a\u00ad\u00dcr\ud857\udd25\ud879\udfa4\ud990\udf2e\u00fd\u00e3G\\u0016\ua38d\\u000f!\u00a9k\":{\"\u00f1~Z\\f\u00efo\":null},\"\u0096\u00db\":[\"0\ud9cd\udeb9\ud906\udd048fg;\",{},{\"\ud93e\udf41K\u00a5\udb8f\udde6D\u00cb\ud957\udcba|\":1.0141961094443902e+85,\"\u009bM;\u00e58\udb69\udfe3\u00f7\u00f8\udab8\udeb6\u00a9\u00db\\u0003\\u0001\ud9a3\udffc\u0098\u00bc\u007fK\u00d87\uda66\udd4b5\":1.9863962884148105e-117,\"(\u009a\\u001e\u00e3\udafd\udf39\":null}]},\"execution_logic\":\"e\",\"enabled\":false,\"id\":\"ce281655-9d29-4df6-b5af-c1f1103d254e\",\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:02:55.729222Z\",\"updated_at\":\"2026-08-21T08:02:55.729222Z\"},{\"name\":\"XqwHOSj6UHknaf0tOsl\",\"description\":\"\u00d5\uda8a\udd790\udb7a\udf5c\",\"input_schema\":{},\"output_schema\":{\"\ud815\uddd3\":{},\"j\ud9c1\uddb9\u00f7\\u0006J*\":{\"\u00c5\u008b\u009f\u00c7-\uda74\udd94\udaa5\ude91d\u00e40\u00f1\udb9b\udeff\ud909\udff0R\u2ca6?\udb7a\udd6c\u0096\ud94e\udd74CeR\u00f4\\u0007\udbe6\ude65\\u0002\u00a2<\u00a0\":null},\"\":{\"\uda93\udef3\u0092\u00cc\udb80\udcfd\u008e\\u0012\":null,\"\u0084\u5880iC\":false,\"\u0082\u00acR_\u00aa\u0087\u0083\":\")\u00f4\u00ec\\fl.\u00c0\udadf\udf5c\ud88c\udf98%\udb7c\udecc\"}},\"execution_logic\":\"0\",\"enabled\":false,\"id\":\"c53e0bb7-fd61-4664-a842-5025637d3a95\",\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:02:53.868754Z\",\"updated_at\":\"2026-08-21T08:02:53.868754Z\"},{\"name\":\"p\",\"description\":\"\u00e9\",\"input_schema\":{\"\u00e0\\f<\u0094\u00f3\u00be\u00d4\":[],\"\u169b\u1684\u1693\u1690\u168b\u1692\u1684\u1680\u1691\u1684\u1682\u1691\u168f\u1685\u169c\":\"\u00eb\"},\"output_schema\":{},\"execution_logic\":\"\u00c5\u00f1\u00d0\u00dd\",\"enabled\":true,\"id\":\"17c57004-32dd-4090-ae5a-955fe5a4cff3\",\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:02:53.248451Z\",\"updated_at\":\"2026-08-21T08:02:53.248451Z\"},{\"name\":\"uIFn\",\"description\":\"\u00ec\udaf1\udd6bNT\u00c1\udb88\udd71\uda32\udc2c\u0095\ud88e\udc0d\u00b2\u00ebk\",\"input_schema\":{\"\u00f2\u008d\u00fd\u009e\ud8f4\uddc5\\u001d\u008e\":[7117242242677462,null,\"K\u00ae\ud92c\udf8e\u00d25\u00dd\"],\"\":{\"\u00b6@\":{\"\":\"\",\"\u008c\u00c3\u00ba\u00ff\u00a2\u00e4\":false,\"\u00c3\ud8ba\udd48\u00c4\u00bc\udba2\udeba\u00c3\u0087\ud90d\udf8b!\ud9c5\udfd0\u009e\u00962\u00e6&\":\"w\"},\"\ud8cb\udeb6\\u0000\u00aei\\u0016\u0088'D\u00bf\ud895\udd23\":815,\"\u00ec\\u0001\u00d3\u0097}\ud952\udeef\u00d0\\u0010\u008b\\u0003\u0083\\u000bx,n\":-285084505139193184},\"\u00d1\u00a3\u00b3\udad0\ude03\":[null,{\"'\u00f5\u00a5\\u0005\":-28287420647,\"\":6.675614211662645e+146},[]],\"\u00e9\ud9ff\udce9*\":{\"\u00b8\u00dd;\\u001e\udb3c\udff0\u00ce\u00b7\":\"\u0097\ud8f5\udf58\",\"\u00b9\":[726000013,\"\udbf3\udf79\"],\"v\":{}}},\"output_schema\":{\"H\udad9\udfd9\\u0004D\ud9c8\udf44\u007f\u00db\\u0010\":[1.175494351e-38,{\"\u009a\\u000f\\u000b\u00ec=\u00d9\\u001e\u0097K%\":\"6\u8ea9E\ud8a8\udd5d\u0099A\u00c5\u00e0\u00f1l\u00d3\u0097\udbe3\udc2d\u00fe\"},\"\u00a0\u00bcb\u00e2\"]},\"execution_logic\":\"0\",\"enabled\":true,\"id\":\"f0410536-6aca-415b-b420-fd7bbff25bc0\",\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:02:52.364380Z\",\"updated_at\":\"2026-08-21T08:02:52.364380Z\"},{\"name\":\"e\",\"description\":\"\u0093;X\u00ca\u00f0\u00eb\",\"input_schema\":{\"b\uf8f1y\udabe\udf11y\u00d4\":{\"s\udb3a\udf05l\ud8a0\udc97\u00a0B~\udb4e\udc3c\ud915\udc710\u00b1\":{},\"\udb8b\udf9ef\u00d0\udb11\udfa4tV\":[],\"\u00e2\":-88608401909846},\"\ud8c0\udfac\ud9c7\ude77\u00bd\":[],\"\uda8d\ude6e\\u000e\uda0d\ude40Q\u00cf!\":{\"\u00c9\":[57898,null,true],\"\":\"\u00ed\\u0012\ud96a\udf1c\u00ef\ud992\udcd4~\u0092#\u00f6\udb16\udccck\uda85\udc58\u00dd\u0083r[\",\"p\udb1b\udc31\u00de\u00c6\":{}}},\"output_schema\":{\"\u007f\u00de\":{},\"*\u00d7\ud9cf\udd43\u00cf\u00f9\\u001d\u00a0\":[7.832113260616886e+276,true],\"\u009cM\\u0010_\u00f3\udb87\udd99\u00af\":[[],[]],\"X\\u000b\u00ca4\ud867\udcc4 &\u00ea\":[\"\"],\"\u00c1J\u00b9\u009f0\u00e9\":[],\"\u0089\udb0a\udecd\":103898135,\"\u00e1h}\u00be\\u0012\":{},\"\u0097\u00e9\u00ec\":{},\"q\":{\"\u0091c\u00d5\u0093\u00e0\":-368202,\"o\":\"]\",\"qY\ud8cb\udf60d\u00db\udbce\udfe9\":null},\"\u00de\":[[2.3966602053819388e+16],[],[\"\u00e0\"]],\"\u00f7\":-1084,\"\u0087\":[[true],false,{\"kL\":-10139629915.038239}],\"L\ud8ff\udf0a\":[7392,-3.475077595389118e+267,-453241568489486221312],\"\u00db\\r\u00f2\u00b0\u00cf\":[]},\"execution_logic\":\"0\",\"enabled\":true,\"id\":\"dbd06159-0803-4ce2-820f-6682e0bc4424\",\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:02:52.132449Z\",\"updated_at\":\"2026-08-21T08:02:52.132449Z\"},{\"name\":\"OpJ92q4c2pO\",\"description\":\"\ud8a0\udd4bX\",\"input_schema\":{},\"output_schema\":{\"\u00e1\":{},\"\u00c7i\u00d7xC\u00cf\u00e9\udadb\udcd4\":{\"\uda52\udcb7\u00c2\u0095\":[]},\"\u00ae\u00e6F\u00d6tG\u00c1\u00a2\uda9c\ude10\":[]},\"execution_logic\":\"0\",\"enabled\":true,\"id\":\"f460b63d-6dfe-452c-a6f6-a78d7f654889\",\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:02:51.985763Z\",\"updated_at\":\"2026-08-21T08:02:51.985763Z\"}]"
+      },
+      "link": null,
+      "checks": [],
+      "meta": {
+        "generation": {
+          "time": 0.00045589999353978783,
+          "mode": "positive"
+        },
+        "components": {},
+        "phase": {
+          "name": "stateful",
+          "data": {
+            "type": "StatefulPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/tools",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    },
+    {
+      "method": "PATCH",
+      "url": "http://localhost:8000/api/v1/tools/dbd06159-0803-4ce2-820f-6682e0bc4424",
+      "url_template": "http://localhost:8000/api/v1/tools/{tool_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "sbhd6V",
+        "Content-Type": "application/json",
+        "Content-Length": "301"
+      },
+      "response": {
+        "status_code": 500,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:02:55 GMT",
+          "server": "uvicorn",
+          "content-length": "21",
+          "content-type": "text/plain; charset=utf-8"
+        },
+        "body": "Internal Server Error"
+      },
+      "link": {
+        "operationId": "GET /api/v1/tools -> [200] PatchToolResponse -> PATCH /api/v1/tools/{tool_id}",
+        "parameters": {
+          "path.tool_id": "$response.body#/*/id"
+        }
+      },
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 500\nDocumented: 200, 404, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.020007899991469458,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "stateful",
+          "data": {
+            "type": "StatefulPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/tools/{tool_id}",
+      "path_parameters": {
+        "tool_id": "dbd06159-0803-4ce2-820f-6682e0bc4424"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "\u00e2\u008c": [],
+          "": -2.5006724018621036e+16,
+          "g\u00aeO\ud943\udf2c\ud9d8\udf23\u00f2\u00d9px": 7005698530704417.0,
+          "o\u00d6D\u0018\udaf2\udf62\ud86e\ude37": [
+            [
+              null
+            ],
+            {
+              "\u0082\ud8ab\udc52\udb28\uddba\ud8d9\udcac": null
+            },
+            [
+              false
+            ]
+          ],
+          "\ud91f\udea4\ud97e\udfea\u00bbU'": true,
+          "execution_logic": null
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": 0
+    }
+  ]
+}

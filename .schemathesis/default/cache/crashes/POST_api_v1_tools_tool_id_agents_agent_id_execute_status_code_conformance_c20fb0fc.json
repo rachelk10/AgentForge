@@ -1,0 +1,114 @@
+{
+  "operation": "POST /api/v1/tools/{tool_id}/agents/{agent_id}/execute",
+  "method": "POST",
+  "path_template": "/api/v1/tools/{tool_id}/agents/{agent_id}/execute",
+  "fingerprint": "c20fb0fc",
+  "case_id": "I3phgo",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"arguments\": {}}' http://localhost:8000/api/v1/tools/aac8f0d8-104c-4d12-82dd-698bafb73d71/agents/aac8f0d8-104c-4d12-82dd-698bafb73d71/execute",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/tools/aac8f0d8-104c-4d12-82dd-698bafb73d71/agents/aac8f0d8-104c-4d12-82dd-698bafb73d71/execute",
+      "url_template": "http://localhost:8000/api/v1/tools/{tool_id}/agents/{agent_id}/execute",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "I3phgo",
+        "Content-Type": "application/json",
+        "Content-Length": "17"
+      },
+      "response": {
+        "status_code": 404,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:53:29 GMT",
+          "server": "uvicorn",
+          "content-length": "27",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Tool not found\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 404\nDocumented: 200, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.01625369999965187,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive",
+          "HEADER": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Object with valid 'arguments' value: Valid object",
+            "location": null,
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "valid_object"
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "tool_id",
+            "resource_name": "ToolResponse",
+            "resource_field": "id",
+            "source_operation": "<jwt:auth>",
+            "source_status": 200
+          },
+          {
+            "location": "path",
+            "parameter_name": "agent_id",
+            "resource_name": "AgentResponse",
+            "resource_field": "id",
+            "source_operation": "<jwt:auth>",
+            "source_status": 200
+          }
+        ],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "PATH": {
+            "tool_id": "aac8f0d8-104c-4d12-82dd-698bafb73d71",
+            "agent_id": "aac8f0d8-104c-4d12-82dd-698bafb73d71"
+          },
+          "HEADER": {
+            "Authorization": "Bearer "
+          }
+        }
+      },
+      "path": "/api/v1/tools/{tool_id}/agents/{agent_id}/execute",
+      "path_parameters": {
+        "tool_id": "aac8f0d8-104c-4d12-82dd-698bafb73d71",
+        "agent_id": "aac8f0d8-104c-4d12-82dd-698bafb73d71"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "arguments": {}
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

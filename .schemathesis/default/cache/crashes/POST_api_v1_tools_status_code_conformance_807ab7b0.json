@@ -1,0 +1,93 @@
+{
+  "operation": "POST /api/v1/tools",
+  "method": "POST",
+  "path_template": "/api/v1/tools",
+  "fingerprint": "807ab7b0",
+  "case_id": "vchWW7",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d $'\ufffdM\ufffd%\ufffd\ufffd\\x16\\n\ufffd' http://localhost:8000/api/v1/tools\n\n\u26a0\ufe0f  Request body contains non-printable characters. Actual value: b'\\xef\\xbf\\xbdM\\xef\\xbf\\xbd%\\xef\\xbf\\xbd\\xef\\xbf\\xbd\\x16\\n\\xef\\xbf\\xbd'",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/tools",
+      "url_template": "http://localhost:8000/api/v1/tools",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "vchWW7",
+        "Content-Type": "application/json",
+        "Content-Length": "9"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:16:25 GMT",
+          "server": "uvicorn",
+          "content-length": "48",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"There was an error parsing the body\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 400\nDocumented: 201, 409, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.0012264999968465418,
+          "mode": "negative"
+        },
+        "components": {
+          "BODY": "negative"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Invalid syntax: random bytes",
+            "location": null,
+            "parameter": null,
+            "parameter_location": "BODY",
+            "mutations": [
+              {
+                "path": [],
+                "schema_pointer": "",
+                "channel": "schema",
+                "operator": "syntax_fuzzing",
+                "keywords": [],
+                "parameter": null,
+                "original_value": null,
+                "new_value": null
+              }
+            ]
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/tools",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "base64",
+        "value": "903xJfz8FgrX"
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

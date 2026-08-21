@@ -1,0 +1,89 @@
+{
+  "operation": "POST /api/v1/tools",
+  "method": "POST",
+  "path_template": "/api/v1/tools",
+  "fingerprint": "9fcba31a",
+  "case_id": "n0ufwY",
+  "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"description\": \"0\", \"execution_logic\": \"0\", \"input_schema\": {}, \"name\": \"A\", \"output_schema\": {}}' http://localhost:8000/api/v1/tools",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/tools",
+      "url_template": "http://localhost:8000/api/v1/tools",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "n0ufwY",
+        "Content-Type": "application/json",
+        "Content-Length": "98"
+      },
+      "response": {
+        "status_code": 401,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:31:22 GMT",
+          "server": "uvicorn",
+          "www-authenticate": "[Filtered]",
+          "content-length": "30",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Not authenticated\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 401\nDocumented: 201, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 1.7099999240599573e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "HEADER": "negative",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Missing `Authorization` at header",
+            "location": null,
+            "parameter": "Authorization",
+            "parameter_location": "HEADER",
+            "scenario": "missing_parameter"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "HEADER": {}
+        }
+      },
+      "path": "/api/v1/tools",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "description": "0",
+          "execution_logic": "0",
+          "input_schema": {},
+          "name": "A",
+          "output_schema": {}
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

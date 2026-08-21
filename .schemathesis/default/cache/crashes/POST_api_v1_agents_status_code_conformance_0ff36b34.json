@@ -1,0 +1,151 @@
+{
+  "operation": "POST /api/v1/agents",
+  "method": "POST",
+  "path_template": "/api/v1/agents",
+  "fingerprint": "0ff36b34",
+  "case_id": "lX8qjY",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"\\u00100\\u00b2\\u00ea\\u00f1|\\u0018\": [true, false], \"\\u0012\": [-2.1841355137831956e+16, 5.979146873884394e+16], \"\\nN\\u00cc\\ud816\\udf97\\u0001\\u00fa\\u00a3\\u00c4\\u00f8B\\uda06\\uddec\\ud981\\udd48\\u0095\": [[-2455049377649863.0, 3.8081298451517596e+276], [], 3087886306582], \"\": [{\"\\u00f1n\\u00a9\\ud9de\\udf1dx\\udbd4\\udd06\\u00f7\\u00b7Q\\udb7c\\ude5d\\u0012\\u00b7\\ud9a3\\udc69\\udac9\\udc51\\u00a3\\udb3a\\udd9fB\\uda8f\\udd08/\": -5.546289915559295e-231}, null, [null]], \"name\": \"\\u008f|\\ud934\\udf90L\\u0084\\u00b9\\u00a8\\u0096\\u001f\", \"rag_top_k\": 3, \"is_active\": false, \"temperature\": 1.646526503402011, \"max_tokens\": 1785958230828, \"rag_similarity_threshold\": 0.5527644272235469, \"model\": \"gpt-4o-mini\", \"system_prompt\": \"\\u008a\\u00f4\\u00c6\\udae1\\udf01\\u007f\\u00be\", \"description\": \"\\uda11\\udd85:\\u00b3\\u00afG\\u00e6j\\u0097\\u0083\\u00c9\\u00ef\\udab5\\udf04\\u00cc+\\udada\\udc9aQ\\u00fchV\\u00c9\\u009f\\u00f9\\ud9a7\\ude76\"}' http://localhost:8000/api/v1/agents",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/agents",
+      "url_template": "http://localhost:8000/api/v1/agents",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "lX8qjY",
+        "Content-Type": "application/json",
+        "Content-Length": "890"
+      },
+      "response": {
+        "status_code": 500,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:54:07 GMT",
+          "server": "uvicorn",
+          "content-length": "21",
+          "content-type": "text/plain; charset=utf-8"
+        },
+        "body": "Internal Server Error"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 500\nDocumented: 201, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.010997799996403046,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "stateful",
+          "data": {
+            "type": "StatefulPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [
+          {
+            "path": [
+              "description"
+            ],
+            "type_token": "string",
+            "format_token": null,
+            "pattern_hash": null,
+            "normalized_name": "description",
+            "value": "\uda11\udd85:\u00b3\u00afG\u00e6j\u0097\u0083\u00c9\u00ef\udab5\udf04\u00cc+\udada\udc9aQ\u00fchV\u00c9\u009f\u00f9\ud9a7\ude76",
+            "source_operation": "POST /api/v1/agents"
+          },
+          {
+            "path": [
+              "system_prompt"
+            ],
+            "type_token": "string",
+            "format_token": null,
+            "pattern_hash": null,
+            "normalized_name": "systemprompt",
+            "value": "\u008a\u00f4\u00c6\udae1\udf01\u007f\u00be",
+            "source_operation": "POST /api/v1/agents"
+          },
+          {
+            "path": [
+              "model"
+            ],
+            "type_token": "string",
+            "format_token": null,
+            "pattern_hash": null,
+            "normalized_name": "model",
+            "value": "gpt-4o-mini",
+            "source_operation": "POST /api/v1/agents"
+          }
+        ],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/agents",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "\u00100\u00b2\u00ea\u00f1|\u0018": [
+            true,
+            false
+          ],
+          "\u0012": [
+            -2.1841355137831956e+16,
+            5.979146873884394e+16
+          ],
+          "\nN\u00cc\ud816\udf97\u0001\u00fa\u00a3\u00c4\u00f8B\uda06\uddec\ud981\udd48\u0095": [
+            [
+              -2455049377649863.0,
+              3.8081298451517596e+276
+            ],
+            [],
+            3087886306582
+          ],
+          "": [
+            {
+              "\u00f1n\u00a9\ud9de\udf1dx\udbd4\udd06\u00f7\u00b7Q\udb7c\ude5d\u0012\u00b7\ud9a3\udc69\udac9\udc51\u00a3\udb3a\udd9fB\uda8f\udd08/": -5.546289915559295e-231
+            },
+            null,
+            [
+              null
+            ]
+          ],
+          "name": "\u008f|\ud934\udf90L\u0084\u00b9\u00a8\u0096\u001f",
+          "rag_top_k": 3,
+          "is_active": false,
+          "temperature": 1.646526503402011,
+          "max_tokens": "[Filtered]",
+          "rag_similarity_threshold": 0.5527644272235469,
+          "model": "gpt-4o-mini",
+          "system_prompt": "\u008a\u00f4\u00c6\udae1\udf01\u007f\u00be",
+          "description": "\uda11\udd85:\u00b3\u00afG\u00e6j\u0097\u0083\u00c9\u00ef\udab5\udf04\u00cc+\udada\udc9aQ\u00fchV\u00c9\u009f\u00f9\ud9a7\ude76"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "operation": "POST /api/v1/auth/register",
+  "method": "POST",
+  "path_template": "/api/v1/auth/register",
+  "fingerprint": "700ceeac",
+  "case_id": "qz0Y6p",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"email\": \"schemathesis-1787298797134@example.com\", \"password\": \"00000000\", \"username\": \"schemathesis-1787298797134\"}' http://localhost:8000/api/v1/auth/register",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/auth/register",
+      "url_template": "http://localhost:8000/api/v1/auth/register",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "qz0Y6p",
+        "Content-Type": "application/json",
+        "Content-Length": "117"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:53:37 GMT",
+          "server": "uvicorn",
+          "content-length": "37",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Email already registered\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 400\nDocumented: 201, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.003125399991404265,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [
+          {
+            "path": [
+              "email"
+            ],
+            "type_token": "string",
+            "format_token": "email",
+            "pattern_hash": null,
+            "normalized_name": "email",
+            "value": "schemathesis-1787298797134@example.com",
+            "source_operation": "GET /api/v1/auth/me"
+          },
+          {
+            "path": [
+              "username"
+            ],
+            "type_token": "string",
+            "format_token": null,
+            "pattern_hash": null,
+            "normalized_name": "username",
+            "value": "schemathesis-1787298797134",
+            "source_operation": "GET /api/v1/auth/me"
+          }
+        ],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/auth/register",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "email": "schemathesis-1787298797134@example.com",
+          "password": "[Filtered]",
+          "username": "schemathesis-1787298797134"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "operation": "PUT /api/v1/tools/{tool_id}/agents/{agent_id}",
+  "method": "PUT",
+  "path_template": "/api/v1/tools/{tool_id}/agents/{agent_id}",
+  "fingerprint": "b8763376",
+  "case_id": "sg1fch",
+  "code_sample": "curl -X PUT -H 'Authorization: [Filtered]' http://localhost:8000/api/v1/tools/f728b4fa-4248-1e3a-8a5d-2f346baa9455/agents/e3e70682-c209-1cac-a29f-6fbed82c07cd",
+  "sequence": [
+    {
+      "method": "PUT",
+      "url": "http://localhost:8000/api/v1/tools/f728b4fa-4248-1e3a-8a5d-2f346baa9455/agents/e3e70682-c209-1cac-a29f-6fbed82c07cd",
+      "url_template": "http://localhost:8000/api/v1/tools/{tool_id}/agents/{agent_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "sg1fch",
+        "Content-Length": "0"
+      },
+      "response": {
+        "status_code": 404,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:53:47 GMT",
+          "server": "uvicorn",
+          "content-length": "27",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Tool not found\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 404\nDocumented: 204, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.0037906000070506707,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/tools/{tool_id}/agents/{agent_id}",
+      "path_parameters": {
+        "agent_id": "e3e70682-c209-1cac-a29f-6fbed82c07cd",
+        "tool_id": "f728b4fa-4248-1e3a-8a5d-2f346baa9455"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    }
+  ]
+}

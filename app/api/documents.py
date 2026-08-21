@@ -13,7 +13,12 @@ from app.services.document import DocumentService
 router = APIRouter(prefix="/agents/{agent_id}/documents", tags=["Documents"])
 
 
-@router.post("", response_model=DocumentResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=DocumentResponse,
+    status_code=status.HTTP_201_CREATED,
+    responses={400: {"description": "File is empty"}, 404: {"description": "Agent not found"}},
+)
 async def upload_document(
     agent_id: uuid.UUID,
     file: UploadFile = File(...),
@@ -36,7 +41,11 @@ async def upload_document(
     return DocumentResponse.model_validate(document)
 
 
-@router.get("", response_model=list[DocumentResponse])
+@router.get(
+    "",
+    response_model=list[DocumentResponse],
+    responses={404: {"description": "Agent not found"}},
+)
 async def list_documents(
     agent_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
@@ -48,7 +57,11 @@ async def list_documents(
     return [DocumentResponse.model_validate(document) for document in documents]
 
 
-@router.get("/{document_id}", response_model=DocumentResponse)
+@router.get(
+    "/{document_id}",
+    response_model=DocumentResponse,
+    responses={404: {"description": "Agent or document not found"}},
+)
 async def get_document(
     agent_id: uuid.UUID,
     document_id: uuid.UUID,
@@ -61,7 +74,11 @@ async def get_document(
     return DocumentResponse.model_validate(document)
 
 
-@router.delete("/{document_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{document_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={404: {"description": "Agent or document not found"}},
+)
 async def delete_document(
     agent_id: uuid.UUID,
     document_id: uuid.UUID,

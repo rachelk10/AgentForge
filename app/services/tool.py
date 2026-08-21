@@ -2,6 +2,7 @@ import uuid
 
 from fastapi import HTTPException, status
 from sqlalchemy import delete, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.agent import Agent
@@ -24,7 +25,14 @@ class ToolService:
     async def create(self, data: ToolCreate, owner_id: uuid.UUID) -> Tool:
         tool = Tool(**data.model_dump(), owner_id=owner_id)
         self.db.add(tool)
-        await self.db.commit()
+        try:
+            await self.db.commit()
+        except IntegrityError as exc:
+            await self.db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="A tool with this name already exists",
+            ) from exc
         await self.db.refresh(tool)
         return tool
 

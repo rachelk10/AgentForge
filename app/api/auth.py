@@ -11,7 +11,12 @@ from app.services.auth import AuthService
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
-@router.post("/register", response_model=UserResponse, status_code=201)
+@router.post(
+    "/register",
+    response_model=UserResponse,
+    status_code=201,
+    responses={400: {"description": "Email or username already registered"}},
+)
 async def register(
     data: UserCreate,
     db: AsyncSession = Depends(get_db),
@@ -20,7 +25,11 @@ async def register(
     return await AuthService(db).register(data)
 
 
-@router.post("/login", response_model=Token)
+@router.post(
+    "/login",
+    response_model=Token,
+    responses={401: {"description": "Invalid credentials"}},
+)
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_db),

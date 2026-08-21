@@ -1,0 +1,206 @@
+{
+  "operation": "POST /api/v1/agents/{agent_id}/documents",
+  "method": "POST",
+  "path_template": "/api/v1/agents/{agent_id}/documents",
+  "fingerprint": "7acfb849",
+  "case_id": "YQd3vn",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: multipart/form-data; boundary=861711c693f9185307c0cdf4198856f2' -d '{\"\\udb92\\udef9\\udbf4\\udd45j\": {\"\\u00a2_\\u00c88\": -1681893433, \"\\u0088O\\u00d5\\u00b3\\ud8f2\\udca3f\\ud8d5\\udc68>\": -5.781968153442164e+16, \"\": null}, \"is_active\": true, \"max_tokens\": null, \"model\": \"\\u001d\\u00c4=\\udb31\\uddb3\", \"temperature\": 1.9, \"rag_similarity_threshold\": 0.6429329372506866, \"description\": \"f\", \"system_prompt\": null, \"name\": \"i\\u00c4t\\u31ad\\u0098\\u00ed-a\\u00d7\", \"rag_top_k\": 35}' http://localhost:8000/api/v1/agents\ncurl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: multipart/form-data; boundary=861711c693f9185307c0cdf4198856f2' -d $'--bea51c774a305aafb71754b7d6846dc9\\r\\n--bea51c774a305aafb71754b7d6846dc9--\\r\\n' http://localhost:8000/api/v1/agents/9d488949-078d-41b9-8cc4-3a0f8b2deb75/documents\n\n\u26a0\ufe0f  Request body contains non-printable characters. Actual value: b'--bea51c774a305aafb71754b7d6846dc9\\r\\n--bea51c774a305aafb71754b7d6846dc9--\\r\\n'",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/agents",
+      "url_template": "http://localhost:8000/api/v1/agents",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "igZ0o2",
+        "Content-Type": "application/json",
+        "Content-Length": "396"
+      },
+      "response": {
+        "status_code": 201,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:54:51 GMT",
+          "server": "uvicorn",
+          "content-length": "383",
+          "content-type": "application/json"
+        },
+        "body": "{\"id\":\"9d488949-078d-41b9-8cc4-3a0f8b2deb75\",\"name\":\"i\u00c4t\u31ad\u0098\u00ed-a\u00d7\",\"description\":\"f\",\"system_prompt\":null,\"model\":\"\\u001d\u00c4=\udb31\uddb3\",\"temperature\":1.9,\"max_tokens\":null,\"rag_top_k\":35,\"rag_similarity_threshold\":0.6429329372506866,\"is_active\":true,\"owner_id\":\"aac8f0d8-104c-4d12-82dd-698bafb73d71\",\"created_at\":\"2026-08-21T07:54:52.313069Z\",\"updated_at\":\"2026-08-21T07:54:52.313069Z\"}"
+      },
+      "link": null,
+      "checks": [],
+      "meta": {
+        "generation": {
+          "time": 0.01491830000304617,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "stateful",
+          "data": {
+            "type": "StatefulPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [
+          {
+            "path": [
+              "name"
+            ],
+            "type_token": "string",
+            "format_token": null,
+            "pattern_hash": null,
+            "normalized_name": "name",
+            "value": "i\u00c4t\u31ad\u0098\u00ed-a\u00d7",
+            "source_operation": "POST /api/v1/agents"
+          },
+          {
+            "path": [
+              "model"
+            ],
+            "type_token": "string",
+            "format_token": null,
+            "pattern_hash": null,
+            "normalized_name": "model",
+            "value": "\u001d\u00c4=\udb31\uddb3",
+            "source_operation": "POST /api/v1/agents"
+          }
+        ],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/agents",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "\udb92\udef9\udbf4\udd45j": {
+            "\u00a2_\u00c88": -1681893433,
+            "\u0088O\u00d5\u00b3\ud8f2\udca3f\ud8d5\udc68>": -5.781968153442164e+16,
+            "": null
+          },
+          "is_active": true,
+          "max_tokens": "[Filtered]",
+          "model": "\u001d\u00c4=\udb31\uddb3",
+          "temperature": 1.9,
+          "rag_similarity_threshold": 0.6429329372506866,
+          "description": "f",
+          "system_prompt": null,
+          "name": "i\u00c4t\u31ad\u0098\u00ed-a\u00d7",
+          "rag_top_k": 35
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    },
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/agents/9d488949-078d-41b9-8cc4-3a0f8b2deb75/documents",
+      "url_template": "http://localhost:8000/api/v1/agents/{agent_id}/documents",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "YQd3vn",
+        "Content-Type": "multipart/form-data; boundary=861711c693f9185307c0cdf4198856f2",
+        "Content-Length": "74"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:54:51 GMT",
+          "server": "uvicorn",
+          "content-length": "48",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"There was an error parsing the body\"}"
+      },
+      "link": {
+        "operationId": "POST /api/v1/agents -> [201] PostAgentResponse_1 -> POST /api/v1/agents/{agent_id}/documents",
+        "parameters": {
+          "path.agent_id": "$response.body#/id"
+        }
+      },
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 400\nDocumented: 201, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.005755899997893721,
+          "mode": "negative"
+        },
+        "components": {
+          "BODY": "negative"
+        },
+        "phase": {
+          "name": "stateful",
+          "data": {
+            "type": "StatefulPhaseData",
+            "description": "violates `type` (was object, became string)",
+            "location": null,
+            "parameter": null,
+            "parameter_location": "BODY",
+            "mutations": [
+              {
+                "path": [],
+                "schema_pointer": "",
+                "channel": "schema",
+                "operator": "change_type",
+                "keywords": [
+                  "type"
+                ],
+                "parameter": null,
+                "original_value": "object",
+                "new_value": "string"
+              }
+            ]
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/agents/{agent_id}/documents",
+      "path_parameters": {
+        "agent_id": "9d488949-078d-41b9-8cc4-3a0f8b2deb75"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": ""
+      },
+      "media_type": "multipart/form-data",
+      "parent_index": 0
+    }
+  ]
+}

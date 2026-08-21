@@ -1,0 +1,97 @@
+{
+  "operation": "POST /api/v1/agents/{agent_id}/chat",
+  "method": "POST",
+  "path_template": "/api/v1/agents/{agent_id}/chat",
+  "fingerprint": "ee7be653",
+  "case_id": "H8Jq20",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"message\": \"\\ud90f\\udea0;g\\u0099\\u0000d\\u00c8\\udbec\\udde8\\ud803\\udca5\", \"conversation_id\": null}' http://localhost:8000/api/v1/agents/288ce1c8-16e6-465e-85d6-7fc587a9ef6f/chat",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/agents/288ce1c8-16e6-465e-85d6-7fc587a9ef6f/chat",
+      "url_template": "http://localhost:8000/api/v1/agents/{agent_id}/chat",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "H8Jq20",
+        "Content-Type": "application/json",
+        "Content-Length": "97"
+      },
+      "response": {
+        "status_code": 500,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:01:26 GMT",
+          "server": "uvicorn",
+          "content-length": "21",
+          "content-type": "text/plain; charset=utf-8"
+        },
+        "body": "Internal Server Error"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 500\nDocumented: 200, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.01254019999760203,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "agent_id",
+            "resource_name": "AgentResponse",
+            "resource_field": "id",
+            "source_operation": "POST /api/v1/agents",
+            "source_status": 201
+          }
+        ],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/agents/{agent_id}/chat",
+      "path_parameters": {
+        "agent_id": "288ce1c8-16e6-465e-85d6-7fc587a9ef6f"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "message": "\ud90f\udea0;g\u0099\u0000d\u00c8\udbec\udde8\ud803\udca5",
+          "conversation_id": null
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "operation": "POST /api/v1/agents/{agent_id}/chat",
+  "method": "POST",
+  "path_template": "/api/v1/agents/{agent_id}/chat",
+  "fingerprint": "f0448720",
+  "case_id": "6c0EKa",
+  "code_sample": "curl -X GET -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' http://localhost:8000/api/v1/agents\ncurl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '\ufffd+|\ufffdk' http://localhost:8000/api/v1/agents/7a533543-04b5-4671-ab22-688c25bd2015/chat",
+  "sequence": [
+    {
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/agents",
+      "url_template": "http://localhost:8000/api/v1/agents",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "LOvHSA"
+      },
+      "response": {
+        "status_code": 200,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:03:15 GMT",
+          "server": "uvicorn",
+          "content-length": "2915",
+          "content-type": "application/json"
+        },
+        "body": "[{\"id\":\"845c522e-51e5-440f-9268-8caef7f3ded1\",\"name\":\"\u008dQ\",\"description\":\"\",\"system_prompt\":null,\"model\":\"gpt-4o-mini\",\"temperature\":0.7,\"max_tokens\":null,\"rag_top_k\":15,\"rag_similarity_threshold\":0.75,\"is_active\":true,\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:03:15.383097Z\",\"updated_at\":\"2026-08-21T08:03:15.383097Z\"},{\"id\":\"6f135b17-4af2-45df-bd79-6a8f8ac3b350\",\"name\":\"0\",\"description\":null,\"system_prompt\":null,\"model\":\"gpt-4o-mini\",\"temperature\":0.7,\"max_tokens\":null,\"rag_top_k\":5,\"rag_similarity_threshold\":0.75,\"is_active\":true,\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:03:11.543244Z\",\"updated_at\":\"2026-08-21T08:03:11.543244Z\"},{\"id\":\"07b036d7-2fe1-4f89-af6f-c8830dbeab39\",\"name\":\"0\",\"description\":\"\ud8a0\udd4bX\",\"system_prompt\":\"\",\"model\":\"gpt-4o-mini\",\"temperature\":0.8173769574011367,\"max_tokens\":null,\"rag_top_k\":36,\"rag_similarity_threshold\":0.10073024855292981,\"is_active\":false,\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:03:10.815334Z\",\"updated_at\":\"2026-08-21T08:03:10.815334Z\"},{\"id\":\"66ea63e1-995d-47be-a987-3e155bb7d6db\",\"name\":\"0\",\"description\":null,\"system_prompt\":null,\"model\":\"gpt-4o-mini\",\"temperature\":0.7,\"max_tokens\":null,\"rag_top_k\":5,\"rag_similarity_threshold\":0.75,\"is_active\":true,\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:03:09.913392Z\",\"updated_at\":\"2026-08-21T08:03:09.913392Z\"},{\"id\":\"7a533543-04b5-4671-ab22-688c25bd2015\",\"name\":\"\u008dQ\",\"description\":\"\u00d5\uda8a\udd790\udb7a\udf5c\",\"system_prompt\":\"\",\"model\":\"\\r\u0094\",\"temperature\":1.8814626929537033,\"max_tokens\":null,\"rag_top_k\":19,\"rag_similarity_threshold\":0.08462166832514996,\"is_active\":false,\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:03:07.769580Z\",\"updated_at\":\"2026-08-21T08:03:07.769580Z\"},{\"id\":\"40158132-8936-455c-b676-5633b7a8f975\",\"name\":\"\u008dQ\",\"description\":\"\",\"system_prompt\":\"\",\"model\":\"gpt-4o-mini\",\"temperature\":0.7,\"max_tokens\":null,\"rag_top_k\":5,\"rag_similarity_threshold\":5.765688486852063e-67,\"is_active\":true,\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:02:59.742592Z\",\"updated_at\":\"2026-08-21T08:02:59.742592Z\"},{\"id\":\"00f1bb96-bfee-4fe5-becc-0bf4cd4f4f00\",\"name\":\"0\",\"description\":\"0\",\"system_prompt\":null,\"model\":\"gpt-4o-mini\",\"temperature\":0.7,\"max_tokens\":null,\"rag_top_k\":5,\"rag_similarity_threshold\":0.75,\"is_active\":true,\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:02:54.934383Z\",\"updated_at\":\"2026-08-21T08:02:54.934383Z\"},{\"id\":\"44bb7bca-e4d8-4d18-9be2-671bc27484a7\",\"name\":\"0\",\"description\":\"0\",\"system_prompt\":null,\"model\":\"gpt-4o-mini\",\"temperature\":1.1,\"max_tokens\":null,\"rag_top_k\":32,\"rag_similarity_threshold\":0.75,\"is_active\":true,\"owner_id\":\"302ea8fc-aeb1-408e-b69b-77700825cb54\",\"created_at\":\"2026-08-21T08:02:54.780946Z\",\"updated_at\":\"2026-08-21T08:02:54.780946Z\"}]"
+      },
+      "link": null,
+      "checks": [],
+      "meta": {
+        "generation": {
+          "time": 0.0008289999968837947,
+          "mode": "positive"
+        },
+        "components": {},
+        "phase": {
+          "name": "stateful",
+          "data": {
+            "type": "StatefulPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/agents",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    },
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/agents/7a533543-04b5-4671-ab22-688c25bd2015/chat",
+      "url_template": "http://localhost:8000/api/v1/agents/{agent_id}/chat",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "6c0EKa",
+        "Content-Type": "application/json",
+        "Content-Length": "5"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:03:15 GMT",
+          "server": "uvicorn",
+          "content-length": "48",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"There was an error parsing the body\"}"
+      },
+      "link": {
+        "operationId": "GET /api/v1/agents -> [200] PostAgentResponse_0 -> POST /api/v1/agents/{agent_id}/chat",
+        "parameters": {
+          "path.agent_id": "$response.body#/*/id"
+        }
+      },
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 400\nDocumented: 200, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.014844200006336905,
+          "mode": "negative"
+        },
+        "components": {
+          "BODY": "negative"
+        },
+        "phase": {
+          "name": "stateful",
+          "data": {
+            "type": "StatefulPhaseData",
+            "description": "Invalid syntax: random bytes",
+            "location": null,
+            "parameter": null,
+            "parameter_location": "BODY",
+            "mutations": [
+              {
+                "path": [],
+                "schema_pointer": "",
+                "channel": "schema",
+                "operator": "syntax_fuzzing",
+                "keywords": [],
+                "parameter": null,
+                "original_value": null,
+                "new_value": null
+              }
+            ]
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/agents/{agent_id}/chat",
+      "path_parameters": {
+        "agent_id": "7a533543-04b5-4671-ab22-688c25bd2015"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "base64",
+        "value": "8Ct8g2s="
+      },
+      "media_type": "application/json",
+      "parent_index": 0
+    }
+  ]
+}

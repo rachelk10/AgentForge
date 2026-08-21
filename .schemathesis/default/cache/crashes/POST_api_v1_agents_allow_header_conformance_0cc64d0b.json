@@ -1,0 +1,90 @@
+{
+  "operation": "POST /api/v1/agents",
+  "method": "OPTIONS",
+  "path_template": "/api/v1/agents",
+  "fingerprint": "0cc64d0b",
+  "case_id": "NJPGIr",
+  "code_sample": "curl -X OPTIONS -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"name\": \"0\"}' http://localhost:8000/api/v1/agents",
+  "sequence": [
+    {
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/agents",
+      "url_template": "http://localhost:8000/api/v1/agents",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "NJPGIr",
+        "Content-Type": "application/json",
+        "Content-Length": "13"
+      },
+      "response": {
+        "status_code": 405,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:16:01 GMT",
+          "server": "uvicorn",
+          "allow": "POST",
+          "content-length": "31",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Method Not Allowed\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "allow_header_conformance",
+          "status": "failure",
+          "message": "Invalid Allow header\n\n`Allow` header does not match the schema \u2014 missing documented methods: GET\n\nList exactly the methods this resource supports in `Allow`"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 5.800000508315861e-06,
+          "mode": "negative"
+        },
+        "components": {
+          "HEADER": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Unspecified HTTP method: OPTIONS",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "scenario": "unspecified_http_method"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "HEADER": {
+            "Authorization": "Bearer "
+          }
+        }
+      },
+      "path": "/api/v1/agents",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "name": "0"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

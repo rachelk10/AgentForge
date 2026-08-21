@@ -1,0 +1,134 @@
+{
+  "operation": "POST /api/v1/tools",
+  "method": "POST",
+  "path_template": "/api/v1/tools",
+  "fingerprint": "4be60f16",
+  "case_id": "GUYeMb",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"LPT1\": [], \"\\ud9e7\\udf6d\\ud93a\\uddfac\": {}, \"\\u00d8\\u0095W\\u0098\\u00f8\\u00c0\\u009c\\u0003\\u00bf\\u00b6,\": {\"|\": [null, 1664307193324354.0, true]}, \"output_schema\": {\"\\u00dd\\u00d3\\u00a7\": {\"\\u0093\\u0014\\u00d4\\ud8ed\\udf10G\\u00db\\u0011\\udadb\\udcd3z\\udb47\\udc8e\\ud899\\udfbc\\u00e3g\\u000ew\\u00cb\\u0011X\\ud9bc\\udf63\": null, \"U\": 2.9466013366628206e-185, \"k0\\u0084\\u0004\": 66284564}, \"\\u00e2\\ud896\\udfaa\\uda7e\\uddb1\\u00a7\": {\"\\u0082\\u00b2\\u00e7vs\": [4.799454126390123e+16], \"\\u0086\\\\\\u00db\\u0012\\ud905\\udd04\\u00b3\\u0088\\u00be\\u00ea`@\": [[], [true, -363]], \"\\u00bf\\u00e6\": {}}}, \"enabled\": false, \"description\": \"\\u0095\\uda2a\\udfd9c\\u0000\\u00f8\\u00db\\u00c34L\\u009cR\\u008b\\u00e4N\\u00f4\\\\\", \"name\": \"jzb\", \"input_schema\": {\"\\udab7\\udcaf\": {\">[(G\": \"\\u00a5\\u00ea\", \"\\u00eb\\n\\udbb5\\udc1f\\u0098\\u00a8\\ud93a\\udc66\": \"\\u008f\"}}, \"execution_logic\": \"0\"}' http://localhost:8000/api/v1/tools",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/tools",
+      "url_template": "http://localhost:8000/api/v1/tools",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "GUYeMb",
+        "Content-Type": "application/json",
+        "Content-Length": "836"
+      },
+      "response": {
+        "status_code": 500,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:03:00 GMT",
+          "server": "uvicorn",
+          "content-length": "21",
+          "content-type": "text/plain; charset=utf-8"
+        },
+        "body": "Internal Server Error"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "not_a_server_error",
+          "status": "failure",
+          "message": "Server error"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.028768500007572584,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "stateful",
+          "data": {
+            "type": "StatefulPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [
+          {
+            "path": [
+              "execution_logic"
+            ],
+            "type_token": "string",
+            "format_token": null,
+            "pattern_hash": null,
+            "normalized_name": "executionlogic",
+            "value": "0",
+            "source_operation": "POST /api/v1/tools"
+          }
+        ],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/tools",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "LPT1": [],
+          "\ud9e7\udf6d\ud93a\uddfac": {},
+          "\u00d8\u0095W\u0098\u00f8\u00c0\u009c\u0003\u00bf\u00b6,": {
+            "|": [
+              null,
+              1664307193324354.0,
+              true
+            ]
+          },
+          "output_schema": {
+            "\u00dd\u00d3\u00a7": {
+              "\u0093\u0014\u00d4\ud8ed\udf10G\u00db\u0011\udadb\udcd3z\udb47\udc8e\ud899\udfbc\u00e3g\u000ew\u00cb\u0011X\ud9bc\udf63": null,
+              "U": 2.9466013366628206e-185,
+              "k0\u0084\u0004": 66284564
+            },
+            "\u00e2\ud896\udfaa\uda7e\uddb1\u00a7": {
+              "\u0082\u00b2\u00e7vs": [
+                4.799454126390123e+16
+              ],
+              "\u0086\\\u00db\u0012\ud905\udd04\u00b3\u0088\u00be\u00ea`@": [
+                [],
+                [
+                  true,
+                  -363
+                ]
+              ],
+              "\u00bf\u00e6": {}
+            }
+          },
+          "enabled": false,
+          "description": "\u0095\uda2a\udfd9c\u0000\u00f8\u00db\u00c34L\u009cR\u008b\u00e4N\u00f4\\",
+          "name": "jzb",
+          "input_schema": {
+            "\udab7\udcaf": {
+              ">[(G": "\u00a5\u00ea",
+              "\u00eb\n\udbb5\udc1f\u0098\u00a8\ud93a\udc66": "\u008f"
+            }
+          },
+          "execution_logic": "0"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

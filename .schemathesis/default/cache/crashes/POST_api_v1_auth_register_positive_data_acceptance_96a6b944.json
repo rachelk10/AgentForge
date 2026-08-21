@@ -1,0 +1,86 @@
+{
+  "operation": "POST /api/v1/auth/register",
+  "method": "POST",
+  "path_template": "/api/v1/auth/register",
+  "fingerprint": "96a6b944",
+  "case_id": "hi4ObJ",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"email\": \"0@com\", \"password\": \"000000000\", \"username\": \"000\"}' http://localhost:8000/api/v1/auth/register",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/auth/register",
+      "url_template": "http://localhost:8000/api/v1/auth/register",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "hi4ObJ",
+        "Content-Type": "application/json",
+        "Content-Length": "62"
+      },
+      "response": {
+        "status_code": 422,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:16:03 GMT",
+          "server": "uvicorn",
+          "content-length": "267",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":[{\"type\":\"value_error\",\"loc\":[\"body\",\"email\"],\"msg\":\"value is not a valid email address: The part after the @-sign is not valid. It should have a period.\",\"input\":\"0@com\",\"ctx\":{\"reason\":\"The part after the @-sign is not valid. It should have a period.\"}}]}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "positive_data_acceptance",
+          "status": "failure",
+          "message": "API rejected schema-compliant request\n\nValid data should have been accepted\nExpected: 2xx, 401, 403, 404, 409, 5xx"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.001553900001454167,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Object with valid 'password' value: Near-boundary length string",
+            "location": null,
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "valid_object"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/auth/register",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "email": "0@com",
+          "password": "[Filtered]",
+          "username": "000"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

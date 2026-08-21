@@ -1,0 +1,111 @@
+{
+  "operation": "PATCH /api/v1/agents/{agent_id}",
+  "method": "PATCH",
+  "path_template": "/api/v1/agents/{agent_id}",
+  "fingerprint": "9ab482b1",
+  "case_id": "JOMpOh",
+  "code_sample": "curl -X PATCH -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"is_active\": null, \"temperature\": null, \"rag_similarity_threshold\": 0.19725918831828176, \"name\": \"0\"}' http://localhost:8000/api/v1/agents/82ab32fb-4839-4dcd-b60e-71bc58cc0cbe",
+  "sequence": [
+    {
+      "method": "PATCH",
+      "url": "http://localhost:8000/api/v1/agents/82ab32fb-4839-4dcd-b60e-71bc58cc0cbe",
+      "url_template": "http://localhost:8000/api/v1/agents/{agent_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "JOMpOh",
+        "Content-Type": "application/json",
+        "Content-Length": "102"
+      },
+      "response": {
+        "status_code": 500,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:17:27 GMT",
+          "server": "uvicorn",
+          "content-length": "21",
+          "content-type": "text/plain; charset=utf-8"
+        },
+        "body": "Internal Server Error"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 500\nDocumented: 200, 404, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.010696900004404597,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "agent_id",
+            "resource_name": "AgentResponse",
+            "resource_field": "id",
+            "source_operation": "POST /api/v1/agents/{agent_id}/conversations",
+            "source_status": 201
+          }
+        ],
+        "pool_misses": [],
+        "semantic_draws": [
+          {
+            "path": [
+              "name"
+            ],
+            "type_token": "string",
+            "format_token": null,
+            "pattern_hash": null,
+            "normalized_name": "name",
+            "value": "0",
+            "source_operation": "POST /api/v1/agents"
+          }
+        ],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/agents/{agent_id}",
+      "path_parameters": {
+        "agent_id": "82ab32fb-4839-4dcd-b60e-71bc58cc0cbe"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "is_active": null,
+          "temperature": null,
+          "rag_similarity_threshold": 0.19725918831828176,
+          "name": "0"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

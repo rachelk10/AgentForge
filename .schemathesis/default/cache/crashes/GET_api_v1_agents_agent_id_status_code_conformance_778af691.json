@@ -1,0 +1,81 @@
+{
+  "operation": "GET /api/v1/agents/{agent_id}",
+  "method": "GET",
+  "path_template": "/api/v1/agents/{agent_id}",
+  "fingerprint": "778af691",
+  "case_id": "VpxPce",
+  "code_sample": "curl -X GET -H 'Authorization: [Filtered]' http://localhost:8000/api/v1/agents/86d704d2-f310-2e05-b62b-b111cc1e50f8",
+  "sequence": [
+    {
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/agents/86d704d2-f310-2e05-b62b-b111cc1e50f8",
+      "url_template": "http://localhost:8000/api/v1/agents/{agent_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "VpxPce"
+      },
+      "response": {
+        "status_code": 404,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:53:51 GMT",
+          "server": "uvicorn",
+          "content-length": "28",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Agent not found\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 404\nDocumented: 200, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.005241399994702078,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "negative"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/agents/{agent_id}",
+      "path_parameters": {
+        "agent_id": "86d704d2-f310-2e05-b62b-b111cc1e50f8"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    }
+  ]
+}

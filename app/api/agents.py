@@ -31,7 +31,11 @@ async def list_agents(
     return await AgentService(db).get_agents(current_user.id)
 
 
-@router.get("/{agent_id}", response_model=AgentResponse)
+@router.get(
+    "/{agent_id}",
+    response_model=AgentResponse,
+    responses={404: {"description": "Agent not found"}},
+)
 async def get_agent(
     agent_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
@@ -41,7 +45,11 @@ async def get_agent(
     return await AgentService(db).get(agent_id, current_user.id)
 
 
-@router.patch("/{agent_id}", response_model=AgentResponse)
+@router.patch(
+    "/{agent_id}",
+    response_model=AgentResponse,
+    responses={404: {"description": "Agent not found"}},
+)
 async def update_agent(
     agent_id: uuid.UUID,
     data: AgentUpdate,
@@ -52,7 +60,11 @@ async def update_agent(
     return await AgentService(db).update(agent_id, data, current_user.id)
 
 
-@router.delete("/{agent_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{agent_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={404: {"description": "Agent not found"}},
+)
 async def delete_agent(
     agent_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),

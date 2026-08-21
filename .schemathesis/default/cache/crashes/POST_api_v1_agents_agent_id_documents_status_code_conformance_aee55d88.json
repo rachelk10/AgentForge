@@ -1,0 +1,96 @@
+{
+  "operation": "POST /api/v1/agents/{agent_id}/documents",
+  "method": "POST",
+  "path_template": "/api/v1/agents/{agent_id}/documents",
+  "fingerprint": "aee55d88",
+  "case_id": "89ad07",
+  "code_sample": "curl -X POST -H 'Content-Type: multipart/form-data; boundary=06fd11b6a0f7f579f0a39ca41a5544f4' -d $'--1fef5e9b94f3ee9df0a68ec59955fac7\\r\\nContent-Disposition: form-data; name=\"file\"\\r\\n\\r\\n\\r\\n--1fef5e9b94f3ee9df0a68ec59955fac7--\\r\\n' http://localhost:8000/api/v1/agents/e3e70682-c209-1cac-a29f-6fbed82c07cd/documents\n\n\u26a0\ufe0f  Request body contains non-printable characters. Actual value: b'--1fef5e9b94f3ee9df0a68ec59955fac7\\r\\nContent-Disposition: form-data; name=\"file\"\\r\\n\\r\\n\\r\\n--1fef5e9b94f3ee9df0a68ec59955fac7--\\r\\n'",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/agents/e3e70682-c209-1cac-a29f-6fbed82c07cd/documents",
+      "url_template": "http://localhost:8000/api/v1/agents/{agent_id}/documents",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "89ad07",
+        "Content-Length": "123",
+        "Content-Type": "multipart/form-data; boundary=06fd11b6a0f7f579f0a39ca41a5544f4"
+      },
+      "response": {
+        "status_code": 401,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:31:23 GMT",
+          "server": "uvicorn",
+          "www-authenticate": "[Filtered]",
+          "content-length": "30",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Not authenticated\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 401\nDocumented: 201, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 3.539999306667596e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "positive",
+          "HEADER": "negative",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Missing `Authorization` at header",
+            "location": null,
+            "parameter": "Authorization",
+            "parameter_location": "HEADER",
+            "scenario": "missing_parameter"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [
+          [
+            "path",
+            "agent_id"
+          ]
+        ],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "PATH": {
+            "agent_id": "e3e70682-c209-1cac-a29f-6fbed82c07cd"
+          },
+          "HEADER": {}
+        }
+      },
+      "path": "/api/v1/agents/{agent_id}/documents",
+      "path_parameters": {
+        "agent_id": "e3e70682-c209-1cac-a29f-6fbed82c07cd"
+      },
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "file": ""
+        }
+      },
+      "media_type": "multipart/form-data",
+      "parent_index": null
+    }
+  ]
+}

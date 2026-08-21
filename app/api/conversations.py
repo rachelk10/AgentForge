@@ -18,7 +18,12 @@ from app.services.conversation import ConversationService
 router = APIRouter(prefix="/agents/{agent_id}/conversations", tags=["Conversations"])
 
 
-@router.post("", response_model=ConversationResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=ConversationResponse,
+    status_code=status.HTTP_201_CREATED,
+    responses={404: {"description": "Agent not found"}},
+)
 async def create_conversation(
     agent_id: uuid.UUID,
     data: ConversationCreate,
@@ -30,7 +35,11 @@ async def create_conversation(
     return await ConversationService(db).create(agent_id, current_user.id, data)
 
 
-@router.get("", response_model=list[ConversationResponse])
+@router.get(
+    "",
+    response_model=list[ConversationResponse],
+    responses={404: {"description": "Agent not found"}},
+)
 async def list_conversations(
     agent_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
@@ -41,7 +50,11 @@ async def list_conversations(
     return await ConversationService(db).get_conversations(agent_id, current_user.id)
 
 
-@router.get("/{conversation_id}", response_model=ConversationWithMessages)
+@router.get(
+    "/{conversation_id}",
+    response_model=ConversationWithMessages,
+    responses={404: {"description": "Agent or conversation not found"}},
+)
 async def get_conversation(
     agent_id: uuid.UUID,
     conversation_id: uuid.UUID,
@@ -53,7 +66,11 @@ async def get_conversation(
     return await ConversationService(db).get(conversation_id, current_user.id)
 
 
-@router.delete("/{conversation_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{conversation_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={404: {"description": "Agent or conversation not found"}},
+)
 async def delete_conversation(
     agent_id: uuid.UUID,
     conversation_id: uuid.UUID,
@@ -65,7 +82,11 @@ async def delete_conversation(
     await ConversationService(db).delete(conversation_id, current_user.id)
 
 
-@router.get("/{conversation_id}/messages", response_model=list[MessageResponse])
+@router.get(
+    "/{conversation_id}/messages",
+    response_model=list[MessageResponse],
+    responses={404: {"description": "Agent or conversation not found"}},
+)
 async def list_messages(
     agent_id: uuid.UUID,
     conversation_id: uuid.UUID,

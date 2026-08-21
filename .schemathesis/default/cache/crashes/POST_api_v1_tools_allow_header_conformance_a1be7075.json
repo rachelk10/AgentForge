@@ -1,0 +1,94 @@
+{
+  "operation": "POST /api/v1/tools",
+  "method": "OPTIONS",
+  "path_template": "/api/v1/tools",
+  "fingerprint": "a1be7075",
+  "case_id": "L4doIT",
+  "code_sample": "curl -X OPTIONS -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"description\": \"0\", \"execution_logic\": \"0\", \"input_schema\": {}, \"name\": \"A\", \"output_schema\": {}}' http://localhost:8000/api/v1/tools",
+  "sequence": [
+    {
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/tools",
+      "url_template": "http://localhost:8000/api/v1/tools",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "L4doIT",
+        "Content-Type": "application/json",
+        "Content-Length": "98"
+      },
+      "response": {
+        "status_code": 405,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:16:03 GMT",
+          "server": "uvicorn",
+          "allow": "POST",
+          "content-length": "31",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Method Not Allowed\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "allow_header_conformance",
+          "status": "failure",
+          "message": "Invalid Allow header\n\n`Allow` header does not match the schema \u2014 missing documented methods: GET\n\nList exactly the methods this resource supports in `Allow`"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 1.3899989426136017e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "HEADER": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Unspecified HTTP method: OPTIONS",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "scenario": "unspecified_http_method"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "HEADER": {
+            "Authorization": "Bearer "
+          }
+        }
+      },
+      "path": "/api/v1/tools",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "description": "0",
+          "execution_logic": "0",
+          "input_schema": {},
+          "name": "A",
+          "output_schema": {}
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "operation": "POST /api/v1/tools/{tool_id}/agents/{agent_id}/execute",
+  "method": "POST",
+  "path_template": "/api/v1/tools/{tool_id}/agents/{agent_id}/execute",
+  "fingerprint": "80304399",
+  "case_id": "A1MBdM",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '\ufffd\ufffdu\ufffd\ufffdl' http://localhost:8000/api/v1/tools/07b31418-10c1-27e1-b50a-c843a0082068/agents/e48e3fc2-aaeb-53ad-97dc-b3c1bfe678bc/execute",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/tools/07b31418-10c1-27e1-b50a-c843a0082068/agents/e48e3fc2-aaeb-53ad-97dc-b3c1bfe678bc/execute",
+      "url_template": "http://localhost:8000/api/v1/tools/{tool_id}/agents/{agent_id}/execute",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "A1MBdM",
+        "Content-Type": "application/json",
+        "Content-Length": "6"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:16:39 GMT",
+          "server": "uvicorn",
+          "content-length": "48",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"There was an error parsing the body\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 400\nDocumented: 200, 403, 404, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.0033371000026818365,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "negative",
+          "BODY": "negative"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Invalid syntax: random bytes",
+            "location": null,
+            "parameter": null,
+            "parameter_location": "BODY",
+            "mutations": [
+              {
+                "path": [],
+                "schema_pointer": "",
+                "channel": "schema",
+                "operator": "syntax_fuzzing",
+                "keywords": [],
+                "parameter": null,
+                "original_value": null,
+                "new_value": null
+              }
+            ]
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/tools/{tool_id}/agents/{agent_id}/execute",
+      "path_parameters": {
+        "tool_id": "07b31418-10c1-27e1-b50a-c843a0082068",
+        "agent_id": "e48e3fc2-aaeb-53ad-97dc-b3c1bfe678bc"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "base64",
+        "value": "mex10MJs"
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "operation": "PATCH /api/v1/agents/{agent_id}",
+  "method": "PATCH",
+  "path_template": "/api/v1/agents/{agent_id}",
+  "fingerprint": "9e9ec1eb",
+  "case_id": "iVvw2U",
+  "code_sample": "curl -X PATCH -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"is_active\": 0}' http://localhost:8000/api/v1/agents/aac8f0d8-104c-4d12-82dd-698bafb73d71",
+  "sequence": [
+    {
+      "method": "PATCH",
+      "url": "http://localhost:8000/api/v1/agents/aac8f0d8-104c-4d12-82dd-698bafb73d71",
+      "url_template": "http://localhost:8000/api/v1/agents/{agent_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "iVvw2U",
+        "Content-Type": "application/json",
+        "Content-Length": "16"
+      },
+      "response": {
+        "status_code": 404,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:53:31 GMT",
+          "server": "uvicorn",
+          "content-length": "28",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Agent not found\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 404\nDocumented: 200, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.0003538999881129712,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "positive",
+          "HEADER": "positive",
+          "BODY": "negative"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "is_active: Incorrect type",
+            "location": "/properties/is_active/anyOf/0/type",
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "incorrect_type"
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "agent_id",
+            "resource_name": "AgentResponse",
+            "resource_field": "id",
+            "source_operation": "<jwt:auth>",
+            "source_status": 200
+          }
+        ],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "PATH": {
+            "agent_id": "aac8f0d8-104c-4d12-82dd-698bafb73d71"
+          },
+          "HEADER": {
+            "Authorization": "Bearer "
+          }
+        }
+      },
+      "path": "/api/v1/agents/{agent_id}",
+      "path_parameters": {
+        "agent_id": "aac8f0d8-104c-4d12-82dd-698bafb73d71"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "is_active": 0
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

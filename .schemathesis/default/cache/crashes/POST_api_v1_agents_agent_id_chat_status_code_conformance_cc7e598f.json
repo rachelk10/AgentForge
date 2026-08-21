@@ -1,0 +1,96 @@
+{
+  "operation": "POST /api/v1/agents/{agent_id}/chat",
+  "method": "POST",
+  "path_template": "/api/v1/agents/{agent_id}/chat",
+  "fingerprint": "cc7e598f",
+  "case_id": "CRc5Xj",
+  "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"message\": \"0\"}' http://localhost:8000/api/v1/agents/e3e70682-c209-1cac-a29f-6fbed82c07cd/chat",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/agents/e3e70682-c209-1cac-a29f-6fbed82c07cd/chat",
+      "url_template": "http://localhost:8000/api/v1/agents/{agent_id}/chat",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "CRc5Xj",
+        "Content-Type": "application/json",
+        "Content-Length": "16"
+      },
+      "response": {
+        "status_code": 401,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:31:22 GMT",
+          "server": "uvicorn",
+          "www-authenticate": "[Filtered]",
+          "content-length": "30",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Not authenticated\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 401\nDocumented: 200, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 2.1500003640539944e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "positive",
+          "HEADER": "negative",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Missing `Authorization` at header",
+            "location": null,
+            "parameter": "Authorization",
+            "parameter_location": "HEADER",
+            "scenario": "missing_parameter"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [
+          [
+            "path",
+            "agent_id"
+          ]
+        ],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "PATH": {
+            "agent_id": "e3e70682-c209-1cac-a29f-6fbed82c07cd"
+          },
+          "HEADER": {}
+        }
+      },
+      "path": "/api/v1/agents/{agent_id}/chat",
+      "path_parameters": {
+        "agent_id": "e3e70682-c209-1cac-a29f-6fbed82c07cd"
+      },
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "message": "0"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

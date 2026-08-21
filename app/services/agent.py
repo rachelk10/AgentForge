@@ -38,6 +38,15 @@ class AgentService:
         agent = await self.get(agent_id, owner_id)
         update_data = data.model_dump(exclude_unset=True)
         for field, value in update_data.items():
+            if value is None and field in {
+                "name",
+                "model",
+                "temperature",
+                "rag_top_k",
+                "rag_similarity_threshold",
+                "is_active",
+            }:
+                continue
             setattr(agent, field, value)
         await self.db.commit()
         await self.db.refresh(agent)

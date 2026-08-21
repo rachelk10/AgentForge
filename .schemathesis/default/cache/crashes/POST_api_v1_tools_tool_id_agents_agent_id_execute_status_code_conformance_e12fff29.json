@@ -1,0 +1,103 @@
+{
+  "operation": "POST /api/v1/tools/{tool_id}/agents/{agent_id}/execute",
+  "method": "POST",
+  "path_template": "/api/v1/tools/{tool_id}/agents/{agent_id}/execute",
+  "fingerprint": "e12fff29",
+  "case_id": "OeoeEl",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{}' http://localhost:8000/api/v1/tools/2fb02fed-5ac6-4181-afeb-209bd8be81ee/agents/db69a6fd-2877-4362-86b5-1a5bc35f36a2/execute",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/tools/2fb02fed-5ac6-4181-afeb-209bd8be81ee/agents/db69a6fd-2877-4362-86b5-1a5bc35f36a2/execute",
+      "url_template": "http://localhost:8000/api/v1/tools/{tool_id}/agents/{agent_id}/execute",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "OeoeEl",
+        "Content-Type": "application/json",
+        "Content-Length": "2"
+      },
+      "response": {
+        "status_code": 403,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:53:47 GMT",
+          "server": "uvicorn",
+          "content-length": "47",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Tool is not enabled for this agent\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 403\nDocumented: 200, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.00812430000223685,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "tool_id",
+            "resource_name": "ToolResponse",
+            "resource_field": "id",
+            "source_operation": "POST /api/v1/tools",
+            "source_status": 201
+          },
+          {
+            "location": "path",
+            "parameter_name": "agent_id",
+            "resource_name": "AgentResponse",
+            "resource_field": "id",
+            "source_operation": "POST /api/v1/agents",
+            "source_status": 201
+          }
+        ],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/tools/{tool_id}/agents/{agent_id}/execute",
+      "path_parameters": {
+        "agent_id": "db69a6fd-2877-4362-86b5-1a5bc35f36a2",
+        "tool_id": "2fb02fed-5ac6-4181-afeb-209bd8be81ee"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {}
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

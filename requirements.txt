@@ -7,6 +7,7 @@ pydantic-settings
 python-dotenv
 python-jose[cryptography]
 passlib[bcrypt]
+bcrypt==4.0.1
 python-multipart
 psycopg2-binary
 openai
@@ -14,3 +15,7 @@ pgvector
 pypdf
 python-docx
 email-validator
+pytest
+pytest-asyncio
+httpx
+schemathesis

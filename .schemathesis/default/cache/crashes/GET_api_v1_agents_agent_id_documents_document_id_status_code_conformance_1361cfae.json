@@ -1,0 +1,96 @@
+{
+  "operation": "GET /api/v1/agents/{agent_id}/documents/{document_id}",
+  "method": "GET",
+  "path_template": "/api/v1/agents/{agent_id}/documents/{document_id}",
+  "fingerprint": "1361cfae",
+  "case_id": "rLjOjJ",
+  "code_sample": "curl -X GET http://localhost:8000/api/v1/agents/e3e70682-c209-1cac-a29f-6fbed82c07cd/documents/e3e70682-c209-1cac-a29f-6fbed82c07cd",
+  "sequence": [
+    {
+      "method": "GET",
+      "url": "http://localhost:8000/api/v1/agents/e3e70682-c209-1cac-a29f-6fbed82c07cd/documents/e3e70682-c209-1cac-a29f-6fbed82c07cd",
+      "url_template": "http://localhost:8000/api/v1/agents/{agent_id}/documents/{document_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "rLjOjJ"
+      },
+      "response": {
+        "status_code": 401,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:31:23 GMT",
+          "server": "uvicorn",
+          "www-authenticate": "[Filtered]",
+          "content-length": "30",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Not authenticated\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 401\nDocumented: 200, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 1.9699989934451878e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "positive",
+          "HEADER": "negative"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Missing `Authorization` at header",
+            "location": null,
+            "parameter": "Authorization",
+            "parameter_location": "HEADER",
+            "scenario": "missing_parameter"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [
+          [
+            "path",
+            "agent_id"
+          ],
+          [
+            "path",
+            "document_id"
+          ]
+        ],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "PATH": {
+            "agent_id": "e3e70682-c209-1cac-a29f-6fbed82c07cd",
+            "document_id": "e3e70682-c209-1cac-a29f-6fbed82c07cd"
+          },
+          "HEADER": {}
+        }
+      },
+      "path": "/api/v1/agents/{agent_id}/documents/{document_id}",
+      "path_parameters": {
+        "agent_id": "e3e70682-c209-1cac-a29f-6fbed82c07cd",
+        "document_id": "e3e70682-c209-1cac-a29f-6fbed82c07cd"
+      },
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    }
+  ]
+}

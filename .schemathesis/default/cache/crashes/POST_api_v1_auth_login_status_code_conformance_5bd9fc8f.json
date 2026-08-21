@@ -1,0 +1,98 @@
+{
+  "operation": "POST /api/v1/auth/login",
+  "method": "POST",
+  "path_template": "/api/v1/auth/login",
+  "fingerprint": "5bd9fc8f",
+  "case_id": "TqJgTm",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/x-www-form-urlencoded' -d 'password=0&username=schemathesis-1787298797134' http://localhost:8000/api/v1/auth/login",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/auth/login",
+      "url_template": "http://localhost:8000/api/v1/auth/login",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "TqJgTm",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Length": "46"
+      },
+      "response": {
+        "status_code": 401,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:53:37 GMT",
+          "server": "uvicorn",
+          "www-authenticate": "[Filtered]",
+          "content-length": "32",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Invalid credentials\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 401\nDocumented: 200, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.014466599997831509,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [
+          {
+            "path": [
+              "username"
+            ],
+            "type_token": "string",
+            "format_token": null,
+            "pattern_hash": null,
+            "normalized_name": "username",
+            "value": "schemathesis-1787298797134",
+            "source_operation": "GET /api/v1/auth/me"
+          }
+        ],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/auth/login",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "password": "[Filtered]",
+          "username": "schemathesis-1787298797134"
+        }
+      },
+      "media_type": "application/x-www-form-urlencoded",
+      "parent_index": null
+    }
+  ]
+}

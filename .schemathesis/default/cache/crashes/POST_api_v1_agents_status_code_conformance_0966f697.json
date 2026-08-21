@@ -1,0 +1,85 @@
+{
+  "operation": "POST /api/v1/agents",
+  "method": "POST",
+  "path_template": "/api/v1/agents",
+  "fingerprint": "0966f697",
+  "case_id": "RCzCMT",
+  "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"name\": \"0\"}' http://localhost:8000/api/v1/agents",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/agents",
+      "url_template": "http://localhost:8000/api/v1/agents",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "RCzCMT",
+        "Content-Type": "application/json",
+        "Content-Length": "13"
+      },
+      "response": {
+        "status_code": 401,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:31:20 GMT",
+          "server": "uvicorn",
+          "www-authenticate": "[Filtered]",
+          "content-length": "30",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Not authenticated\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 401\nDocumented: 201, 422"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 1.6700010746717453e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "HEADER": "negative",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Missing `Authorization` at header",
+            "location": null,
+            "parameter": "Authorization",
+            "parameter_location": "HEADER",
+            "scenario": "missing_parameter"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "HEADER": {}
+        }
+      },
+      "path": "/api/v1/agents",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "name": "0"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

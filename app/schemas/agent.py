@@ -10,7 +10,7 @@ class AgentCreate(BaseModel):
     system_prompt: str | None = None
     model: str = "gpt-4o-mini"
     temperature: float = Field(default=0.7, ge=0.0, le=2.0)
-    max_tokens: int | None = Field(default=None, gt=0)
+    max_tokens: int | None = Field(default=None, gt=0, le=2_147_483_647)
     rag_top_k: int = Field(default=5, ge=1, le=50)
     rag_similarity_threshold: float = Field(default=0.75, ge=0.0, le=1.0)
     is_active: bool = True
@@ -22,7 +22,7 @@ class AgentUpdate(BaseModel):
     system_prompt: str | None = None
     model: str | None = None
     temperature: float | None = Field(default=None, ge=0.0, le=2.0)
-    max_tokens: int | None = Field(default=None, gt=0)
+    max_tokens: int | None = Field(default=None, gt=0, le=2_147_483_647)
     rag_top_k: int | None = Field(default=None, ge=1, le=50)
     rag_similarity_threshold: float | None = Field(default=None, ge=0.0, le=1.0)
     is_active: bool | None = None

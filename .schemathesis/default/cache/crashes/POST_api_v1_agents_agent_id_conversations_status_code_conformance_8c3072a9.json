@@ -1,0 +1,91 @@
+{
+  "operation": "POST /api/v1/agents/{agent_id}/conversations",
+  "method": "POST",
+  "path_template": "/api/v1/agents/{agent_id}/conversations",
+  "fingerprint": "8c3072a9",
+  "case_id": "YH3m1Q",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"@\\u00d6+hC\\uda15\\ude75\\u0099\": {\"\": null, \"\\u00ec\\ud82f\\ude90\\u00e6\\ud80c\\udc6b\": false, \"2\\u009d\\u001c\\u0015\": null}}' http://localhost:8000/api/v1/agents/3596ee48-f0cc-3c28-a4d6-1bfe8dafd108/conversations",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/agents/3596ee48-f0cc-3c28-a4d6-1bfe8dafd108/conversations",
+      "url_template": "http://localhost:8000/api/v1/agents/{agent_id}/conversations",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "YH3m1Q",
+        "Content-Type": "application/json",
+        "Content-Length": "120"
+      },
+      "response": {
+        "status_code": 404,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 07:53:47 GMT",
+          "server": "uvicorn",
+          "content-length": "28",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Agent not found\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 404\nDocumented: 201, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.004962899998645298,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/agents/{agent_id}/conversations",
+      "path_parameters": {
+        "agent_id": "3596ee48-f0cc-3c28-a4d6-1bfe8dafd108"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "@\u00d6+hC\uda15\ude75\u0099": {
+            "": null,
+            "\u00ec\ud82f\ude90\u00e6\ud80c\udc6b": false,
+            "2\u009d\u001c\u0015": null
+          }
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

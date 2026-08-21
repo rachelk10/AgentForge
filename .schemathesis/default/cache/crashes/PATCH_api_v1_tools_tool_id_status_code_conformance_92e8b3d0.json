@@ -1,0 +1,105 @@
+{
+  "operation": "PATCH /api/v1/tools/{tool_id}",
+  "method": "PATCH",
+  "path_template": "/api/v1/tools/{tool_id}",
+  "fingerprint": "92e8b3d0",
+  "case_id": "Yaqwpj",
+  "code_sample": "curl -X PATCH -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '\ufffd' http://localhost:8000/api/v1/tools/c5c780a1-faf4-4d4c-ae33-133458131574",
+  "sequence": [
+    {
+      "method": "PATCH",
+      "url": "http://localhost:8000/api/v1/tools/c5c780a1-faf4-4d4c-ae33-133458131574",
+      "url_template": "http://localhost:8000/api/v1/tools/{tool_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "Yaqwpj",
+        "Content-Type": "application/json",
+        "Content-Length": "2"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:17:27 GMT",
+          "server": "uvicorn",
+          "content-length": "48",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"There was an error parsing the body\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 400\nDocumented: 200, 404, 422, 401"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.003864199999952689,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "negative",
+          "BODY": "negative"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Invalid syntax: random bytes",
+            "location": null,
+            "parameter": null,
+            "parameter_location": "BODY",
+            "mutations": [
+              {
+                "path": [],
+                "schema_pointer": "",
+                "channel": "schema",
+                "operator": "syntax_fuzzing",
+                "keywords": [],
+                "parameter": null,
+                "original_value": null,
+                "new_value": null
+              }
+            ]
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "tool_id",
+            "resource_name": "ToolResponse",
+            "resource_field": "id",
+            "source_operation": "POST /api/v1/tools",
+            "source_status": 201
+          }
+        ],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/tools/{tool_id}",
+      "path_parameters": {
+        "tool_id": "c5c780a1-faf4-4d4c-ae33-133458131574"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "base64",
+        "value": "9IM="
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

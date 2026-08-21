@@ -31,6 +31,7 @@ class Document(Base, TimestampMixin):
     chunks: Mapped[list["DocumentChunk"]] = relationship(
         "DocumentChunk",
         back_populates="document",
+        foreign_keys="DocumentChunk.document_id",
         cascade="all, delete-orphan",
         order_by="DocumentChunk.chunk_index",
     )
@@ -65,4 +66,8 @@ class DocumentChunk(Base, TimestampMixin):
     metadata_: Mapped[dict | None] = mapped_column("metadata", JSON, nullable=True)
 
     agent: Mapped["Agent"] = relationship("Agent", back_populates="document_chunks")
-    document: Mapped["Document"] = relationship("Document", back_populates="chunks")
+    document: Mapped["Document"] = relationship(
+        "Document",
+        back_populates="chunks",
+        foreign_keys=[document_id],
+    )

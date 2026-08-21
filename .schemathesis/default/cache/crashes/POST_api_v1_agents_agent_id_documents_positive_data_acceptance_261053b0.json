@@ -1,0 +1,96 @@
+{
+  "operation": "POST /api/v1/agents/{agent_id}/documents",
+  "method": "POST",
+  "path_template": "/api/v1/agents/{agent_id}/documents",
+  "fingerprint": "261053b0",
+  "case_id": "QgL1Sn",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: multipart/form-data; boundary=a5b628f4a33180340fe00c1ce108f5fb' -d $'--0c72cecd2965376d3df45811975a6648\\r\\nContent-Disposition: form-data; name=\"file\"\\r\\n\\r\\n0\\r\\n--0c72cecd2965376d3df45811975a6648--\\r\\n' http://localhost:8000/api/v1/agents/ed89f229-8bfa-4f09-a439-28e30b913c9d/documents\n\n\u26a0\ufe0f  Request body contains non-printable characters. Actual value: b'--0c72cecd2965376d3df45811975a6648\\r\\nContent-Disposition: form-data; name=\"file\"\\r\\n\\r\\n0\\r\\n--0c72cecd2965376d3df45811975a6648--\\r\\n'",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8000/api/v1/agents/ed89f229-8bfa-4f09-a439-28e30b913c9d/documents",
+      "url_template": "http://localhost:8000/api/v1/agents/{agent_id}/documents",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "QgL1Sn",
+        "Content-Length": "124",
+        "Content-Type": "multipart/form-data; boundary=a5b628f4a33180340fe00c1ce108f5fb"
+      },
+      "response": {
+        "status_code": 422,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:16:37 GMT",
+          "server": "uvicorn",
+          "content-length": "154",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":[{\"type\":\"value_error\",\"loc\":[\"body\",\"file\"],\"msg\":\"Value error, Expected UploadFile, received: <class 'str'>\",\"input\":\"0\",\"ctx\":{\"error\":{}}}]}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "positive_data_acceptance",
+          "status": "failure",
+          "message": "API rejected schema-compliant request\n\nValid data should have been accepted\nExpected: 2xx, 401, 403, 404, 409, 5xx"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.012971200005267747,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "agent_id",
+            "resource_name": "AgentResponse",
+            "resource_field": "id",
+            "source_operation": "POST /api/v1/agents",
+            "source_status": 201
+          }
+        ],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/v1/agents/{agent_id}/documents",
+      "path_parameters": {
+        "agent_id": "ed89f229-8bfa-4f09-a439-28e30b913c9d"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "file": "0"
+        }
+      },
+      "media_type": "multipart/form-data",
+      "parent_index": null
+    }
+  ]
+}

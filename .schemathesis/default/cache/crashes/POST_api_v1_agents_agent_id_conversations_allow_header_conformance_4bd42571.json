@@ -1,0 +1,103 @@
+{
+  "operation": "POST /api/v1/agents/{agent_id}/conversations",
+  "method": "OPTIONS",
+  "path_template": "/api/v1/agents/{agent_id}/conversations",
+  "fingerprint": "4bd42571",
+  "case_id": "u3HzqJ",
+  "code_sample": "curl -X OPTIONS -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{}' http://localhost:8000/api/v1/agents/0fa8abb2-0d6f-41e9-927d-61e958c7f1e3/conversations",
+  "sequence": [
+    {
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/agents/0fa8abb2-0d6f-41e9-927d-61e958c7f1e3/conversations",
+      "url_template": "http://localhost:8000/api/v1/agents/{agent_id}/conversations",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "u3HzqJ",
+        "Content-Type": "application/json",
+        "Content-Length": "2"
+      },
+      "response": {
+        "status_code": 405,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:16:05 GMT",
+          "server": "uvicorn",
+          "allow": "POST",
+          "content-length": "31",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Method Not Allowed\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "allow_header_conformance",
+          "status": "failure",
+          "message": "Invalid Allow header\n\n`Allow` header does not match the schema \u2014 missing documented methods: GET\n\nList exactly the methods this resource supports in `Allow`"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 8.200004231184721e-06,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "positive",
+          "HEADER": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Unspecified HTTP method: OPTIONS",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "scenario": "unspecified_http_method"
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "agent_id",
+            "resource_name": "AgentResponse",
+            "resource_field": "id",
+            "source_operation": "<jwt:auth>",
+            "source_status": 200
+          }
+        ],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "PATH": {
+            "agent_id": "0fa8abb2-0d6f-41e9-927d-61e958c7f1e3"
+          },
+          "HEADER": {
+            "Authorization": "Bearer "
+          }
+        }
+      },
+      "path": "/api/v1/agents/{agent_id}/conversations",
+      "path_parameters": {
+        "agent_id": "0fa8abb2-0d6f-41e9-927d-61e958c7f1e3"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {}
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

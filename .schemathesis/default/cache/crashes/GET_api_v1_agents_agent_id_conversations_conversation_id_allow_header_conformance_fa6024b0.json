@@ -1,0 +1,107 @@
+{
+  "operation": "GET /api/v1/agents/{agent_id}/conversations/{conversation_id}",
+  "method": "OPTIONS",
+  "path_template": "/api/v1/agents/{agent_id}/conversations/{conversation_id}",
+  "fingerprint": "fa6024b0",
+  "case_id": "HYD780",
+  "code_sample": "curl -X OPTIONS -H 'Authorization: [Filtered]' http://localhost:8000/api/v1/agents/e3e70682-c209-1cac-a29f-6fbed82c07cd/conversations/0fa8abb2-0d6f-41e9-927d-61e958c7f1e3",
+  "sequence": [
+    {
+      "method": "OPTIONS",
+      "url": "http://localhost:8000/api/v1/agents/e3e70682-c209-1cac-a29f-6fbed82c07cd/conversations/0fa8abb2-0d6f-41e9-927d-61e958c7f1e3",
+      "url_template": "http://localhost:8000/api/v1/agents/{agent_id}/conversations/{conversation_id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.25.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "HYD780",
+        "Content-Length": "0"
+      },
+      "response": {
+        "status_code": 405,
+        "headers": {
+          "date": "Fri, 21 Aug 2026 08:16:07 GMT",
+          "server": "uvicorn",
+          "allow": "GET",
+          "content-length": "31",
+          "content-type": "application/json"
+        },
+        "body": "{\"detail\":\"Method Not Allowed\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "allow_header_conformance",
+          "status": "failure",
+          "message": "Invalid Allow header\n\n`Allow` header does not match the schema \u2014 missing documented methods: DELETE\n\nList exactly the methods this resource supports in `Allow`"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 1.999999221879989e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "positive",
+          "HEADER": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Unspecified HTTP method: OPTIONS",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "scenario": "unspecified_http_method"
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "conversation_id",
+            "resource_name": "ConversationResponse",
+            "resource_field": "id",
+            "source_operation": "<jwt:auth>",
+            "source_status": 200
+          }
+        ],
+        "pool_misses": [
+          [
+            "path",
+            "agent_id"
+          ]
+        ],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "PATH": {
+            "agent_id": "e3e70682-c209-1cac-a29f-6fbed82c07cd",
+            "conversation_id": "0fa8abb2-0d6f-41e9-927d-61e958c7f1e3"
+          },
+          "HEADER": {
+            "Authorization": "Bearer "
+          }
+        }
+      },
+      "path": "/api/v1/agents/{agent_id}/conversations/{conversation_id}",
+      "path_parameters": {
+        "agent_id": "e3e70682-c209-1cac-a29f-6fbed82c07cd",
+        "conversation_id": "0fa8abb2-0d6f-41e9-927d-61e958c7f1e3"
+      },
+      "query": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    }
+  ]
+}
