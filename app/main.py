@@ -92,6 +92,12 @@ def create_app() -> FastAPI:
             "/api/v1/tools": {"GET", "POST"},
             "/api/v1/tools/{tool_id}": {"GET", "PATCH", "DELETE"},
             "/api/v1/tools/{tool_id}/agents/{agent_id}": {"PUT", "DELETE"},
+            "/api/v1/skills": {"GET", "POST"},
+            "/api/v1/skills/{skill_id}": {"GET", "PATCH", "DELETE"},
+            "/api/v1/skills/{skill_id}/enable": {"POST"},
+            "/api/v1/skills/{skill_id}/disable": {"POST"},
+            "/api/v1/skills/{skill_id}/agents/{agent_id}": {"PUT", "DELETE"},
+            "/api/v1/skills/{skill_id}/agents/{agent_id}/remove": {"DELETE"},
         }
     )
 

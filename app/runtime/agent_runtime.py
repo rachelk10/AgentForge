@@ -21,6 +21,7 @@ This layer is designed to be easily extensible for future additions:
 """
 
 import logging
+import re
 import uuid
 from typing import Any
 
@@ -31,6 +32,7 @@ from app.models.agent import Agent
 from app.models.conversation import Conversation
 from app.models.message import Message, MessageRole
 from app.models.tool import AgentTool, Tool
+from app.models.skill import AgentSkill, Skill
 from app.runtime.context import ConversationContext
 from app.runtime.llm import LLMComponent
 from app.runtime.rag import RAGKnowledgeBase
@@ -124,6 +126,17 @@ class AgentRuntime:
                 *messages,
             ]
 
+        active_skills = await self._load_relevant_skills(agent, user_message)
+        if active_skills:
+            skill_context = "\n\n".join(
+                f"Skill: {skill.name} (version {skill.version})\n{skill.instructions}"
+                for skill in active_skills
+            )
+            messages = [
+                {"role": "system", "content": f"Apply these relevant skills when appropriate:\n\n{skill_context}"},
+                *messages,
+            ]
+
         enabled_tools_result = await self.db.execute(
             select(Tool).join(AgentTool).where(
                 AgentTool.agent_id == agent.id,
@@ -174,6 +187,70 @@ class AgentRuntime:
         )
 
         return conversation, assistant_msg
+
+    async def _load_relevant_skills(self, agent: Agent, user_message: str) -> list[Skill]:
+        result = await self.db.execute(
+            select(Skill.id, Skill.name, Skill.description, Skill.skill_metadata).join(AgentSkill).where(
+                AgentSkill.agent_id == agent.id,
+                AgentSkill.enabled.is_(True),
+                Skill.enabled.is_(True),
+                Skill.owner_id == agent.owner_id,
+            )
+        )
+        skill_metadata = list(result.all())
+        request_terms = set(re.findall(r"[a-z0-9]+", user_message.lower()))
+        active: list[Skill] = []
+        for metadata in skill_metadata:
+            metadata_terms = " ".join(str(value) for value in (metadata.skill_metadata or {}).values())
+            searchable = f"{metadata.name} {metadata.description} {metadata_terms}".lower()
+            searchable_terms = set(re.findall(r"[a-z0-9]+", searchable))
+            logger.info("Skill metadata checked skill_id=%s", metadata.id)
+            if not request_terms.intersection(searchable_terms):
+                continue
+            full_result = await self.db.execute(
+                select(Skill).join(AgentSkill).where(
+                    Skill.id == metadata.id,
+                    AgentSkill.agent_id == agent.id,
+                    AgentSkill.enabled.is_(True),
+                    Skill.enabled.is_(True),
+                    Skill.owner_id == agent.owner_id,
+                )
+            )
+            skill = full_result.scalar_one_or_none()
+            if skill is None:
+                continue
+            logger.info(
+                "Skill checked skill_id=%s version=%s required_tools=%s",
+                skill.id,
+                skill.version,
+                skill.required_tool_names,
+            )
+            missing_tools = await self._missing_skill_tools(skill, agent.id)
+            if missing_tools:
+                logger.warning(
+                    "Skill rejected skill_id=%s version=%s reason=required_tools_unavailable tools=%s",
+                    skill.id,
+                    skill.version,
+                    missing_tools,
+                )
+                continue
+            active.append(skill)
+            logger.info("Skill activated skill_id=%s version=%s", skill.id, skill.version)
+        return active
+
+    async def _missing_skill_tools(self, skill: Skill, agent_id: uuid.UUID) -> list[str]:
+        if not skill.required_tool_names:
+            return []
+        result = await self.db.execute(
+            select(Tool.name).join(AgentTool).where(
+                Tool.name.in_(skill.required_tool_names),
+                Tool.owner_id == skill.owner_id,
+                Tool.enabled.is_(True),
+                AgentTool.agent_id == agent_id,
+                AgentTool.enabled.is_(True),
+            )
+        )
+        return sorted(set(skill.required_tool_names) - set(result.scalars().all()))
 
     async def _get_or_create_conversation(
         self,

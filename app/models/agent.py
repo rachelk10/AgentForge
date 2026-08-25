@@ -36,3 +36,6 @@ class Agent(Base, TimestampMixin):
     tool_links: Mapped[list["AgentTool"]] = relationship(
         "AgentTool", back_populates="agent", cascade="all, delete-orphan"
     )
+    skill_links: Mapped[list["AgentSkill"]] = relationship(
+        "AgentSkill", back_populates="agent", cascade="all, delete-orphan"
+    )

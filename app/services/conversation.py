@@ -44,12 +44,17 @@ class ConversationService:
 
     async def get(
         self,
+        agent_id: uuid.UUID,
         conversation_id: uuid.UUID,
         user_id: uuid.UUID,
     ) -> Conversation:
         result = await self.db.execute(
             select(Conversation)
-            .where(Conversation.id == conversation_id, Conversation.user_id == user_id)
+            .where(
+                Conversation.id == conversation_id,
+                Conversation.agent_id == agent_id,
+                Conversation.user_id == user_id,
+            )
             .options(selectinload(Conversation.messages))
         )
         conversation = result.scalar_one_or_none()
@@ -62,12 +67,14 @@ class ConversationService:
 
     async def delete(
         self,
+        agent_id: uuid.UUID,
         conversation_id: uuid.UUID,
         user_id: uuid.UUID,
     ) -> None:
         result = await self.db.execute(
             select(Conversation).where(
                 Conversation.id == conversation_id,
+                Conversation.agent_id == agent_id,
                 Conversation.user_id == user_id,
             )
         )
@@ -82,6 +89,7 @@ class ConversationService:
 
     async def get_messages(
         self,
+        agent_id: uuid.UUID,
         conversation_id: uuid.UUID,
         user_id: uuid.UUID,
     ) -> list[Message]:
@@ -89,6 +97,7 @@ class ConversationService:
         result = await self.db.execute(
             select(Conversation).where(
                 Conversation.id == conversation_id,
+                Conversation.agent_id == agent_id,
                 Conversation.user_id == user_id,
             )
         )

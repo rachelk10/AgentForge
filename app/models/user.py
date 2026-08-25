@@ -24,3 +24,6 @@ class User(Base, TimestampMixin):
     tools: Mapped[list["Tool"]] = relationship(
         "Tool", back_populates="owner", cascade="all, delete-orphan"
     )
+    skills: Mapped[list["Skill"]] = relationship(
+        "Skill", back_populates="owner", cascade="all, delete-orphan"
+    )

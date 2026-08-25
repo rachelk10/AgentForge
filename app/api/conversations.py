@@ -63,7 +63,7 @@ async def get_conversation(
 ) -> ConversationWithMessages:
     """Get a conversation with its full message history."""
     await AgentService(db).get(agent_id, current_user.id)
-    return await ConversationService(db).get(conversation_id, current_user.id)
+    return await ConversationService(db).get(agent_id, conversation_id, current_user.id)
 
 
 @router.delete(
@@ -79,7 +79,7 @@ async def delete_conversation(
 ) -> None:
     """Delete a conversation and all its messages."""
     await AgentService(db).get(agent_id, current_user.id)
-    await ConversationService(db).delete(conversation_id, current_user.id)
+    await ConversationService(db).delete(agent_id, conversation_id, current_user.id)
 
 
 @router.get(
@@ -95,4 +95,4 @@ async def list_messages(
 ) -> list[MessageResponse]:
     """List all messages in a conversation ordered by time."""
     await AgentService(db).get(agent_id, current_user.id)
-    return await ConversationService(db).get_messages(conversation_id, current_user.id)
+    return await ConversationService(db).get_messages(agent_id, conversation_id, current_user.id)
