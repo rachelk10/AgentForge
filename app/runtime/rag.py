@@ -66,6 +66,7 @@ class RAGKnowledgeBase:
         query: str,
         limit: int = 5,
         similarity_threshold: float = 0.0,
+        query_embedding: list[float] | None = None,
     ) -> list[str]:
         if self.db is None:
             return []
@@ -76,11 +77,12 @@ class RAGKnowledgeBase:
 
         from app.models.document import DocumentChunk
 
-        provider = self.embedding_provider or OpenAIEmbeddingProvider()
-        query_embeddings = await provider.embed([query])
-        if not query_embeddings:
-            return []
-        query_embedding = query_embeddings[0]
+        if query_embedding is None:
+            provider = self.embedding_provider or OpenAIEmbeddingProvider()
+            query_embeddings = await provider.embed([query])
+            if not query_embeddings:
+                return []
+            query_embedding = query_embeddings[0]
         distance = DocumentChunk.embedding.cosine_distance(query_embedding)
         result = await self.db.execute(
             select(DocumentChunk)

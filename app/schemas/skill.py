@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class SkillCreate(BaseModel):
-    name: str = Field(min_length=1, max_length=100, pattern=r"^[A-Za-z][A-Za-z0-9_. -]*$")
+    name: str = Field(min_length=1, max_length=100, pattern=r"^[^\W\d_][\w. -]*$")
     description: str = Field(min_length=1)
     instructions: str = Field(min_length=1)
     configuration: dict[str, Any] = Field(default_factory=dict)
@@ -26,7 +26,7 @@ class SkillCreate(BaseModel):
 
 
 class SkillUpdate(BaseModel):
-    name: str | None = Field(default=None, min_length=1, max_length=100, pattern=r"^[A-Za-z][A-Za-z0-9_. -]*$")
+    name: str | None = Field(default=None, min_length=1, max_length=100, pattern=r"^[^\W\d_][\w. -]*$")
     description: str | None = Field(default=None, min_length=1)
     instructions: str | None = Field(default=None, min_length=1)
     configuration: dict[str, Any] | None = None

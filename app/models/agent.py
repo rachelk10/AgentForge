@@ -18,6 +18,8 @@ class Agent(Base, TimestampMixin):
     max_tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
     rag_top_k: Mapped[int] = mapped_column(Integer, default=5, nullable=False)
     rag_similarity_threshold: Mapped[float] = mapped_column(Float, default=0.75, nullable=False)
+    skills_top_k: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
+    skills_similarity_threshold: Mapped[float] = mapped_column(Float, default=0.75, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     owner_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True

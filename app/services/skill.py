@@ -1,3 +1,4 @@
+import logging
 import uuid
 
 from fastapi import HTTPException, status
@@ -8,12 +9,33 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.agent import Agent
 from app.models.skill import AgentSkill, Skill
 from app.models.tool import AgentTool, Tool
+from app.rag.embeddings import EmbeddingProvider, OpenAIEmbeddingProvider
+from app.runtime.skills import skill_canonical_text, skill_embedding_source_hash
 from app.schemas.skill import SkillCreate, SkillUpdate
+
+logger = logging.getLogger(__name__)
 
 
 class SkillService:
-    def __init__(self, db: AsyncSession) -> None:
+    def __init__(self, db: AsyncSession, embedding_provider: EmbeddingProvider | None = None) -> None:
         self.db = db
+        self.embedding_provider = embedding_provider
+
+    async def _generate_embedding(self, skill: Skill) -> None:
+        source_hash = skill_embedding_source_hash(skill.name, skill.description, skill.skill_metadata)
+        if skill.embedding is not None and skill.embedding_source_hash == source_hash:
+            return
+        try:
+            provider = self.embedding_provider or OpenAIEmbeddingProvider()
+            embeddings = await provider.embed([skill_canonical_text(skill.name, skill.description, skill.skill_metadata)])
+            if len(embeddings) != 1 or len(embeddings[0]) != 1536:
+                raise ValueError("Embedding provider returned an invalid result")
+            skill.embedding = embeddings[0]
+            skill.embedding_source_hash = source_hash
+        except Exception as exc:
+            skill.embedding = None
+            skill.embedding_source_hash = None
+            logger.warning("Skill embedding failed skill_id=%s reason=%s", skill.id, exc)
 
     async def get_owned(self, skill_id: uuid.UUID, owner_id: uuid.UUID) -> Skill:
         result = await self.db.execute(select(Skill).where(Skill.id == skill_id, Skill.owner_id == owner_id))
@@ -61,6 +83,8 @@ class SkillService:
         skill = Skill(**values, owner_id=owner_id)
         self.db.add(skill)
         try:
+            await self.db.flush()
+            await self._generate_embedding(skill)
             await self.db.commit()
         except IntegrityError as exc:
             await self.db.rollback()
@@ -75,6 +99,7 @@ class SkillService:
             values["skill_metadata"] = values.pop("metadata")
         if values.get("scope") not in (None, "user"):
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Only user scope is supported")
+        embedding_fields_changed = any(field in values for field in ("name", "description", "skill_metadata"))
         if "version" not in values and any(
             field in values for field in ("description", "instructions", "configuration", "skill_metadata", "resources", "required_tool_names")
         ):
@@ -82,6 +107,8 @@ class SkillService:
         for field, value in values.items():
             setattr(skill, field, value)
         try:
+            if embedding_fields_changed:
+                await self._generate_embedding(skill)
             await self.db.commit()
         except IntegrityError as exc:
             await self.db.rollback()

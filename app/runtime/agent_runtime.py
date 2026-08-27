@@ -21,7 +21,6 @@ This layer is designed to be easily extensible for future additions:
 """
 
 import logging
-import re
 import uuid
 from typing import Any
 
@@ -36,6 +35,8 @@ from app.models.skill import AgentSkill, Skill
 from app.runtime.context import ConversationContext
 from app.runtime.llm import LLMComponent
 from app.runtime.rag import RAGKnowledgeBase
+from app.runtime.skills import rank_skills
+from app.rag.embeddings import EmbeddingProvider, OpenAIEmbeddingProvider
 from app.runtime.tools import execute_tool
 
 logger = logging.getLogger(__name__)
@@ -57,9 +58,10 @@ class AgentRuntime:
     - MCP integration
     """
 
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession, embedding_provider: EmbeddingProvider | None = None):
         self.db = db
         self.llm = LLMComponent()
+        self.embedding_provider = embedding_provider
 
     async def process_message(
         self,
@@ -113,12 +115,23 @@ class AgentRuntime:
         )
 
         # Step 4: Retrieve relevant RAG chunks for this agent and inject them into context
-        rag_context = await RAGKnowledgeBase(self.db).retrieve(
-            agent.id,
-            user_message,
-            limit=agent.rag_top_k,
-            similarity_threshold=agent.rag_similarity_threshold,
-        )
+        provider = self.embedding_provider or OpenAIEmbeddingProvider()
+        query_embedding: list[float] | None = None
+        try:
+            embeddings = await provider.embed([user_message])
+            query_embedding = embeddings[0] if embeddings else None
+        except Exception as exc:
+            logger.warning("User message embedding failed conversation_id=%s reason=%s", conversation.id, exc)
+
+        rag_context = []
+        if query_embedding is not None:
+            rag_context = await RAGKnowledgeBase(self.db, provider).retrieve(
+                agent.id,
+                user_message,
+                limit=agent.rag_top_k,
+                similarity_threshold=agent.rag_similarity_threshold,
+                query_embedding=query_embedding,
+            )
         if rag_context:
             knowledge_context = "\n\n".join(rag_context)
             messages = [
@@ -126,7 +139,7 @@ class AgentRuntime:
                 *messages,
             ]
 
-        active_skills = await self._load_relevant_skills(agent, user_message)
+        active_skills = await self._load_relevant_skills(agent, query_embedding)
         if active_skills:
             skill_context = "\n\n".join(
                 f"Skill: {skill.name} (version {skill.version})\n{skill.instructions}"
@@ -188,35 +201,44 @@ class AgentRuntime:
 
         return conversation, assistant_msg
 
-    async def _load_relevant_skills(self, agent: Agent, user_message: str) -> list[Skill]:
+    async def _load_relevant_skills(
+        self, agent: Agent, query_embedding: list[float] | None
+    ) -> list[Skill]:
+        if query_embedding is None or agent.skills_top_k <= 0:
+            return []
         result = await self.db.execute(
-            select(Skill.id, Skill.name, Skill.description, Skill.skill_metadata).join(AgentSkill).where(
+            select(Skill.id, Skill.embedding).join(AgentSkill).where(
+                AgentSkill.agent_id == agent.id,
+                AgentSkill.enabled.is_(True),
+                Skill.enabled.is_(True),
+                Skill.owner_id == agent.owner_id,
+                Skill.embedding.is_not(None),
+            )
+        )
+        candidates = [{"id": row.id, "embedding": row.embedding} for row in result.all()]
+        selected = rank_skills(
+            query_embedding,
+            candidates,
+            limit=agent.skills_top_k,
+            similarity_threshold=agent.skills_similarity_threshold,
+        )
+        selected_ids = [candidate["id"] for candidate in selected]
+        if not selected_ids:
+            return []
+
+        full_result = await self.db.execute(
+            select(Skill).join(AgentSkill).where(
+                Skill.id.in_(selected_ids),
                 AgentSkill.agent_id == agent.id,
                 AgentSkill.enabled.is_(True),
                 Skill.enabled.is_(True),
                 Skill.owner_id == agent.owner_id,
             )
         )
-        skill_metadata = list(result.all())
-        request_terms = set(re.findall(r"[a-z0-9]+", user_message.lower()))
+        skills_by_id = {skill.id: skill for skill in full_result.scalars().all()}
         active: list[Skill] = []
-        for metadata in skill_metadata:
-            metadata_terms = " ".join(str(value) for value in (metadata.skill_metadata or {}).values())
-            searchable = f"{metadata.name} {metadata.description} {metadata_terms}".lower()
-            searchable_terms = set(re.findall(r"[a-z0-9]+", searchable))
-            logger.info("Skill metadata checked skill_id=%s", metadata.id)
-            if not request_terms.intersection(searchable_terms):
-                continue
-            full_result = await self.db.execute(
-                select(Skill).join(AgentSkill).where(
-                    Skill.id == metadata.id,
-                    AgentSkill.agent_id == agent.id,
-                    AgentSkill.enabled.is_(True),
-                    Skill.enabled.is_(True),
-                    Skill.owner_id == agent.owner_id,
-                )
-            )
-            skill = full_result.scalar_one_or_none()
+        for selected_skill in selected:
+            skill = skills_by_id.get(selected_skill["id"])
             if skill is None:
                 continue
             logger.info(
