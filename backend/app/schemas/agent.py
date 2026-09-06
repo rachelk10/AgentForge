@@ -12,7 +12,7 @@ class AgentCreate(BaseModel):
     temperature: float = Field(default=0.7, ge=0.0, le=2.0)
     max_tokens: int | None = Field(default=None, gt=0, le=2_147_483_647)
     rag_top_k: int = Field(default=5, ge=1, le=50)
-    rag_similarity_threshold: float = Field(default=0.75, ge=0.0, le=1.0)
+    rag_similarity_threshold: float = Field(default=0.30, ge=0.0, le=1.0)
     skills_top_k: int = Field(default=3, ge=1, le=50)
     skills_similarity_threshold: float = Field(default=0.75, ge=0.0, le=1.0)
     is_active: bool = True

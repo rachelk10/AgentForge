@@ -40,6 +40,7 @@ from app.rag.embeddings import EmbeddingProvider, OpenAIEmbeddingProvider
 from app.runtime.tools import execute_tool
 
 logger = logging.getLogger(__name__)
+RAG_FALLBACK_SIMILARITY_THRESHOLD = 0.15
 
 
 class AgentRuntime:
@@ -125,17 +126,44 @@ class AgentRuntime:
 
         rag_context = []
         if query_embedding is not None:
-            rag_context = await RAGKnowledgeBase(self.db, provider).retrieve(
+            knowledge_base = RAGKnowledgeBase(self.db, provider)
+            rag_context = await knowledge_base.retrieve(
                 agent.id,
                 user_message,
                 limit=agent.rag_top_k,
                 similarity_threshold=agent.rag_similarity_threshold,
                 query_embedding=query_embedding,
             )
+            if not rag_context and agent.rag_similarity_threshold > RAG_FALLBACK_SIMILARITY_THRESHOLD:
+                rag_context = await knowledge_base.retrieve(
+                    agent.id,
+                    user_message,
+                    limit=agent.rag_top_k,
+                    similarity_threshold=RAG_FALLBACK_SIMILARITY_THRESHOLD,
+                    query_embedding=query_embedding,
+                )
+                if rag_context:
+                    logger.info(
+                        "RAG fallback retrieval used agent_id=%s threshold=%s chunks=%d",
+                        agent.id,
+                        RAG_FALLBACK_SIMILARITY_THRESHOLD,
+                        len(rag_context),
+                    )
         if rag_context:
             knowledge_context = "\n\n".join(rag_context)
             messages = [
-                {"role": "system", "content": f"Use the following knowledge base context when relevant:\n\n{knowledge_context}"},
+                {
+                    "role": "system",
+                    "content": (
+                        "The following excerpts were retrieved from the agent's uploaded documents. "
+                        "Use them as the source of truth for the user's question. "
+                        "Answer in the same language as the user when possible. "
+                        "Do not claim that you cannot access uploaded documents when the answer is present "
+                        "in these excerpts. If the excerpts do not contain the answer, say that the answer "
+                        "was not found in the uploaded documents.\n\n"
+                        f"Retrieved document excerpts:\n\n{knowledge_context}"
+                    ),
+                },
                 *messages,
             ]
 

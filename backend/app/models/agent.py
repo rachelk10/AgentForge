@@ -17,7 +17,7 @@ class Agent(Base, TimestampMixin):
     temperature: Mapped[float] = mapped_column(Float, default=0.7, nullable=False)
     max_tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
     rag_top_k: Mapped[int] = mapped_column(Integer, default=5, nullable=False)
-    rag_similarity_threshold: Mapped[float] = mapped_column(Float, default=0.75, nullable=False)
+    rag_similarity_threshold: Mapped[float] = mapped_column(Float, default=0.30, nullable=False)
     skills_top_k: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
     skills_similarity_threshold: Mapped[float] = mapped_column(Float, default=0.75, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)

@@ -15,6 +15,9 @@ venv/
 env/
 ENV/
 
+# Frontend dependencies
+frontend/node_modules/
+
 # Environment variables - NEVER commit secrets
 .env
 .env.local
