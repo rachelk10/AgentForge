@@ -3,7 +3,7 @@ import uuid
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.dependencies import get_current_user
+from app.api.dependencies import get_admin_user, get_current_user
 from app.database import get_db
 from app.models.user import User
 from app.schemas.tool import ToolCreate, ToolExecutionRequest, ToolResponse, ToolResult, ToolUpdate
@@ -18,13 +18,13 @@ router = APIRouter(prefix="/tools", tags=["Tools"])
     status_code=status.HTTP_201_CREATED,
     responses={409: {"description": "A tool with this name already exists"}},
 )
-async def create_tool(data: ToolCreate, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)) -> ToolResponse:
+async def create_tool(data: ToolCreate, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_admin_user)) -> ToolResponse:
     return await ToolService(db).create(data, current_user.id)
 
 
 @router.get("", response_model=list[ToolResponse])
 async def list_tools(db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)) -> list[ToolResponse]:
-    return await ToolService(db).list_tools(current_user.id)
+    return await ToolService(db).list_tools(include_disabled=current_user.is_admin)
 
 
 @router.get(
@@ -33,7 +33,7 @@ async def list_tools(db: AsyncSession = Depends(get_db), current_user: User = De
     responses={404: {"description": "Tool not found"}},
 )
 async def get_tool(tool_id: uuid.UUID, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)) -> ToolResponse:
-    return await ToolService(db).get_owned(tool_id, current_user.id)
+    return await ToolService(db).get_visible(tool_id, current_user)
 
 
 @router.patch(
@@ -41,8 +41,8 @@ async def get_tool(tool_id: uuid.UUID, db: AsyncSession = Depends(get_db), curre
     response_model=ToolResponse,
     responses={404: {"description": "Tool not found"}},
 )
-async def update_tool(tool_id: uuid.UUID, data: ToolUpdate, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)) -> ToolResponse:
-    return await ToolService(db).update(tool_id, data, current_user.id)
+async def update_tool(tool_id: uuid.UUID, data: ToolUpdate, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_admin_user)) -> ToolResponse:
+    return await ToolService(db).update(tool_id, data, None)
 
 
 @router.delete(
@@ -50,8 +50,8 @@ async def update_tool(tool_id: uuid.UUID, data: ToolUpdate, db: AsyncSession = D
     status_code=status.HTTP_204_NO_CONTENT,
     responses={404: {"description": "Tool not found"}},
 )
-async def delete_tool(tool_id: uuid.UUID, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)) -> None:
-    await ToolService(db).delete(tool_id, current_user.id)
+async def delete_tool(tool_id: uuid.UUID, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_admin_user)) -> None:
+    await ToolService(db).delete(tool_id, None)
 
 
 @router.put(

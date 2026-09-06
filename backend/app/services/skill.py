@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.agent import Agent
 from app.models.skill import AgentSkill, Skill
 from app.models.tool import AgentTool, Tool
+from app.models.user import User
 from app.rag.embeddings import EmbeddingProvider, OpenAIEmbeddingProvider
 from app.runtime.skills import skill_canonical_text, skill_embedding_source_hash
 from app.schemas.skill import SkillCreate, SkillUpdate
@@ -37,15 +38,32 @@ class SkillService:
             skill.embedding_source_hash = None
             logger.warning("Skill embedding failed skill_id=%s reason=%s", skill.id, exc)
 
-    async def get_owned(self, skill_id: uuid.UUID, owner_id: uuid.UUID) -> Skill:
-        result = await self.db.execute(select(Skill).where(Skill.id == skill_id, Skill.owner_id == owner_id))
+    async def get_owned(self, skill_id: uuid.UUID, owner_id: uuid.UUID | None) -> Skill:
+        query = select(Skill).where(Skill.id == skill_id)
+        if owner_id is not None:
+            query = query.where(Skill.owner_id == owner_id)
+        result = await self.db.execute(query)
         skill = result.scalar_one_or_none()
         if skill is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
         return skill
 
-    async def list_skills(self, owner_id: uuid.UUID) -> list[Skill]:
-        result = await self.db.execute(select(Skill).where(Skill.owner_id == owner_id).order_by(Skill.created_at.desc()))
+    async def get_visible(self, skill_id: uuid.UUID, user: User) -> Skill:
+        """Return a catalog skill visible to the current user."""
+        query = select(Skill).where(Skill.id == skill_id)
+        if not user.is_admin:
+            query = query.where(Skill.enabled.is_(True))
+        result = await self.db.execute(query)
+        skill = result.scalar_one_or_none()
+        if skill is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
+        return skill
+
+    async def list_skills(self, include_disabled: bool = False) -> list[Skill]:
+        query = select(Skill)
+        if not include_disabled:
+            query = query.where(Skill.enabled.is_(True))
+        result = await self.db.execute(query.order_by(Skill.created_at.desc()))
         return list(result.scalars().all())
 
     async def _validate_required_tools(
@@ -60,7 +78,6 @@ class SkillService:
             return
         result = await self.db.execute(
             select(Tool.name).join(AgentTool).where(
-                Tool.owner_id == owner_id,
                 Tool.name.in_(skill.required_tool_names),
                 Tool.enabled.is_(True),
                 AgentTool.agent_id == agent_id,
@@ -92,7 +109,7 @@ class SkillService:
         await self.db.refresh(skill)
         return skill
 
-    async def update(self, skill_id: uuid.UUID, data: SkillUpdate, owner_id: uuid.UUID) -> Skill:
+    async def update(self, skill_id: uuid.UUID, data: SkillUpdate, owner_id: uuid.UUID | None) -> Skill:
         skill = await self.get_owned(skill_id, owner_id)
         values = data.model_dump(exclude_unset=True)
         if "metadata" in values:
@@ -116,13 +133,19 @@ class SkillService:
         await self.db.refresh(skill)
         return skill
 
-    async def delete(self, skill_id: uuid.UUID, owner_id: uuid.UUID) -> None:
+    async def delete(self, skill_id: uuid.UUID, owner_id: uuid.UUID | None) -> None:
         skill = await self.get_owned(skill_id, owner_id)
         await self.db.delete(skill)
         await self.db.commit()
 
     async def set_agent_access(self, agent_id: uuid.UUID, skill_id: uuid.UUID, owner_id: uuid.UUID, enabled: bool) -> None:
-        skill = await self.get_owned(skill_id, owner_id)
+        skill_query = select(Skill).where(Skill.id == skill_id)
+        if enabled:
+            skill_query = skill_query.where(Skill.enabled.is_(True))
+        skill_result = await self.db.execute(skill_query)
+        skill = skill_result.scalar_one_or_none()
+        if skill is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Skill not found")
         if enabled:
             await self._validate_required_tools(skill, agent_id, owner_id)
         else:

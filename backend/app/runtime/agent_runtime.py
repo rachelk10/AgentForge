@@ -183,7 +183,6 @@ class AgentRuntime:
                 AgentTool.agent_id == agent.id,
                 AgentTool.enabled.is_(True),
                 Tool.enabled.is_(True),
-                Tool.owner_id == agent.owner_id,
             )
         )
         enabled_tools = list(enabled_tools_result.scalars().all())
@@ -239,7 +238,6 @@ class AgentRuntime:
                 AgentSkill.agent_id == agent.id,
                 AgentSkill.enabled.is_(True),
                 Skill.enabled.is_(True),
-                Skill.owner_id == agent.owner_id,
                 Skill.embedding.is_not(None),
             )
         )
@@ -260,7 +258,6 @@ class AgentRuntime:
                 AgentSkill.agent_id == agent.id,
                 AgentSkill.enabled.is_(True),
                 Skill.enabled.is_(True),
-                Skill.owner_id == agent.owner_id,
             )
         )
         skills_by_id = {skill.id: skill for skill in full_result.scalars().all()}
@@ -294,7 +291,6 @@ class AgentRuntime:
         result = await self.db.execute(
             select(Tool.name).join(AgentTool).where(
                 Tool.name.in_(skill.required_tool_names),
-                Tool.owner_id == skill.owner_id,
                 Tool.enabled.is_(True),
                 AgentTool.agent_id == agent_id,
                 AgentTool.enabled.is_(True),

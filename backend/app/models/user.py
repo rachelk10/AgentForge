@@ -14,6 +14,7 @@ class User(Base, TimestampMixin):
     username: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     agents: Mapped[list["Agent"]] = relationship(
         "Agent", back_populates="owner", cascade="all, delete-orphan"
