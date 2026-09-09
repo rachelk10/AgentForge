@@ -31,6 +31,7 @@ export default function App() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState({});
   const [agentName, setAgentName] = useState("");
+  const [selectedToolIds, setSelectedToolIds] = useState([]);
   const [skillForm, setSkillForm] = useState({ name: "", description: "", instructions: "" });
   const [toolForm, setToolForm] = useState({
     name: "",
@@ -115,6 +116,10 @@ export default function App() {
     const created = await runLoading("createAgent", () => api.createAgent(token, { name: agentName }));
     if (created) {
       setAgentName("");
+      await Promise.all(
+        selectedToolIds.map((toolId) => api.enableToolForAgent(token, toolId, created.id)),
+      );
+      setSelectedToolIds([]);
       await loadAgents();
       setSelectedAgentId(created.id);
     }
@@ -193,8 +198,33 @@ export default function App() {
         </select>
         <button onClick={loadAgents} disabled={loading.agents}>Refresh Agents</button> {loading.agents && <span>Loading...</span>}
         {selectedAgent && <p>Selected: <strong>{selectedAgent.name}</strong> ({selectedAgent.model})</p>}
-        <form className="inline-form" onSubmit={createAgent}><input placeholder="New agent name" value={agentName} onChange={(event) => setAgentName(event.target.value)} required /><button disabled={loading.createAgent}>Create Agent</button></form>
+        <form onSubmit={createAgent}>
+          <label>New agent name<input placeholder="New agent name" value={agentName} onChange={(event) => setAgentName(event.target.value)} required /></label>
+          <fieldset>
+            <legend>Tools for this agent</legend>
+            {tools.length === 0 ? <p>No tools are available.</p> : tools.map((tool) => (
+              <label key={tool.id}>
+                <input
+                  type="checkbox"
+                  checked={selectedToolIds.includes(tool.id)}
+                  onChange={(event) => setSelectedToolIds((current) => event.target.checked
+                    ? [...current, tool.id]
+                    : current.filter((toolId) => toolId !== tool.id))}
+                />
+                {tool.name} - {tool.description}
+              </label>
+            ))}
+          </fieldset>
+          <button disabled={loading.createAgent}>Create Agent</button>
+        </form>
         {selectedAgent && <button className="danger" onClick={() => runLoading("deleteAgent", async () => { await api.deleteAgent(token, selectedAgent.id); await loadAgents(); })}>Delete Selected Agent</button>}
+      </section>
+
+      <section>
+        <h2>Tools</h2><p>Available Tools. Select an Agent to enable or remove a tool for that Agent.</p>
+        <button onClick={loadGlobalResources} disabled={loading.tools}>Refresh Tools</button> {loading.tools && <span>Loading...</span>}
+        <ul>{tools.map((tool) => <li key={tool.id}><strong>{tool.name}</strong>: {tool.description} <button disabled={!selectedAgentId} onClick={() => runLoading(`tool-add-${tool.id}`, () => api.enableToolForAgent(token, tool.id, selectedAgentId))}>Enable for Agent</button> <button disabled={!selectedAgentId} onClick={() => runLoading(`tool-remove-${tool.id}`, () => api.disableToolForAgent(token, tool.id, selectedAgentId))}>Remove from Agent</button> <button className="danger" onClick={() => runLoading(`tool-delete-${tool.id}`, async () => { await api.deleteTool(token, tool.id); await loadGlobalResources(); })}>Delete</button></li>)}</ul>
+        <form onSubmit={createTool}><h3>Create Tool</h3><label>Name<input value={toolForm.name} onChange={(event) => setToolForm({ ...toolForm, name: event.target.value })} required /></label><label>Description<input value={toolForm.description} onChange={(event) => setToolForm({ ...toolForm, description: event.target.value })} required /></label><JsonField label="Input schema (JSON)" value={toolForm.inputSchema} onChange={(inputSchema) => setToolForm({ ...toolForm, inputSchema })} /><JsonField label="Output schema (JSON)" value={toolForm.outputSchema} onChange={(outputSchema) => setToolForm({ ...toolForm, outputSchema })} /><label>Execution logic<input value={toolForm.executionLogic} onChange={(event) => setToolForm({ ...toolForm, executionLogic: event.target.value })} required /></label><button disabled={loading.createTool}>Create Tool</button></form>
       </section>
 
       {!selectedAgent && <p>Select or create an Agent to test documents, skills, tools, and chat.</p>}
@@ -211,13 +241,6 @@ export default function App() {
           <button onClick={loadGlobalResources} disabled={loading.skills}>Refresh Skills</button> {loading.skills && <span>Loading...</span>}
           <ul>{skills.map((skill) => <li key={skill.id}><strong>{skill.name}</strong>: {skill.description} <button onClick={() => runLoading(`skill-add-${skill.id}`, () => api.enableSkillForAgent(token, skill.id, selectedAgentId))}>Enable for Agent</button> <button onClick={() => runLoading(`skill-remove-${skill.id}`, () => api.disableSkillForAgent(token, skill.id, selectedAgentId))}>Remove from Agent</button> <button className="danger" onClick={() => runLoading(`skill-delete-${skill.id}`, async () => { await api.deleteSkill(token, skill.id); await loadGlobalResources(); })}>Delete</button></li>)}</ul>
           <form onSubmit={createSkill}><h3>Create Skill</h3><label>Name<input value={skillForm.name} onChange={(event) => setSkillForm({ ...skillForm, name: event.target.value })} required /></label><label>Description<input value={skillForm.description} onChange={(event) => setSkillForm({ ...skillForm, description: event.target.value })} required /></label><label>Instructions<textarea value={skillForm.instructions} onChange={(event) => setSkillForm({ ...skillForm, instructions: event.target.value })} required /></label><button disabled={loading.createSkill}>Create Skill</button></form>
-        </section>
-
-        <section>
-          <h2>Tools</h2><p>Available Tools. The API exposes enable/remove actions, but does not expose a per-Agent assignment list.</p>
-          <button onClick={loadGlobalResources} disabled={loading.tools}>Refresh Tools</button> {loading.tools && <span>Loading...</span>}
-          <ul>{tools.map((tool) => <li key={tool.id}><strong>{tool.name}</strong>: {tool.description} <button onClick={() => runLoading(`tool-add-${tool.id}`, () => api.enableToolForAgent(token, tool.id, selectedAgentId))}>Enable for Agent</button> <button onClick={() => runLoading(`tool-remove-${tool.id}`, () => api.disableToolForAgent(token, tool.id, selectedAgentId))}>Remove from Agent</button> <button className="danger" onClick={() => runLoading(`tool-delete-${tool.id}`, async () => { await api.deleteTool(token, tool.id); await loadGlobalResources(); })}>Delete</button></li>)}</ul>
-          <form onSubmit={createTool}><h3>Create Tool</h3><label>Name<input value={toolForm.name} onChange={(event) => setToolForm({ ...toolForm, name: event.target.value })} required /></label><label>Description<input value={toolForm.description} onChange={(event) => setToolForm({ ...toolForm, description: event.target.value })} required /></label><JsonField label="Input schema (JSON)" value={toolForm.inputSchema} onChange={(inputSchema) => setToolForm({ ...toolForm, inputSchema })} /><JsonField label="Output schema (JSON)" value={toolForm.outputSchema} onChange={(outputSchema) => setToolForm({ ...toolForm, outputSchema })} /><label>Execution logic<input value={toolForm.executionLogic} onChange={(event) => setToolForm({ ...toolForm, executionLogic: event.target.value })} required /></label><button disabled={loading.createTool}>Create Tool</button></form>
         </section>
 
         <section>

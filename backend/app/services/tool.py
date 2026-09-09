@@ -56,7 +56,11 @@ class ToolService:
         if not include_disabled:
             query = query.where(Tool.enabled.is_(True))
         result = await self.db.execute(query.order_by(Tool.created_at.desc()))
-        return list(result.scalars().all())
+        return [
+            tool
+            for tool in result.scalars().all()
+            if isinstance(tool.input_schema, dict) and isinstance(tool.output_schema, dict)
+        ]
 
     async def update(self, tool_id: uuid.UUID, data: ToolUpdate, owner_id: uuid.UUID | None) -> Tool:
         tool = await self.get_owned(tool_id, owner_id)

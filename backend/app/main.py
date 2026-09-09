@@ -6,6 +6,7 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 
 from app.api.routes import create_router
+from app.runtime.builtin_tools import register_builtin_tools
 
 logging.basicConfig(
     level=logging.INFO,
@@ -45,6 +46,7 @@ def custom_openapi(app: FastAPI) -> dict:
 
 
 def create_app() -> FastAPI:
+    register_builtin_tools()
     app = FastAPI(
         title="AI Agent Platform",
         version="0.1.0",

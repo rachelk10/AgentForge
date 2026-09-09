@@ -16,6 +16,8 @@ from app.models.agent import Agent
 
 logger = logging.getLogger(__name__)
 
+MAX_TOOL_ITERATIONS = 5
+
 
 class LLMComponent:
     """Manages LLM interactions.
@@ -71,27 +73,58 @@ class LLMComponent:
             call_kwargs["tools"] = tools
 
         response = await self.client.responses.create(**call_kwargs)
-        for _ in range(5):
+        for _ in range(MAX_TOOL_ITERATIONS):
             calls = [item for item in response.output if getattr(item, "type", None) == "function_call"]
             if not calls or tool_executor is None:
                 break
-            messages = [
-                *messages,
-                *[
+            response_items = [
+                item.model_dump(exclude_none=True)
+                if hasattr(item, "model_dump")
+                else vars(item)
+                if hasattr(item, "__dict__")
+                else item
+                for item in response.output
+            ]
+            tool_outputs = []
+            for call in calls:
+                tool_result = await tool_executor(call.name, json.loads(call.arguments))
+                tool_outputs.append(
                     {
                         "type": "function_call_output",
                         "call_id": call.call_id,
-                        "output": json.dumps(
-                            await tool_executor(call.name, json.loads(call.arguments)),
-                            default=str,
-                        ),
+                        "output": json.dumps(tool_result, default=str),
                     }
-                    for call in calls
-                ],
+                )
+            messages = [
+                *messages,
+                *response_items,
+                *tool_outputs,
             ]
             call_kwargs["input"] = messages
             response = await self.client.responses.create(**call_kwargs)
+        else:
+            pending_calls = [item for item in response.output if getattr(item, "type", None) == "function_call"]
+            if pending_calls and tool_executor is not None:
+                logger.warning(
+                    "Tool iteration limit reached model=%s max_iterations=%d; requesting final answer without tools",
+                    agent.model,
+                    MAX_TOOL_ITERATIONS,
+                )
+                final_kwargs = {key: value for key, value in call_kwargs.items() if key != "tools"}
+                response = await self.client.responses.create(**final_kwargs)
         assistant_content = response.output_text or ""
+        if not assistant_content:
+            message_items = [
+                item for item in response.output if getattr(item, "type", None) == "message"
+            ]
+            assistant_content = "".join(
+                content.text
+                for item in message_items
+                for content in getattr(item, "content", [])
+                if getattr(content, "type", None) == "output_text"
+            )
+        if not assistant_content:
+            logger.warning("LLM returned empty content model=%s", agent.model)
 
         logger.debug(
             "LLM response received model=%s output_length=%d",
