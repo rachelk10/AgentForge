@@ -21,7 +21,9 @@ class Skill(Base, TimestampMixin):
     required_tool_names: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
     version: Mapped[int] = mapped_column(default=1, nullable=False)
     enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-    scope: Mapped[str] = mapped_column(String(20), default="user", nullable=False)
+    status: Mapped[str] = mapped_column(String(20), default="draft", nullable=False)
+    visibility: Mapped[str] = mapped_column(String(20), default="global", nullable=False)
+    scope: Mapped[str] = mapped_column(String(20), default="global", nullable=False)
     embedding: Mapped[list[float] | None] = mapped_column(Vector(1536), nullable=True)
     embedding_source_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
     owner_id: Mapped[uuid.UUID] = mapped_column(

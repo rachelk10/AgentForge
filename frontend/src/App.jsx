@@ -24,6 +24,7 @@ export default function App() {
   const [selectedAgentId, setSelectedAgentId] = useState("");
   const [documents, setDocuments] = useState([]);
   const [skills, setSkills] = useState([]);
+  const [agentSkills, setAgentSkills] = useState([]);
   const [tools, setTools] = useState([]);
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState(null);
@@ -32,7 +33,7 @@ export default function App() {
   const [loading, setLoading] = useState({});
   const [agentName, setAgentName] = useState("");
   const [selectedToolIds, setSelectedToolIds] = useState([]);
-  const [skillForm, setSkillForm] = useState({ name: "", description: "", instructions: "" });
+  const [selectedSkillIds, setSelectedSkillIds] = useState([]);
   const [toolForm, setToolForm] = useState({
     name: "",
     description: "",
@@ -72,6 +73,12 @@ export default function App() {
     if (toolData) setTools(toolData);
   }
 
+  async function loadAgentSkills(agentId = selectedAgentId) {
+    if (!agentId) return;
+    const data = await runLoading("agentSkills", () => api.getAgentSkills(token, agentId));
+    if (data) setAgentSkills(data);
+  }
+
   async function loadDocuments(agentId = selectedAgentId) {
     if (!agentId) return;
     const data = await runLoading("documents", () => api.getDocuments(token, agentId));
@@ -92,9 +99,13 @@ export default function App() {
 
   useEffect(() => {
     setDocuments([]);
+    setAgentSkills([]);
     setMessages([]);
     setConversationId(null);
-    if (token && selectedAgentId) loadDocuments(selectedAgentId);
+    if (token && selectedAgentId) {
+      loadDocuments(selectedAgentId);
+      loadAgentSkills(selectedAgentId);
+    }
   }, [selectedAgentId]);
 
   async function login(event) {
@@ -119,7 +130,11 @@ export default function App() {
       await Promise.all(
         selectedToolIds.map((toolId) => api.enableToolForAgent(token, toolId, created.id)),
       );
+      await Promise.all(
+        selectedSkillIds.map((skillId) => api.enableSkillForAgent(token, skillId, created.id)),
+      );
       setSelectedToolIds([]);
+      setSelectedSkillIds([]);
       await loadAgents();
       setSelectedAgentId(created.id);
     }
@@ -131,15 +146,6 @@ export default function App() {
     if (!file || !selectedAgentId) return;
     const uploaded = await runLoading("upload", () => api.uploadDocument(token, selectedAgentId, file));
     if (uploaded) loadDocuments();
-  }
-
-  async function createSkill(event) {
-    event.preventDefault();
-    const created = await runLoading("createSkill", () => api.createSkill(token, skillForm));
-    if (created) {
-      setSkillForm({ name: "", description: "", instructions: "" });
-      loadGlobalResources();
-    }
   }
 
   async function createTool(event) {
@@ -215,6 +221,21 @@ export default function App() {
               </label>
             ))}
           </fieldset>
+          <fieldset>
+            <legend>Skills for this agent</legend>
+            {skills.length === 0 ? <p>No skills are available.</p> : skills.map((skill) => (
+              <label key={skill.id}>
+                <input
+                  type="checkbox"
+                  checked={selectedSkillIds.includes(skill.id)}
+                  onChange={(event) => setSelectedSkillIds((current) => event.target.checked
+                    ? [...current, skill.id]
+                    : current.filter((skillId) => skillId !== skill.id))}
+                />
+                {skill.name} - {skill.description}
+              </label>
+            ))}
+          </fieldset>
           <button disabled={loading.createAgent}>Create Agent</button>
         </form>
         {selectedAgent && <button className="danger" onClick={() => runLoading("deleteAgent", async () => { await api.deleteAgent(token, selectedAgent.id); await loadAgents(); })}>Delete Selected Agent</button>}
@@ -237,10 +258,18 @@ export default function App() {
         </section>
 
         <section>
-          <h2>Skills</h2><p>Available Skills. The API exposes enable/remove actions, but does not expose a per-Agent assignment list.</p>
-          <button onClick={loadGlobalResources} disabled={loading.skills}>Refresh Skills</button> {loading.skills && <span>Loading...</span>}
-          <ul>{skills.map((skill) => <li key={skill.id}><strong>{skill.name}</strong>: {skill.description} <button onClick={() => runLoading(`skill-add-${skill.id}`, () => api.enableSkillForAgent(token, skill.id, selectedAgentId))}>Enable for Agent</button> <button onClick={() => runLoading(`skill-remove-${skill.id}`, () => api.disableSkillForAgent(token, skill.id, selectedAgentId))}>Remove from Agent</button> <button className="danger" onClick={() => runLoading(`skill-delete-${skill.id}`, async () => { await api.deleteSkill(token, skill.id); await loadGlobalResources(); })}>Delete</button></li>)}</ul>
-          <form onSubmit={createSkill}><h3>Create Skill</h3><label>Name<input value={skillForm.name} onChange={(event) => setSkillForm({ ...skillForm, name: event.target.value })} required /></label><label>Description<input value={skillForm.description} onChange={(event) => setSkillForm({ ...skillForm, description: event.target.value })} required /></label><label>Instructions<textarea value={skillForm.instructions} onChange={(event) => setSkillForm({ ...skillForm, instructions: event.target.value })} required /></label><button disabled={loading.createSkill}>Create Skill</button></form>
+          <h2>Skills</h2>
+          <button onClick={() => { loadGlobalResources(); loadAgentSkills(); }} disabled={loading.skills || loading.agentSkills}>Refresh Skills</button> {loading.skills || loading.agentSkills ? <span>Loading...</span> : null}
+          <ul>{skills.map((skill) => {
+            const assignment = agentSkills.find((item) => item.skill.id === skill.id);
+            return <li key={skill.id}>
+              <strong>{skill.name}</strong>: {skill.description} | {assignment ? assignment.status : "not assigned"}
+              {assignment?.missing_required_tools?.length ? ` | Missing: ${assignment.missing_required_tools.join(", ")}` : null}
+              {!assignment && <button onClick={() => runLoading(`skill-add-${skill.id}`, async () => { await api.enableSkillForAgent(token, skill.id, selectedAgentId); await loadAgentSkills(); })}>Attach</button>}
+              {assignment && <button onClick={() => runLoading(`skill-toggle-${skill.id}`, async () => { const action = assignment.enabled ? api.disableSkillForAgent : api.enableSkillForAgent; await action(token, skill.id, selectedAgentId); await loadAgentSkills(); })}>{assignment.enabled ? "Disable" : "Enable"}</button>}
+              {assignment && <button onClick={() => runLoading(`skill-remove-${skill.id}`, async () => { await api.removeSkillFromAgent(token, skill.id, selectedAgentId); await loadAgentSkills(); })}>Remove</button>}
+            </li>;
+          })}</ul>
         </section>
 
         <section>

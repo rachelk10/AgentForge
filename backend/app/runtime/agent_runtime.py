@@ -32,12 +32,13 @@ from app.models.conversation import Conversation
 from app.models.message import Message, MessageRole
 from app.models.tool import AgentTool, Tool
 from app.models.skill import AgentSkill, Skill
-from app.runtime.context import ConversationContext
+from app.runtime.context import ConversationContext, RuntimeExecutionContext
+from app.runtime.activation import SkillActivationPolicy, is_valid_tool_schema
 from app.runtime.llm import LLMComponent
 from app.runtime.rag import RAGKnowledgeBase
 from app.runtime.skills import rank_skills
 from app.rag.embeddings import EmbeddingProvider, OpenAIEmbeddingProvider
-from app.runtime.tools import execute_tool
+from app.runtime.tools import execute_tool, tool_registry
 
 logger = logging.getLogger(__name__)
 RAG_FALLBACK_SIMILARITY_THRESHOLD = 0.15
@@ -107,7 +108,10 @@ class AgentRuntime:
 
         # Step 3: Prepare messages for LLM
         user_msg = context.add_user_message(user_message)
-        messages = context.to_messages_list() 
+        execution_context = RuntimeExecutionContext(
+            agent_instructions=agent.system_prompt,
+            conversation_messages=context.to_messages_list(),
+        )
 
         logger.debug(
             "LLM input prepared conversation_id=%s history_length=%d",
@@ -149,34 +153,13 @@ class AgentRuntime:
                         RAG_FALLBACK_SIMILARITY_THRESHOLD,
                         len(rag_context),
                     )
-        if rag_context:
-            knowledge_context = "\n\n".join(rag_context)
-            messages = [
-                {
-                    "role": "system",
-                    "content": (
-                        "The following excerpts were retrieved from the agent's uploaded documents. "
-                        "Use them as the source of truth for the user's question. "
-                        "Answer in the same language as the user when possible. "
-                        "Do not claim that you cannot access uploaded documents when the answer is present "
-                        "in these excerpts. If the excerpts do not contain the answer, say that the answer "
-                        "was not found in the uploaded documents.\n\n"
-                        f"Retrieved document excerpts:\n\n{knowledge_context}"
-                    ),
-                },
-                *messages,
-            ]
+        execution_context.retrieved_knowledge = rag_context
 
         active_skills = await self._load_relevant_skills(agent, query_embedding)
-        if active_skills:
-            skill_context = "\n\n".join(
-                f"Skill: {skill.name} (version {skill.version})\n{skill.instructions}"
-                for skill in active_skills
-            )
-            messages = [
-                {"role": "system", "content": f"Apply these relevant skills when appropriate:\n\n{skill_context}"},
-                *messages,
-            ]
+        execution_context.activated_skill_instructions = [
+            f"Skill: {skill.name} (version {skill.version})\n{skill.instructions}"
+            for skill in active_skills
+        ]
 
         enabled_tools_result = await self.db.execute(
             select(Tool).join(AgentTool).where(
@@ -185,7 +168,13 @@ class AgentRuntime:
                 Tool.enabled.is_(True),
             )
         )
-        enabled_tools = list(enabled_tools_result.scalars().all())
+        enabled_tools = [
+            tool
+            for tool in enabled_tools_result.scalars().all()
+            if is_valid_tool_schema(tool.input_schema)
+            and is_valid_tool_schema(tool.output_schema)
+            and tool_registry.get(tool.execution_logic) is not None
+        ]
         tool_definitions = [
             {
                 "type": "function",
@@ -195,6 +184,8 @@ class AgentRuntime:
             }
             for tool in enabled_tools
         ]
+        execution_context.available_tools = tool_definitions
+        messages = execution_context.to_llm_messages()
         tools_by_name = {tool.name: tool for tool in enabled_tools}
 
         async def execute_agent_tool(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
@@ -234,14 +225,35 @@ class AgentRuntime:
         if query_embedding is None or agent.skills_top_k <= 0:
             return []
         result = await self.db.execute(
-            select(Skill.id, Skill.embedding).join(AgentSkill).where(
+            select(
+                Skill.id,
+                Skill.name,
+                Skill.embedding,
+                Skill.version,
+                Skill.required_tool_names,
+            )
+            .join(AgentSkill)
+            .where(
                 AgentSkill.agent_id == agent.id,
                 AgentSkill.enabled.is_(True),
                 Skill.enabled.is_(True),
+                Skill.status == "published",
+                Skill.visibility == "global",
+                Skill.scope == "global",
                 Skill.embedding.is_not(None),
             )
+            .order_by(Skill.id.asc())
         )
-        candidates = [{"id": row.id, "embedding": row.embedding} for row in result.all()]
+        candidates = [
+            {
+                "id": row.id,
+                "name": row.name,
+                "embedding": row.embedding,
+                "version": row.version,
+                "required_tool_names": row.required_tool_names,
+            }
+            for row in result.all()
+        ]
         selected = rank_skills(
             query_embedding,
             candidates,
@@ -262,23 +274,26 @@ class AgentRuntime:
         )
         skills_by_id = {skill.id: skill for skill in full_result.scalars().all()}
         active: list[Skill] = []
+        activation_policy = SkillActivationPolicy(self.db)
         for selected_skill in selected:
             skill = skills_by_id.get(selected_skill["id"])
             if skill is None:
                 continue
             logger.info(
-                "Skill checked skill_id=%s version=%s required_tools=%s",
+                "Skill discovered skill_id=%s score=%s version=%s required_tools=%s",
                 skill.id,
+                selected_skill["similarity_score"],
                 skill.version,
                 skill.required_tool_names,
             )
-            missing_tools = await self._missing_skill_tools(skill, agent.id)
-            if missing_tools:
+            decision = await activation_policy.evaluate(agent, skill)
+            if not decision.allowed:
                 logger.warning(
-                    "Skill rejected skill_id=%s version=%s reason=required_tools_unavailable tools=%s",
+                    "Skill activation rejected skill_id=%s version=%s reason=%s missing_tools=%s",
                     skill.id,
                     skill.version,
-                    missing_tools,
+                    decision.reason,
+                    decision.missing_tools,
                 )
                 continue
             active.append(skill)

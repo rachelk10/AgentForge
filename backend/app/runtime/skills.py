@@ -52,6 +52,6 @@ def rank_skills(
             continue
         score = cosine_similarity(query_embedding, embedding)
         if score >= similarity_threshold:
-            ranked.append((score, skill))
+            ranked.append((score, {**skill, "similarity_score": score}))
     ranked.sort(key=lambda item: (-item[0], str(item[1]["id"])))
     return [skill for _, skill in ranked[:limit]]

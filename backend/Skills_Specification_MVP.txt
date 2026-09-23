@@ -1,0 +1,1253 @@
+SKILLS SPECIFICATION
+Agent SaaS Platform
+MVP Architecture and Implementation Plan
+
+============================================================
+0. PURPOSE AND CORE DECISION
+============================================================
+
+This document defines the approved architecture and implementation
+specification for Skills in the Agent SaaS platform.
+
+Core decision:
+
+Skills are platform-managed capabilities provided through an approved
+Skill Catalog.
+
+Regular end users do NOT:
+- create arbitrary Skills
+- edit Skill instructions
+- edit Skill dependencies
+- upload SKILL.md files
+- upload arbitrary Skill bundles
+- provide executable Skill code
+
+Regular users DO:
+- browse published Skills
+- view Skill descriptions and requirements
+- select Skills for their Agents
+- enable/disable an assigned Skill
+- remove a Skill from an Agent
+
+Only platform administrators manage the Skill Catalog.
+
+The architecture adapts the concepts from OpenAI Skills to this project's
+existing architecture of:
+- Agents
+- Tools
+- RAG
+- AgentRuntime
+- PostgreSQL
+- semantic embeddings
+
+The OpenAI Shell / SKILL.md bundle model is NOT implemented in the MVP.
+
+============================================================
+1. COMPONENT RESPONSIBILITIES
+============================================================
+
+Agent
+-----
+Defines:
+- identity
+- configuration
+- policies
+- permissions
+- available capabilities
+
+Skill
+-----
+Defines HOW to perform a type of task.
+
+A Skill is an instructional procedure for the LLM.
+
+Tool
+----
+Defines an executable action or side effect.
+
+Examples:
+- call an external API
+- retrieve data
+- modify data
+- execute an approved operation
+
+RAG
+---
+Provides factual knowledge retrieved from Agent-scoped documents.
+
+AgentRuntime
+------------
+Orchestrates the components and decides when components participate.
+
+The Runtime should coordinate the process, but should not contain the
+internal implementation of Skill discovery, RAG retrieval, or Tool execution.
+
+LLM
+---
+Responsible for:
+- reasoning
+- generating the final response
+- deciding which permitted Tools to call
+- following Agent and activated Skill instructions
+
+IMPORTANT BOUNDARY
+------------------
+Skill is NOT Tool and is NOT RAG.
+
+A Skill:
+- does not execute code
+- does not directly access the database
+- does not directly access the network
+- does not directly execute Tools
+- does not replace RAG
+
+A Skill MAY instruct the LLM to:
+- use RAG
+- use a Tool
+- follow a specific procedure
+- format a response in a specific way
+
+The actual execution remains under the Tool and Runtime security model.
+
+============================================================
+2. MVP DATA MODEL
+============================================================
+
+2.1 Skill
+---------
+
+The existing Skill model is the basis for the MVP.
+
+The Skill represents a platform catalog entry.
+
+Recommended fields:
+
+Required / existing:
+- id
+- name
+- description
+- instructions
+- configuration
+- skill_metadata
+- required_tool_names
+- version
+- enabled
+- embedding
+
+Recommended catalog fields:
+- status
+- visibility
+- created_by_admin / publisher
+- embedding_source_hash
+
+Status values:
+- draft
+- published
+- disabled
+- deprecated
+
+MVP visibility:
+- global
+
+Future visibility values may include:
+- organization
+- team
+
+IMPORTANT:
+Do not implement organization/team scope until a real tenancy model exists.
+
+Field meanings
+--------------
+name:
+Stable Skill identifier.
+
+description:
+Short semantic description used for catalog display and Skill discovery.
+
+instructions:
+The actual procedure/instructions provided to the LLM after activation.
+These are platform-managed.
+
+configuration:
+Structured, validated configuration for the Skill.
+In the MVP this must not contain executable code or arbitrary commands.
+
+skill_metadata:
+Descriptive metadata used for categorization, discovery, display, etc.
+
+required_tool_names:
+Names of Tools required by the Skill.
+This is an MVP dependency mechanism.
+
+version:
+Current Skill version number.
+For the MVP this can change on the existing Skill record.
+
+enabled:
+Whether the Skill is currently enabled.
+
+embedding:
+Embedding used for semantic Skill discovery.
+
+embedding_source_hash:
+Hash of the exact descriptive content used to create the embedding.
+This allows the system to determine whether the embedding is stale.
+
+============================================================
+3. SKILL CATALOG
+============================================================
+
+The Skill Catalog is platform-managed.
+
+Only administrators can:
+- create Skills
+- edit Skills
+- publish Skills
+- disable Skills
+- deprecate Skills
+- update Skill metadata
+- update Skill dependencies
+- update Skill instructions
+
+Regular users cannot perform these operations.
+
+Regular users can:
+- list published Skills
+- view an individual published Skill
+- attach an approved Skill to an Agent
+- enable/disable the assignment
+- remove the assignment
+
+A Skill should normally become available to regular users only after
+it is published.
+
+Draft and deprecated Skills should not be exposed as selectable
+catalog capabilities unless an explicit administrative UI requires them.
+
+============================================================
+4. AGENT ↔ SKILL
+============================================================
+
+Relationship:
+
+Agent
+  |
+  +---- AgentSkill ---- Skill
+
+AgentSkill represents the Skills explicitly selected for a specific Agent.
+
+Recommended MVP fields:
+
+- agent_id
+- skill_id
+- enabled
+
+Future fields:
+- skill_version_id
+- configuration_override
+
+Rules:
+- A Skill in the catalog is NOT automatically active for every Agent.
+- A user must explicitly attach the Skill to an Agent.
+- Only assigned Skills participate in Runtime discovery.
+- A disabled AgentSkill does not participate.
+- Removing AgentSkill prevents the Skill from being used by that Agent.
+- The user cannot edit the Skill's platform-managed instructions or dependencies.
+
+This creates four distinct states:
+
+1. Skill exists in the platform catalog.
+2. Skill is assigned to an Agent.
+3. Runtime discovers the Skill as relevant to a user message.
+4. Runtime activates the Skill after policy validation.
+
+These states MUST NOT be treated as the same thing.
+
+============================================================
+5. SKILL ↔ TOOL DEPENDENCIES
+============================================================
+
+MVP mechanism:
+- required_tool_names
+
+Long-term mechanism:
+- SkillToolDependency table
+
+Future relationship:
+
+Skill
+  |
+  +---- SkillToolDependency ---- Tool
+
+Potential future fields:
+- skill_id
+- tool_id
+- required
+- minimum_tool_version
+- dependency_metadata
+
+Do NOT implement the dependency table in the MVP unless required by
+the existing codebase.
+
+MVP dependency rules:
+- Tool names must be unique within the relevant catalog.
+- Runtime must resolve the actual Tool assigned to the Agent.
+- A Tool name appearing in required_tool_names is NOT sufficient by itself.
+- The Tool must exist.
+- The Tool must be enabled at the platform level.
+- The Tool must be enabled for the Agent.
+- The Tool must have a valid registered handler.
+- The Tool schema must be valid.
+- Tool execution must go through the existing tool execution path
+  and tool registry.
+
+A Skill never receives permission to execute a Tool directly.
+
+The Skill declares a dependency and gives instructions to the LLM.
+The LLM may request a Tool, and the Runtime/Tool layer decides whether
+that request is permitted and executes it.
+
+============================================================
+6. SEMANTIC SKILL DISCOVERY
+============================================================
+
+Discovery and Activation are separate concepts.
+
+Discovery answers:
+
+"Which assigned Skills may be relevant to this user message?"
+
+Activation answers:
+
+"Which discovered Skills are actually allowed to enter the LLM context?"
+
+6.1 Embedding source
+--------------------
+
+The Skill discovery embedding should be based on descriptive content,
+not the full execution instructions.
+
+Recommended source:
+- name
+- description
+- descriptive metadata
+- tags
+- category
+- examples
+- triggers
+
+Do NOT include the complete instructions merely for discovery.
+
+Reason:
+instructions describe HOW the Skill operates, while discovery needs
+to represent WHAT the Skill is for.
+
+The existing semantic embedding approach should be preserved.
+
+6.2 Runtime discovery scope
+---------------------------
+
+At chat time, discovery should search only within:
+
+assigned Skills
+AND
+active/enabled Skills
+AND
+Skills permitted for the Agent
+
+In set notation:
+
+Assigned Skills
+∩ Active Skills
+∩ Agent-permitted Skills
+
+This prevents an unrelated platform Skill from being activated merely
+because its embedding is similar.
+
+6.3 Discovery parameters
+------------------------
+
+Existing parameters such as:
+- skills_top_k
+- skills_similarity_threshold
+
+may remain.
+
+They are Discovery parameters only.
+
+They do NOT constitute authorization or Activation Policy.
+
+Recommended discovery output should contain enough information for
+later policy decisions, such as:
+- Skill id
+- Skill name
+- similarity score
+- version
+- dependency information
+
+The ordering should be deterministic.
+
+============================================================
+7. ACTIVATION POLICY
+============================================================
+
+Activation occurs AFTER Discovery.
+
+Activation decides whether a candidate Skill may enter the LLM context.
+
+A Skill should be activated only if all required policy checks pass.
+
+7.1 Catalog and publication checks
+----------------------------------
+
+- Skill exists.
+- Skill is platform-managed.
+- Skill is published.
+- Skill is available for the current Agent/user context.
+- Skill is not disabled.
+- Skill is not otherwise prohibited by policy.
+
+7.2 Agent assignment checks
+---------------------------
+
+- Agent exists.
+- Agent belongs to the correct user/tenant context.
+- AgentSkill exists.
+- AgentSkill is enabled.
+- Agent is active.
+
+7.3 Tool dependency checks
+--------------------------
+
+For every required Tool:
+- Tool exists.
+- Tool is enabled globally.
+- Tool is assigned to the Agent.
+- Tool is enabled for the Agent.
+- Tool handler is registered.
+- Tool schema is valid.
+
+If a required dependency is unavailable, the Skill MUST NOT be activated.
+
+Recommended internal rejection reasons:
+- missing_required_tool
+- tool_disabled
+- skill_disabled
+- skill_not_published
+- agent_skill_disabled
+- context_budget_exceeded
+- policy_conflict
+- incompatible_version
+
+The internal reason should be precise and useful for logs/debugging,
+without exposing sensitive internal information to end users.
+
+7.4 Context limits
+------------------
+
+Activation should enforce limits such as:
+- maximum number of activated Skills
+- maximum Skill instruction token budget
+- maximum total Skill context size
+- maximum RAG context size
+- deterministic ordering
+- conflict handling when multiple Skills apply
+
+If several Skills have similar scores, selection/order must remain
+deterministic.
+
+7.5 Tenant boundary
+-------------------
+
+The current project does not yet have a full tenant model.
+
+Therefore:
+- treat platform Skills as admin-managed global catalog resources
+- do not pretend organization/team scopes are implemented
+- do not allow cross-user Agent assignment
+- do not introduce tenant behavior without the required data model
+
+============================================================
+8. CONTEXT ASSEMBLY
+============================================================
+
+Skill instructions, RAG content, Agent instructions and conversation
+history should remain logically separate.
+
+Recommended internal context structure:
+
+- agent_instructions
+- activated_skills
+- retrieved_knowledge
+- available_tools
+- conversation_messages
+- internal_execution_metadata
+
+Logical order:
+
+Agent instructions
+        |
+        v
+Activated Skill instructions
+        |
+        v
+Retrieved RAG knowledge
+        |
+        v
+Conversation messages
+
+The exact provider-specific prompt format may differ, but the logical
+boundaries MUST remain clear.
+
+8.1 Agent instructions
+----------------------
+
+Highest-level product instructions and policies.
+
+Skills must not override these policies.
+
+8.2 Activated Skill instructions
+--------------------------------
+
+Only instructions belonging to Skills that passed Activation Policy.
+
+8.3 RAG knowledge
+-----------------
+
+RAG is knowledge, not instructions.
+
+Retrieved documents must be treated as untrusted with respect to
+instructions. A document must not be able to override Agent policy
+or instruct the Agent to perform unsafe actions.
+
+8.4 Conversation history
+------------------------
+
+Conversation history contains the actual conversation.
+
+Do not store temporary Skill activation context or retrieved RAG
+context as if it were user/assistant conversation messages.
+
+MVP persistence rule:
+- store user message
+- store final Agent response
+
+Do not automatically persist:
+- Skill instructions
+- Skill discovery scores
+- temporary RAG excerpts
+- internal activation metadata
+
+============================================================
+9. RUNTIME FLOW
+============================================================
+
+The recommended Runtime flow is:
+
+1. Load or create Conversation.
+2. Load conversation history.
+3. Receive the current user message.
+4. Load Agent policy and Agent capabilities.
+5. Load assigned Skills and Tools.
+6. Generate the query embedding once.
+7. Perform Skill Discovery.
+8. Run Activation Policy for each candidate.
+9. Keep only activated Skills.
+10. Load the instructions of activated Skills.
+11. Perform RAG separately according to Agent configuration.
+12. Build the structured execution context.
+13. Build the list of Tools available to the Agent.
+14. Call LLMComponent.
+15. If the LLM requests a Tool, execute it only through the existing
+    Tool execution path.
+16. Validate Tool inputs/outputs as required by the existing Tool layer.
+17. Continue the LLM/Tool loop until:
+    - final response
+    - maximum iterations
+    - unrecoverable failure
+18. Persist the user message and final Agent response.
+19. Do not persist temporary Skill/RAG execution context as conversation
+    messages.
+
+The Runtime decides WHEN components participate.
+
+The Runtime should NOT itself implement:
+- semantic embedding internals
+- vector retrieval internals
+- Tool execution internals
+- arbitrary Skill code execution
+
+Those responsibilities belong to their respective services.
+
+============================================================
+10. SERVICE RESPONSIBILITIES
+============================================================
+
+skills.py / Skill service
+-------------------------
+Responsible for:
+- Skill catalog operations
+- semantic embedding creation/update
+- Skill discovery
+- candidate ranking
+- dependency metadata
+- activation-related checks or policy helpers
+
+agent_runtime.py
+----------------
+Responsible for:
+- orchestration
+- calling Skill discovery
+- invoking Activation Policy
+- requesting RAG
+- preparing execution context
+- invoking LLMComponent
+- coordinating Tool calls
+
+tools.py / Tool service
+-----------------------
+Responsible for:
+- Tool registry
+- Tool lookup
+- schema validation
+- Tool execution
+- timeout
+- ToolResult
+- execution logging according to existing policy
+
+RAG service
+-----------
+Responsible for:
+- document retrieval
+- similarity search
+- returning knowledge excerpts/sources
+
+LLMComponent
+------------
+Responsible for:
+- communicating with the LLM provider
+- handling model responses
+- Tool-call loop mechanics as already defined by the project
+
+Do not move Skill business logic into LLMComponent.
+
+============================================================
+11. API SPECIFICATION
+============================================================
+
+11.1 User-facing Skill Catalog
+------------------------------
+
+GET /api/v1/skills
+GET /api/v1/skills/{skill_id}
+
+Regular users should receive only Skills that are appropriate for
+their catalog view, normally published global Skills.
+
+Response should include:
+- id
+- name
+- description
+- version
+- required Tools
+- status
+- relevant metadata/category
+- compatibility information if available
+
+Regular users must NOT receive sensitive internal implementation details.
+
+11.2 Agent Skill Assignments
+----------------------------
+
+Recommended endpoints:
+
+GET    /api/v1/agents/{agent_id}/skills
+PUT    /api/v1/agents/{agent_id}/skills/{skill_id}
+DELETE /api/v1/agents/{agent_id}/skills/{skill_id}
+
+The exact HTTP method for attach/enable may follow the existing API
+conventions, but authorization must always be enforced.
+
+Assignment response should include:
+- Skill information
+- whether it is assigned
+- whether AgentSkill is enabled
+- active version
+- required Tools
+- missing dependencies
+- activation readiness/status
+
+Possible status values:
+- active
+- disabled
+- missing_required_tool
+- incompatible
+- unavailable
+
+11.3 Admin Catalog API
+----------------------
+
+Admin-only operations may include:
+- create Skill
+- update Skill
+- publish
+- disable
+- deprecate
+- update metadata
+- update dependencies
+- update instructions
+- update/rebuild embedding
+
+The existing POST /skills can remain if it is explicitly protected
+as admin-only catalog management.
+
+Do NOT expose Skill creation as a normal end-user feature.
+
+Do NOT add user Skill bundle uploads in the MVP.
+
+============================================================
+12. FRONTEND / USER EXPERIENCE
+============================================================
+
+Replace a "Create Skill" user flow with:
+
+"Browse and Attach Skill"
+
+User flow:
+
+1. Select an Agent.
+2. Open the Skills catalog.
+3. Browse/search/filter approved Skills.
+4. View:
+   - name
+   - description
+   - category
+   - version
+   - required Tools
+5. Attach a Skill to the Agent.
+6. View assignment status.
+7. Enable/disable the assignment.
+8. Remove the Skill.
+
+Recommended visible states:
+- Active
+- Disabled
+- Missing Required Tool
+- Incompatible
+- Unavailable
+
+Regular users must NOT edit:
+- instructions
+- dependencies
+- execution logic
+- internal resources
+- policy metadata
+
+If a Skill has configurable runtime parameters in the future,
+expose only a platform-defined schema for those parameters.
+
+Do not allow arbitrary JSON to become executable behavior.
+
+============================================================
+13. SECURITY REQUIREMENTS
+============================================================
+
+Hard security boundaries:
+
+1. No code execution from Skills.
+2. No execution of Skill resources.
+3. No execution of arbitrary Skill configuration.
+4. No evaluation of execution_logic supplied by a Skill.
+5. Every Tool execution goes through tool_registry / approved execution path.
+6. Tool input/output validation remains enforced.
+7. Tool timeouts remain enforced.
+8. RAG content cannot override system/developer/Agent policy.
+9. Unpublished Skills are not exposed to normal users.
+10. Users cannot attach Skills outside their allowed catalog scope.
+11. Users cannot attach Skills to Agents they do not own/control.
+12. Skill instructions cannot override higher-level platform policies.
+13. Do not log full prompts, credentials, or sensitive document content
+    unless explicitly required and governed by the project's logging policy.
+14. Platform Skills must be reviewed before publication.
+15. Skill updates must be atomic and controlled.
+16. Do not treat semantic similarity as authorization.
+17. Do not treat required_tool_names as proof that a Tool is authorized.
+18. Do not execute anything simply because it is stored in the database.
+
+OpenAI Shell Skill guidance about SKILL.md bundles, scripts, assets and
+sandbox execution is intentionally outside the MVP.
+
+If bundles are introduced later, they require a separate security design
+including:
+- validation
+- quarantine
+- immutable storage/versioning
+- restricted sandbox
+- controlled filesystem access
+- controlled network access
+- explicit execution policy
+
+============================================================
+14. VERSIONING
+============================================================
+
+MVP
+---
+
+Keep the existing Skill.version field.
+
+A Skill update may increment the version and update the embedding
+atomically where relevant.
+
+Long-term
+---------
+
+Introduce:
+
+skills
+------
+Stable catalog identity.
+
+skill_versions
+--------------
+Immutable versions containing:
+- instructions
+- dependencies
+- metadata
+- embedding
+- version information
+
+agent_skills
+------------
+References the specific Skill version used by the Agent.
+
+This provides:
+- reproducibility
+- rollback
+- auditability
+- predictable Agent behavior
+- protection against an unexpected catalog update changing an existing Agent
+
+Do NOT introduce SkillVersion in the MVP unless an actual product
+requirement demands it.
+
+============================================================
+15. FUTURE DEPENDENCY MODEL
+============================================================
+
+Current MVP:
+- required_tool_names
+
+Future:
+- SkillToolDependency
+
+Future dependency model can support:
+- explicit Tool IDs
+- required/optional dependencies
+- Tool version compatibility
+- dependency metadata
+
+The migration should preserve the conceptual rule:
+
+Skill declares dependencies.
+Runtime validates dependencies.
+Tool layer executes Tools.
+
+Skill itself never executes dependencies.
+
+============================================================
+16. TEST SPECIFICATION
+============================================================
+
+16.1 Discovery tests
+--------------------
+
+Test:
+- similarity threshold
+- top-k behavior
+- threshold applied before/with correct top-k semantics
+- deterministic ranking
+- Skills without embeddings
+- descriptive metadata affecting embeddings
+- correct embedding source/hash behavior
+- only assigned Skills are searched
+- disabled/unavailable Skills are excluded as appropriate
+
+If instructions are excluded from the discovery embedding, verify that
+changing instructions alone does not change the discovery embedding.
+
+16.2 Activation tests
+---------------------
+
+Test:
+- Skill not assigned to Agent
+- Skill disabled
+- AgentSkill disabled
+- Skill not published
+- Agent inactive
+- required Tool missing
+- required Tool disabled
+- required Tool not assigned to Agent
+- Tool handler missing
+- Tool schema invalid
+- Skill context budget exceeded
+- unauthorized Agent
+- unauthorized Skill
+- invalid/deprecated version if versioning is introduced
+
+Verify precise internal rejection reasons.
+
+16.3 Context tests
+------------------
+
+Test:
+- Skill instructions enter context only after activation
+- RAG excerpts remain separate from Skill instructions
+- RAG content cannot become higher-priority instructions
+- temporary Skill context is not persisted as conversation history
+- only approved Tools are passed to the LLM
+- multiple Skills are assembled deterministically
+- conflicting Skills follow an explicit policy
+
+16.4 Runtime tests
+------------------
+
+Test:
+- query embedding generated once per user message
+- discovery happens before activation
+- activation happens before Skill instructions enter context
+- RAG remains a separate retrieval step
+- Tool calls go through execute_tool / tool_registry
+- Tool failures return the expected ToolResult behavior
+- LLM loop respects maximum iterations
+- final response is persisted correctly
+
+16.5 API and authorization tests
+--------------------------------
+
+Test:
+- normal user can list published Skills
+- normal user can read published Skill details
+- normal user cannot create Skill
+- normal user cannot modify Skill catalog content
+- normal user cannot publish/disable/deprecate catalog Skills
+- user cannot access another user's Agent
+- user cannot attach an unauthorized Skill
+- unpublished Skill is not visible in the normal catalog
+- attach/remove/enable/disable return consistent statuses
+- admin can create/update/publish/disable Skills
+
+============================================================
+17. IMPLEMENTATION PHASES
+============================================================
+
+PHASE 1 - DATA MODEL AND SEMANTIC DEFINITIONS
+----------------------------------------------
+
+Goal:
+Stabilize what a Skill means before changing Runtime behavior.
+
+Tasks:
+1. Inspect existing Skill and AgentSkill models.
+2. Keep the existing model as the MVP foundation.
+3. Define exact semantics for every Skill field.
+4. Ensure Skill represents a platform catalog resource.
+5. Ensure AgentSkill represents user assignment to an Agent.
+6. Add only necessary catalog fields.
+7. Do not implement SkillVersion.
+8. Do not implement SkillToolDependency.
+9. Do not implement bundles or SKILL.md upload.
+
+Acceptance criteria:
+- Skill is clearly platform-managed.
+- AgentSkill clearly represents assignment.
+- User cannot modify platform-managed Skill instructions/dependencies.
+- Database constraints prevent invalid duplicate assignments.
+
+PHASE 2 - CATALOG AND AUTHORIZATION
+-----------------------------------
+
+Goal:
+Create correct platform/user boundaries.
+
+Tasks:
+1. Make Skill catalog management admin-only.
+2. Allow normal users to read published Skills.
+3. Enforce Agent ownership on assignments.
+4. Enforce Skill availability/publication.
+5. Ensure disabled Skills cannot be newly attached.
+6. Ensure unauthorized resources cannot be accessed.
+
+Acceptance criteria:
+- Normal users browse approved catalog.
+- Admin manages catalog.
+- No cross-user Agent assignment.
+- No unpublished Skill leakage.
+
+PHASE 3 - AGENT SKILL ASSIGNMENT
+--------------------------------
+
+Goal:
+Make Skill selection a user-facing Agent capability.
+
+Tasks:
+1. Implement/adjust GET Agent Skills.
+2. Implement attach Skill.
+3. Implement remove Skill.
+4. Implement enable/disable assignment.
+5. Return dependency/readiness information.
+6. Update frontend from "Create Skill" to "Browse and Attach Skill".
+
+Acceptance criteria:
+- User can select approved Skills for an Agent.
+- User can see which Skills are attached.
+- User can see whether an attached Skill is usable.
+- User cannot edit Skill definition.
+
+PHASE 4 - SEMANTIC DISCOVERY
+----------------------------
+
+Goal:
+Find relevant Skills among Skills assigned to the Agent.
+
+Tasks:
+1. Keep existing embedding approach.
+2. Define exact embedding source fields.
+3. Store/update embedding_source_hash.
+4. Generate one query embedding per user message.
+5. Search only assigned and eligible Skills.
+6. Apply similarity threshold and top-k.
+7. Make ranking deterministic.
+8. Return candidate Skills with scores.
+
+Acceptance criteria:
+- Discovery does not activate Skills by itself.
+- Similarity is not authorization.
+- Discovery is limited to Agent capabilities.
+- Ranking is deterministic.
+
+PHASE 5 - ACTIVATION POLICY
+---------------------------
+
+Goal:
+Turn discovered candidates into approved active Skills.
+
+Tasks:
+1. Create a clear activation policy/service/helper.
+2. Validate Skill publication/enabled state.
+3. Validate AgentSkill assignment/enabled state.
+4. Validate Agent ownership/authorization.
+5. Validate all required Tools.
+6. Validate Tool registration and schema.
+7. Enforce context/token limits.
+8. Return precise internal rejection reasons.
+9. Keep activation separate from discovery.
+
+Acceptance criteria:
+- A high-similarity Skill can still be rejected.
+- Missing required Tool prevents activation.
+- Disabled Skill cannot enter context.
+- Unauthorized Skill cannot enter context.
+
+PHASE 6 - CONTEXT ASSEMBLY
+--------------------------
+
+Goal:
+Build a clean internal representation of the LLM context.
+
+Tasks:
+1. Create a structured internal context object if needed.
+2. Keep Agent instructions separate.
+3. Keep activated Skill instructions separate.
+4. Keep RAG knowledge separate.
+5. Keep available Tools separate.
+6. Keep conversation messages separate.
+7. Prevent temporary execution context from becoming conversation history.
+
+Acceptance criteria:
+- Only activated Skill instructions enter context.
+- RAG cannot be confused with Skill instructions.
+- Tool list contains only approved Agent Tools.
+- Conversation persistence remains clean.
+
+PHASE 7 - RUNTIME INTEGRATION
+-----------------------------
+
+Goal:
+Integrate Skills into AgentRuntime without turning Runtime into a
+Skill execution engine.
+
+Tasks:
+1. Load Agent capabilities.
+2. Generate query embedding.
+3. Discover candidate Skills.
+4. Activate eligible candidates.
+5. Retrieve activated Skill instructions.
+6. Perform RAG separately.
+7. Assemble context.
+8. Pass approved Tools to LLMComponent.
+9. Execute Tools through existing Tool execution path.
+10. Preserve existing LLM loop limits and error handling.
+11. Persist only appropriate conversation messages.
+
+Acceptance criteria:
+- Runtime orchestrates but does not execute Skill code.
+- Tool execution remains centralized.
+- RAG remains centralized.
+- Skills influence LLM behavior only after activation.
+
+PHASE 8 - TESTING AND HARDENING
+------------------------------
+
+Goal:
+Verify correctness, security and regression safety.
+
+Tasks:
+1. Add Discovery tests.
+2. Add Activation tests.
+3. Add context tests.
+4. Add Runtime integration tests.
+5. Add API authorization tests.
+6. Add frontend assignment-state tests where applicable.
+7. Test disabled/dependency failure cases.
+8. Test deterministic behavior.
+9. Test error handling.
+
+Acceptance criteria:
+- All existing tests remain passing.
+- New Skill tests cover positive and negative cases.
+- No unauthorized Skill/Agent access.
+- No Skill can bypass Tool security.
+
+============================================================
+18. NON-GOALS FOR THE MVP
+============================================================
+
+Do NOT implement as part of the current Skill MVP:
+
+- arbitrary user-created Skills
+- arbitrary Skill uploads
+- SKILL.md upload
+- Skill ZIP bundles
+- Skill scripts
+- Skill assets
+- Skill sandbox
+- hosted shell Skill execution
+- arbitrary filesystem access
+- arbitrary network access from Skills
+- executable Skill configuration
+- Skill-defined execution_logic
+- SkillVersion unless required
+- SkillToolDependency unless required
+- organization/team Skill scopes without tenancy support
+- MCP-specific Skill execution
+- executable workflow engine
+
+These can be future capabilities, but each requires a separate design.
+
+============================================================
+19. FUTURE OPENAI-STYLE BUNDLES
+============================================================
+
+If the product later requires OpenAI-style Skills with:
+- SKILL.md
+- scripts
+- assets
+- references
+- ZIP uploads
+- sandbox execution
+
+then implement them as a separate capability layer.
+
+Do not mix bundle execution into the current DB-based Skill model
+without a security and lifecycle design.
+
+Future bundle architecture should define:
+- upload validation
+- exactly one manifest
+- versioning
+- immutable storage
+- sandbox boundaries
+- filesystem permissions
+- network allowlists
+- resource limits
+- execution approval
+- audit logs
+- lifecycle/deletion rules
+
+The current MVP does not require any of this.
+
+============================================================
+20. FINAL ARCHITECTURE
+============================================================
+
+Approved Platform Skill Catalog
+              |
+              v
+User selects Skills for an Agent
+              |
+              v
+AgentSkill assignments
+              |
+              v
+Runtime discovers relevant assigned Skills
+              |
+              v
+Activation Policy validates candidates
+              |
+              v
+Activated Skill instructions enter context
+              |
+              +-------------------+
+              |                   |
+              v                   v
+             RAG                Tools
+              |                   |
+              +---------+-----------+
+                        |
+                        v
+                       LLM
+                        |
+                        v
+                  Final response
+
+Core invariant:
+
+DISCOVERY != ACTIVATION != EXECUTION
+
+Discovery:
+"Could this Skill be relevant?"
+
+Activation:
+"Is this Skill allowed and ready to be used?"
+
+Execution:
+"Perform an approved action through the Tool layer."
+
+A Skill provides instructions.
+A Tool performs actions.
+RAG provides knowledge.
+The Agent defines available capabilities and policy.
+The Runtime orchestrates them.
+The LLM reasons within these boundaries.
+
+============================================================
+21. IMPLEMENTATION RULE
+============================================================
+
+Before changing code for each phase:
+
+1. Inspect the current implementation.
+2. Identify existing behavior that must be preserved.
+3. Identify the smallest set of required changes.
+4. Implement only the current phase.
+5. Run relevant tests.
+6. Report changed files and architectural impact.
+7. Do not silently introduce future-phase features.
+8. Do not change unrelated Tool, RAG or Agent behavior unless required
+   for the current Skill phase.
+9. Preserve existing API conventions and project structure.
+10. Prefer small, reviewable changes over a large rewrite.
+
+The implementation must adapt the specification to the actual existing
+codebase rather than replacing the existing architecture unnecessarily.

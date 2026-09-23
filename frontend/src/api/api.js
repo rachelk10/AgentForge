@@ -64,12 +64,13 @@ export const api = {
   deleteDocument: (token, agentId, documentId) =>
     request(`/agents/${agentId}/documents/${documentId}`, { token, method: "DELETE" }),
   getSkills: (token) => request("/skills", { token }),
-  createSkill: (token, payload) => jsonRequest("/skills", token, "POST", payload),
-  deleteSkill: (token, skillId) => request(`/skills/${skillId}`, { token, method: "DELETE" }),
+  getAgentSkills: (token, agentId) => request(`/agents/${agentId}/skills`, { token }),
   enableSkillForAgent: (token, skillId, agentId) =>
     request(`/skills/${skillId}/agents/${agentId}`, { token, method: "PUT" }),
   disableSkillForAgent: (token, skillId, agentId) =>
     request(`/skills/${skillId}/agents/${agentId}`, { token, method: "DELETE" }),
+  removeSkillFromAgent: (token, skillId, agentId) =>
+    request(`/skills/${skillId}/agents/${agentId}/remove`, { token, method: "DELETE" }),
   getTools: (token) => request("/tools", { token }),
   createTool: (token, payload) => jsonRequest("/tools", token, "POST", payload),
   deleteTool: (token, toolId) => request(`/tools/${toolId}`, { token, method: "DELETE" }),

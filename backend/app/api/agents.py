@@ -7,7 +7,9 @@ from app.api.dependencies import get_current_user
 from app.database import get_db
 from app.models.user import User
 from app.schemas.agent import AgentCreate, AgentResponse, AgentUpdate
+from app.schemas.skill import SkillAssignmentResponse
 from app.services.agent import AgentService
+from app.services.skill import SkillService
 
 router = APIRouter(prefix="/agents", tags=["Agents"])
 
@@ -29,6 +31,15 @@ async def list_agents(
 ) -> list[AgentResponse]:
     """List all agents owned by the current user."""
     return await AgentService(db).get_agents(current_user.id)
+
+
+@router.get("/{agent_id}/skills", response_model=list[SkillAssignmentResponse])
+async def list_agent_skills(
+    agent_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> list[SkillAssignmentResponse]:
+    return await SkillService(db).list_agent_skills(agent_id, current_user.id)
 
 
 @router.get(

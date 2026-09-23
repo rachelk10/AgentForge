@@ -15,7 +15,8 @@ class SkillCreate(BaseModel):
     required_tool_names: list[str] = Field(default_factory=list)
     version: int = Field(default=1, ge=1)
     enabled: bool = True
-    scope: Literal["user", "team", "organization", "system"] = "user"
+    status: Literal["draft", "published", "disabled", "deprecated"] = "draft"
+    visibility: Literal["global"] = "global"
 
     @field_validator("required_tool_names")
     @classmethod
@@ -35,7 +36,8 @@ class SkillUpdate(BaseModel):
     required_tool_names: list[str] | None = None
     version: int | None = Field(default=None, ge=1)
     enabled: bool | None = None
-    scope: Literal["user", "team", "organization", "system"] | None = None
+    status: Literal["draft", "published", "disabled", "deprecated"] | None = None
+    visibility: Literal["global"] | None = None
 
     @field_validator("required_tool_names")
     @classmethod
@@ -56,9 +58,32 @@ class SkillResponse(BaseModel):
     required_tool_names: list[str]
     version: int
     enabled: bool
-    scope: str
+    status: str
+    visibility: str
     owner_id: uuid.UUID
     created_at: datetime
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class SkillCatalogResponse(BaseModel):
+    id: uuid.UUID
+    name: str
+    description: str
+    required_tool_names: list[str]
+    version: int
+    enabled: bool
+    status: str
+    visibility: str
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class SkillAssignmentResponse(BaseModel):
+    skill: SkillCatalogResponse
+    enabled: bool
+    status: Literal["active", "disabled", "missing_required_tool", "unavailable"]
+    missing_required_tools: list[str] = Field(default_factory=list)
