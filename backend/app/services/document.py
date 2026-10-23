@@ -93,6 +93,7 @@ class DocumentService:
         filename: str,
         content: bytes,
         content_type: str | None = None,
+        source_metadata: dict[str, str | int | float | bool | None] | None = None,
     ) -> Document:
         if self.db is None:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database not configured")
@@ -105,6 +106,16 @@ class DocumentService:
         if len(embeddings) != len(chunks):
             raise ValueError("Embedding provider returned an invalid result count")
 
+        metadata = {
+            "source_type": filename.lower().rsplit(".", 1)[-1] if "." in filename else None,
+            "chunk_count": len(chunks),
+            "extracted_chars": len(cleaned_text),
+            "embedding_model": getattr(provider, "model", provider.__class__.__name__),
+            "embedding_dimensions": len(embeddings[0]) if embeddings else 0,
+        }
+        if source_metadata:
+            metadata.update(source_metadata)
+
         document = Document(
             agent_id=agent_id,
             filename=filename,
@@ -112,13 +123,7 @@ class DocumentService:
             file_size=len(content),
             status="processed",
             extracted_text=cleaned_text[:10000],
-            metadata_={
-                "source_type": filename.lower().rsplit(".", 1)[-1] if "." in filename else None,
-                "chunk_count": len(chunks),
-                "extracted_chars": len(cleaned_text),
-                "embedding_model": getattr(provider, "model", provider.__class__.__name__),
-                "embedding_dimensions": len(embeddings[0]) if embeddings else 0,
-            },
+            metadata_=metadata,
         )
         self.db.add(document)
         await self.db.flush()

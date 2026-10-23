@@ -18,4 +18,5 @@ email-validator
 pytest
 pytest-asyncio
 httpx
+httpcore>=1.0,<2
 schemathesis

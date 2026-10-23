@@ -7,8 +7,15 @@ from app.api.dependencies import get_current_user
 from app.database import get_db
 from app.models.user import User
 from app.schemas.document import DocumentResponse
+from app.schemas.website import (
+    WebsiteImportRequest,
+    WebsitePageResponse,
+    WebsiteScanRequest,
+    WebsiteScanResponse,
+)
 from app.services.agent import AgentService
 from app.services.document import DocumentService
+from app.services.website import WebsiteService
 
 router = APIRouter(prefix="/agents/{agent_id}/documents", tags=["Documents"])
 
@@ -88,3 +95,42 @@ async def delete_document(
     """Delete a document and all of its chunks."""
     await AgentService(db).get(agent_id, current_user.id)
     await DocumentService(db).delete_document(agent_id, document_id)
+
+
+@router.post(
+    "/website/scan",
+    response_model=WebsiteScanResponse,
+    responses={422: {"description": "Website is invalid, inaccessible, or exceeds scan limits"}},
+)
+async def scan_website(
+    agent_id: uuid.UUID,
+    data: WebsiteScanRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> WebsiteScanResponse:
+    await AgentService(db).get(agent_id, current_user.id)
+    pages = await WebsiteService(db).scan(str(data.url))
+    return WebsiteScanResponse(
+        pages=[WebsitePageResponse(url=page.url, title=page.title) for page in pages],
+    )
+
+
+@router.post(
+    "/website",
+    response_model=list[DocumentResponse],
+    status_code=status.HTTP_201_CREATED,
+    responses={404: {"description": "Agent not found"}, 422: {"description": "Selected pages could not be read"}},
+)
+async def import_website_pages(
+    agent_id: uuid.UUID,
+    data: WebsiteImportRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> list[DocumentResponse]:
+    await AgentService(db).get(agent_id, current_user.id)
+    documents = await WebsiteService(db).import_pages(
+        agent_id,
+        str(data.url),
+        [str(page) for page in data.pages],
+    )
+    return [DocumentResponse.model_validate(document) for document in documents]

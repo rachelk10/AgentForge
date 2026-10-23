@@ -35,6 +35,8 @@ async def test_openapi_contains_all_api_groups() -> None:
         "/api/v1/tools",
         "/api/v1/skills",
         "/api/v1/agents/{agent_id}/skills",
+        "/api/v1/agents/{agent_id}/documents/website/scan",
+        "/api/v1/agents/{agent_id}/documents/website",
     }
     assert expected_paths <= paths.keys()
 
@@ -51,6 +53,7 @@ async def test_openapi_contains_all_api_groups() -> None:
         ("GET", "/api/v1/skills"),
         ("POST", "/api/v1/skills"),
         ("GET", "/api/v1/agents/00000000-0000-0000-0000-000000000001/skills"),
+        ("POST", "/api/v1/agents/00000000-0000-0000-0000-000000000001/documents/website/scan"),
     ],
 )
 async def test_skill_endpoints_require_authentication(method: str, path: str) -> None:

@@ -291,6 +291,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/agents/{agent_id}/documents/website/scan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Scan Website */
+        post: operations["scan_website_api_v1_agents__agent_id__documents_website_scan_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/agents/{agent_id}/documents/website": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import Website Pages */
+        post: operations["import_website_pages_api_v1_agents__agent_id__documents_website_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tools": {
         parameters: {
             query?: never;
@@ -722,6 +756,8 @@ export interface components {
         DocumentMetadata: {
             /** Source Type */
             source_type?: string | null;
+            /** Source Url */
+            source_url?: string | null;
             /** Chunk Count */
             chunk_count?: number | null;
             /** Extracted Chars */
@@ -1101,6 +1137,39 @@ export interface components {
             input?: unknown;
             /** Context */
             ctx?: Record<string, never>;
+        };
+        /** WebsiteImportRequest */
+        WebsiteImportRequest: {
+            /**
+             * Url
+             * Format: uri
+             */
+            url: string;
+            /** Pages */
+            pages: string[];
+        };
+        /** WebsitePageResponse */
+        WebsitePageResponse: {
+            /**
+             * Url
+             * Format: uri
+             */
+            url: string;
+            /** Title */
+            title: string;
+        };
+        /** WebsiteScanRequest */
+        WebsiteScanRequest: {
+            /**
+             * Url
+             * Format: uri
+             */
+            url: string;
+        };
+        /** WebsiteScanResponse */
+        WebsiteScanResponse: {
+            /** Pages */
+            pages: components["schemas"]["WebsitePageResponse"][];
         };
     };
     responses: never;
@@ -1942,6 +2011,93 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
+            };
+        };
+    };
+    scan_website_api_v1_agents__agent_id__documents_website_scan_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WebsiteScanRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebsiteScanResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Website is invalid, inaccessible, or exceeds scan limits */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    import_website_pages_api_v1_agents__agent_id__documents_website_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WebsiteImportRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentResponse"][];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Agent not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Selected pages could not be read */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

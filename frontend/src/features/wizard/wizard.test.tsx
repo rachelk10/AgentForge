@@ -1,10 +1,12 @@
 ﻿import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { http, HttpResponse } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { LanguageProvider } from "../../app/LanguageProvider";
 import { i18n } from "../../shared/i18n";
 import { saveToken } from "../../shared/auth/authStorage";
+import { server } from "../../shared/api/mocks/server";
 import { StartPage } from "../start/StartPage";
 import { WizardPage } from "./WizardPage";
 
@@ -38,6 +40,16 @@ async function chooseTemplate(name: string) {
   fireEvent.click(await screen.findByRole("button", { name: "Choose a template" }));
   fireEvent.click(await screen.findByRole("button", { name: `Use ${name}` }));
   await screen.findByRole("heading", { name: "Your business" });
+}
+
+async function goToInformation() {
+  renderApp("/app/start");
+  await startFromScratch();
+  await screen.findByRole("heading", { name: "Your business" });
+  fillRequiredFields();
+  fireEvent.click(screen.getByRole("button", { name: "Next" }));
+  await screen.findByRole("heading", { name: "Information" });
+  await screen.findByRole("heading", { name: "Added information" });
 }
 
 function fillRequiredFields() {
@@ -176,5 +188,127 @@ describe("Stage 2 starting point and wizard", () => {
     expect(await screen.findByText("Hello there", { selector: "p" })).toBeInTheDocument();
     expect(screen.getByText("Dana")).toBeInTheDocument();
   });
-});
 
+  it("adds free-text information to the source list", async () => {
+    await goToInformation();
+    fireEvent.click(screen.getByRole("tab", { name: "Free text" }));
+    fireEvent.change(screen.getByLabelText("Title"), { target: { value: "Opening hours" } });
+    fireEvent.change(screen.getByLabelText("Information"), {
+      target: { value: "We are open on weekdays from nine to five." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Add information" }));
+
+    await waitFor(() =>
+      expect(document.querySelector(".information-source-list")).toHaveTextContent("Opening hours"),
+    );
+    expect(screen.getByText("Ready")).toBeInTheDocument();
+  });
+
+  it("replaces existing free-text information", async () => {
+    await goToInformation();
+    fireEvent.click(screen.getByRole("tab", { name: "Free text" }));
+    fireEvent.change(screen.getByLabelText("Title"), { target: { value: "Opening hours" } });
+    fireEvent.change(screen.getByLabelText("Information"), { target: { value: "Weekdays, nine to five." } });
+    fireEvent.click(screen.getByRole("button", { name: "Add information" }));
+    await waitFor(() =>
+      expect(document.querySelector(".information-source-list")).toHaveTextContent("Opening hours"),
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Replace" }));
+    fireEvent.change(screen.getByLabelText("Information"), {
+      target: { value: "Weekdays, eight to six." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
+
+    await waitFor(() => {
+      expect(document.querySelectorAll(".information-source-list li")).toHaveLength(1);
+      expect(document.querySelector(".information-source-list")).toHaveTextContent("Ready");
+    });
+  });
+
+  it("scans a website and lets the user select which pages to add", async () => {
+    await goToInformation();
+    fireEvent.click(screen.getByRole("tab", { name: "Website" }));
+    expect(screen.getByText("We look for publicly available pages on this website, up to 20 pages."))
+      .toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Website address"), {
+      target: { value: "https://example.test" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Find pages" }));
+
+    expect(await screen.findByText("About")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("checkbox", { name: /Contact/ }));
+    expect(screen.getByText("2 pages selected")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Add selected pages" }));
+
+    await waitFor(() => {
+      const list = document.querySelector(".information-source-list");
+      expect(list).toHaveTextContent("https://example.test/");
+      expect(list).toHaveTextContent("https://example.test/about");
+      expect(list?.querySelectorAll("li")).toHaveLength(2);
+    });
+  });
+
+  it("offers a retry when website scanning fails", async () => {
+    server.use(
+      http.post("http://127.0.0.1:8000/api/v1/agents/:agentId/documents/website/scan", () =>
+        HttpResponse.json({ detail: "Website is temporarily unavailable" }, { status: 502 }),
+      ),
+    );
+    await goToInformation();
+    fireEvent.click(screen.getByRole("tab", { name: "Website" }));
+    fireEvent.change(screen.getByLabelText("Website address"), {
+      target: { value: "https://example.test" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Find pages" }));
+
+    expect(await screen.findByText(
+      "This website could not be scanned. Check the address and make sure the site is publicly available.",
+    )).toBeInTheDocument();
+    server.resetHandlers();
+    fireEvent.click(screen.getByRole("button", { name: "Try scanning again" }));
+    expect(await screen.findByText("About")).toBeInTheDocument();
+  });
+
+  it("uploads and removes a file with confirmation", async () => {
+    await goToInformation();
+    const file = new File(["Business information"], "business-notes.txt", { type: "text/plain" });
+    fireEvent.change(screen.getByLabelText("Choose files to upload"), { target: { files: [file] } });
+
+    expect(await screen.findByText("test-upload.txt")).toBeInTheDocument();
+    expect(screen.getByText("Ready")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Remove" }));
+    expect(await screen.findByRole("dialog")).toHaveTextContent("Remove this information");
+    fireEvent.click(screen.getByRole("dialog").querySelectorAll("button")[1]);
+
+    await waitFor(() => expect(screen.queryByText("test-upload.txt")).not.toBeInTheDocument());
+  });
+
+  it("warns before continuing without information", async () => {
+    await goToInformation();
+    fireEvent.click(screen.getByRole("button", { name: "Continue without adding information" }));
+
+    expect(await screen.findByText("Without business information, your assistant can only answer in general terms."))
+      .toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Continue without it" }));
+    expect(await screen.findByRole("heading", { name: "Capabilities" })).toBeInTheDocument();
+  });
+
+  it("shows a failed file source with a reason and retry action", async () => {
+    server.use(
+      http.post("http://127.0.0.1:8000/api/v1/agents/:agentId/documents", () =>
+        HttpResponse.json({ detail: "Upload unavailable" }, { status: 503 }),
+      ),
+    );
+    await goToInformation();
+    const file = new File(["Business information"], "business-notes.txt", { type: "text/plain" });
+    fireEvent.change(screen.getByLabelText("Choose files to upload"), { target: { files: [file] } });
+
+    expect(
+      await screen.findAllByText("This file could not be added. Check your connection or choose another file."),
+    ).toHaveLength(2);
+    server.resetHandlers();
+    fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+    expect(await screen.findByText("test-upload.txt")).toBeInTheDocument();
+  });
+});

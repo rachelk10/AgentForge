@@ -62,7 +62,7 @@ Step 1: The Business
 • An optional field: "Things the agent should know or avoid" (an assumption).
 • The system builds the agent's instructions behind the scenes; the business owner does not see them. A preview shows how the agent will introduce itself.
 Step 2: Information
-• Three tabs: files (drag and drop upload; PDF, DOCX, TXT, Markdown), free text (title and content), and a website URL (entry and scan, with a list of pages that can be unchecked).
+• Three tabs: files (drag and drop upload; PDF, DOCX, TXT, Markdown), free text (title and content), and a website URL (entry and scan, with a list of pages that can be unchecked). Website scanning imports selected, publicly accessible HTML pages from the same hostname, with a maximum of 20 pages per scan.
 • A list of sources with a status for each item: pending, processing, ready, failed (with a reason and a retry button), plus remove and replace actions.
 • A helper card, "What to upload" (frequently asked questions, price list, opening hours, policies).
 • The step can be skipped, with a notice that an agent without information will answer in general terms only.
@@ -135,7 +135,7 @@ Not shown at all
 • Responsiveness: the dashboard for desktop and mobile; the widget is mobile-first.
 • Accessibility: WCAG 2.1 AA, including contrast, keyboard navigation, and screen reader labels.
 • Performance: a lightweight widget that loads without blocking the host site (suggested target: up to 50KB compressed).
-• Security: the widget uses a public key that does not expose owner data; rate limiting; an allowed-domains list (a proposal); sanitizing message content against XSS; limiting file type and size; removing the developer interface from the public path and restricting it to administrator permission.
+• Security: the widget uses a public key that does not expose owner data; rate limiting; an allowed-domains list (a proposal); sanitizing message content against XSS; limiting file type and size; removing the developer interface from the public path and restricting it to administrator permission. Website imports accept only public HTTP/HTTPS pages on the scanned hostname, pin validated DNS addresses, limit each page to 1 MB, and stop after 20 pages or 60 seconds.
 • Privacy: a notice to the business owner about their responsibility when collecting leads, and the ability to delete a conversation or a lead.
 10. Technical Recommendations
 Recommendations only; they can be replaced:
@@ -149,7 +149,7 @@ Recommendations only; they can be replaced:
 11. Backend Dependencies
 Gaps identified against the existing system:
 • Wiring the existing registration endpoint, adding Google OAuth, and password recovery.
-• Website scanning with a processing status for each source, and support for a free-text source type.
+• Website scanning/import is available through authenticated endpoints. Website sources are stored as agent documents; free-text source persistence and per-source processing status remain backend dependencies.
 • A capabilities catalog with business-friendly names and descriptions, field definitions for rendering forms, and a plan flag.
 • A catalog of ready-made behaviors (Skills) with a business description.
 • Lead collection: storage, email delivery, and export.
@@ -172,7 +172,7 @@ Future extensions: Google Calendar connection, plans and payment, multiple agent
 • The interface term: "agent" or "digital assistant".
 • Whether changes after publishing take effect immediately, or require an additional "Publish" action.
 • Password recovery and email verification at registration.
-• File size limits and the page limit when scanning a website.
+• File size limits. Website scans are limited to 20 publicly accessible pages on the same hostname.
 • How the login token is stored (in memory or in an httpOnly cookie).
 • Names and descriptions of the capabilities in the full catalog.
 • Data deletion policy and lead privacy.

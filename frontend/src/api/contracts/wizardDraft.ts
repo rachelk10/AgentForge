@@ -34,6 +34,13 @@ export type WizardDraft = {
   templateId: string | null;
   currentStep: number;
   business: BusinessData;
+  agentId?: string | null;
+  informationFailures?: InformationFailure[];
+};
+
+export type InformationFailure = {
+  id: string;
+  filename: string;
 };
 
 export const wizardDraftPath = "/account/wizard-draft";

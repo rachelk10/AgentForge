@@ -1,14 +1,15 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
-import type { BusinessData, WizardDraft } from "../../api/contracts/wizardDraft";
+import type { BusinessData, InformationFailure, WizardDraft } from "../../api/contracts/wizardDraft";
 import { wizardStepCount } from "../../api/contracts/wizardDraft";
-import { getWizardDraft } from "../../shared/api/wizardContracts";
+import { createAgent, getAgents, getWizardDraft, saveWizardDraft } from "../../shared/api/wizardContracts";
 import { getToken } from "../../shared/auth/authStorage";
 import { Button, Skeleton } from "../../shared/ui";
 import { LanguageSwitcher } from "../shell/LanguageSwitcher";
 import { BUSINESS_FORM_ID, BusinessStep } from "./BusinessStep";
+import { InformationStep } from "./InformationStep";
 import { useAutosave } from "./useAutosave";
 import "./wizard.css";
 
@@ -53,15 +54,62 @@ function WizardShell({ initialDraft, token }: { initialDraft: WizardDraft; token
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [draft, setDraft] = useState(initialDraft);
+  const draftRef = useRef(draft);
+  const agentCreationRef = useRef<Promise<string> | null>(null);
+  const [agentSetupStatus, setAgentSetupStatus] = useState<"loading" | "ready" | "error">(
+    initialDraft.agentId ? "ready" : "loading",
+  );
+  const [agentSetupAttempt, setAgentSetupAttempt] = useState(0);
   const queryClient = useQueryClient();
   const { status, retry } = useAutosave(draft, token);
   useEffect(() => {
+    draftRef.current = draft;
     queryClient.setQueryData(["wizard-draft"], draft);
   }, [draft, queryClient]);
   const step = Math.min(Math.max(draft.currentStep, 1), wizardStepCount);
 
   const goToStep = (next: number) => setDraft((current) => ({ ...current, currentStep: next }));
   const updateBusiness = (business: BusinessData) => setDraft((current) => ({ ...current, business }));
+  const updateInformationFailures = (informationFailures: InformationFailure[]) =>
+    setDraft((current) => ({ ...current, informationFailures }));
+
+  useEffect(() => {
+    if (step !== 2 || draft.agentId) return;
+    let active = true;
+    setAgentSetupStatus("loading");
+    agentCreationRef.current ??= getAgents(token).then(async (agents) => {
+      if (agents[0]) return agents[0].id;
+      const created = await createAgent(token, {
+        name: draftRef.current.business.agentName,
+        description: draftRef.current.business.businessDescription,
+        model: "gpt-4o-mini",
+        temperature: 0.7,
+        rag_top_k: 5,
+        rag_similarity_threshold: 0.3,
+        skills_top_k: 3,
+        skills_similarity_threshold: 0.75,
+        is_active: true,
+      });
+      return created.id;
+    });
+
+    void agentCreationRef.current
+      .then(async (agentId) => {
+        const updatedDraft = { ...draftRef.current, agentId };
+        await saveWizardDraft(token, updatedDraft);
+        if (!active) return;
+        setDraft(updatedDraft);
+        setAgentSetupStatus("ready");
+      })
+      .catch(() => {
+        agentCreationRef.current = null;
+        if (active) setAgentSetupStatus("error");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [agentSetupAttempt, draft.agentId, step, token]);
 
   return (
     <main className="wizard-page">
@@ -96,6 +144,25 @@ function WizardShell({ initialDraft, token }: { initialDraft: WizardDraft; token
 
         {step === 1 ? (
           <BusinessStep value={draft.business} onChange={updateBusiness} onValid={() => goToStep(2)} />
+        ) : step === 2 ? (
+          agentSetupStatus === "ready" && draft.agentId ? (
+            <InformationStep
+              agentId={draft.agentId}
+              token={token}
+              failures={draft.informationFailures ?? []}
+              onFailuresChange={updateInformationFailures}
+              onSkip={() => goToStep(step + 1)}
+            />
+          ) : (
+            <div className="wizard-agent-setup" role={agentSetupStatus === "error" ? "alert" : "status"}>
+              <p>{t(agentSetupStatus === "error" ? "wizard.information.agentError" : "wizard.information.agentLoading")}</p>
+              {agentSetupStatus === "error" ? (
+                <Button type="button" onClick={() => setAgentSetupAttempt((attempt) => attempt + 1)}>
+                  {t("app.retry")}
+                </Button>
+              ) : null}
+            </div>
+          )
         ) : (
           <p className="wizard-placeholder">{t("wizard.laterStage")}</p>
         )}
@@ -123,7 +190,11 @@ function WizardShell({ initialDraft, token }: { initialDraft: WizardDraft; token
                   {t("wizard.next")}
                 </Button>
               ) : (
-                <Button type="button" onClick={() => goToStep(step + 1)}>
+                <Button
+                  type="button"
+                  disabled={step === 2 && agentSetupStatus !== "ready"}
+                  onClick={() => goToStep(step + 1)}
+                >
                   {t("wizard.next")}
                 </Button>
               )

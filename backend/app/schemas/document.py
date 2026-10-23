@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict
 
 class DocumentMetadata(BaseModel):
     source_type: str | None = None
+    source_url: str | None = None
     chunk_count: int | None = None
     extracted_chars: int | None = None
 
