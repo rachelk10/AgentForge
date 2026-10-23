@@ -1,0 +1,95 @@
+:root {
+  font-family: Inter, "Segoe UI", sans-serif;
+  color: #1f2933;
+  background: #f6f7f8;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  color: #1f2933;
+  background: #f6f7f8;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 3px solid #2369a8;
+  outline-offset: 2px;
+}
+
+.stage-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.stage-card {
+  inline-size: min(100%, 42rem);
+  padding: clamp(1.5rem, 5vw, 3rem);
+  border: 1px solid #d6dce1;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 0.75rem 2.5rem rgb(22 38 52 / 8%);
+}
+
+.stage-shell__header {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-end: 2rem;
+}
+
+.stage-shell__title {
+  margin-block: 0 0.75rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+.stage-shell__copy {
+  margin-block: 0;
+  color: #4b5965;
+  line-height: 1.7;
+}
+
+.language-switch {
+  min-block-size: 2.75rem;
+  padding-inline: 0.875rem;
+  border: 1px solid #7a8791;
+  border-radius: 0.5rem;
+  color: #173b58;
+  background: #fff;
+}
+
+.admin-access {
+  inline-size: min(100%, 28rem);
+  margin-inline: auto;
+}
+
+.admin-access__form {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-access__error {
+  color: #9f2525;
+}

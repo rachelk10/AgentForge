@@ -5,14 +5,39 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite",
-    "preview": "vite preview"
+    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "generate:api": "openapi-typescript http://127.0.0.1:8000/openapi.json -o src/api/generated/openapi.ts"
   },
   "dependencies": {
+    "@hookform/resolvers": "^6.0.0",
+    "@tanstack/react-query": "latest",
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
+    "i18next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-hook-form": "^7.90.0",
+    "react-i18next": "latest",
+    "react-router-dom": "latest",
+    "vite": "latest",
+    "zod": "^4.6.7"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@testing-library/dom": "latest",
+    "@testing-library/jest-dom": "latest",
+    "@testing-library/react": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "jsdom": "latest",
+    "msw": "latest",
+    "openapi-typescript": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
 }

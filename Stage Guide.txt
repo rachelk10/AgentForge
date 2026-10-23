@@ -1,0 +1,129 @@
+Stage Guide: Building the Client Side with Copilot
+October 22, 2026 · Based on the Client-Side Specification, version 1.0 · English translation
+1. Working Principles
+• Save the specification in the repo as docs/client-spec.md. The prompts below refer to it by section number; the section numbers are identical in both language versions. The prompts are written in English so they can be pasted directly.
+• For each stage: open a new Copilot chat, attach the specification file, and paste that stage's prompt.
+• Plan before code: every prompt asks for a work plan and waits for your approval.
+• At the end of each stage ask Copilot: "List every deviation from the spec and every assumption you made." Then review the list.
+• Do not move to the next stage until the acceptance criteria are met and the tests pass.
+• Capabilities that do not yet exist in the backend are built against an API contract defined in code and mocked with MSW, and are replaced with real calls once the endpoint is ready.
+• Before Stage 9, decide whether changes after publishing take effect immediately or require "Publish". The prompt assumes "Publish" is required; change its wording if you decide otherwise.
+2. Preparation: Permanent Instructions for Copilot
+Create the file .github/copilot-instructions.md and paste the following into it. It applies to all stages.
+Project: React + TypeScript (Vite) client for a no-code AI agent platform. Users are small business owners with no technical background. The full spec is in docs/client-spec.md; follow it and do not invent features outside it.
+
+Rules:
+- All user-facing text goes through react-i18next (he + en). No hard-coded strings.
+- Support RTL and LTR. Use CSS logical properties (margin-inline-start etc.), never left/right.
+- Copy is dignified and understated: no exclamation marks, no playful language, and no technical terms (prompt, schema, embeddings, tool JSON) shown to users.
+- Accessibility: WCAG 2.1 AA, keyboard navigation, labels, sufficient contrast.
+- Forms: react-hook-form + zod. Server state: TanStack Query. Types generated from the backend OpenAPI schema.
+- Every data view handles loading (skeletons), empty and error states.
+- The existing developer panel (App.jsx) must not be modified or exposed to business owners.
+- For backend endpoints that do not exist yet, define the contract in src/api/contracts and mock it with MSW. Never call an endpoint that is not in the OpenAPI schema or the contracts folder.
+- Before writing code for a task, outline a plan and wait for approval. Keep changes scoped to the task.
+3. Stage 0: Infrastructure
+Spec sections: 3, 9, 10.
+Read docs/client-spec.md sections 3, 9 and 10. Task: set up the client infrastructure only, with no product screens.
+- Vite + React + TypeScript structure, React Router, and an app shell.
+- i18n with he and en, a language switcher, and automatic dir (rtl/ltr) on <html>.
+- API client generated from the FastAPI OpenAPI schema (openapi-typescript), a TanStack Query provider, and an auth-aware fetch wrapper.
+- MSW configured for development and tests.
+- Base accessible, RTL-safe components: button, input, card, dialog, toast, skeleton.
+- A route guard for authenticated routes. Keep the existing App.jsx developer panel on a separate /admin route restricted to the admin role.
+First outline a plan and wait for my approval.
+Acceptance criteria: the app runs; switching language flips the direction; types are generated from OpenAPI; the base components have tests; the developer interface sits on a separate route.
+4. Stage 1: Registration and Login
+Spec sections: 4, 5.1.
+Read docs/client-spec.md sections 4 and 5.1. Task: build registration and login.
+- One screen with Register and Log in tabs, plus a "Continue with Google" button. Fields and validation as in 5.1, with human-readable error messages.
+- Use the existing backend auth endpoints from the OpenAPI types. Google sign-in and password recovery do not exist yet: define contracts and mock them with MSW.
+- Keep token storage behind a small auth-storage module so the method (memory vs httpOnly cookie) can change later.
+- Post-login redirect per section 4, using a contract for the user's agent state: none | draft | published.
+- Language selector visible on every screen, including before login.
+First outline a plan and wait for my approval.
+Acceptance criteria: registration and login work against the existing backend; the redirect by agent state is correct; error messages are worded in a human way; the screen works in both languages.
+5. Stage 2: Starting Point, Wizard Shell, and Step 1
+Spec sections: 5.2, 5.3 (shared components and Step 1), 6.
+Read docs/client-spec.md sections 5.2, 5.3 (shared components and Step 1) and 6. Task: build the starting-point screen, the wizard shell, and wizard Step 1 (The Business).
+- Starting point: "Start from a template" and "Start from scratch". Templates come from a contract (GET templates), mocked with three templates: customer service, sales and lead collection, appointments.
+- Wizard shell: progress bar, Back/Next, debounced autosave of the draft through a contract, leave-and-return, and resume at the step where the user stopped.
+- Step 1 fields exactly as in the spec, with prefilled values when a template was chosen, and a preview of how the agent introduces itself.
+- Never show the generated instructions to the user.
+First outline a plan and wait for my approval.
+Acceptance criteria: choosing a template fills in the fields; reloading the page does not lose data; going back to an earlier step preserves the fields; form validation has tests.
+6. Stage 3: Wizard Step 2 (Information)
+Spec sections: 5.3 (Step 2), 8.
+Read docs/client-spec.md sections 5.3 (Step 2) and 8. Task: build wizard Step 2 (Information).
+- Three tabs: files (drag and drop; PDF, DOCX, TXT, Markdown), free text (title and content), website URL (enter, scan, and a list of pages that can be unchecked).
+- A sources list with per-item status (pending, processing, ready, failed with reason and retry), plus remove and replace. Poll for processing status.
+- A "What to upload" helper card, and a skip option with the warning from the spec.
+- File upload exists in the backend: use the real endpoint from the OpenAPI types. Free-text sources and website scanning do not exist yet: define contracts and mock them.
+First outline a plan and wait for my approval.
+Acceptance criteria: file upload works against the real backend; each source shows a clear status; a failed source shows a reason and a retry; skipping shows the warning.
+7. Stage 4: Wizard Step 3 (Capabilities)
+Spec sections: 5.3 (Step 3), 7.
+Read docs/client-spec.md sections 5.3 (Step 3) and 7. Task: build wizard Step 3 (Capabilities), driven entirely by a backend catalog.
+- Define a catalog contract, for example {id, name, description, default_enabled, locked, config_fields[]}, and mock it with: lead collection, meeting scheduling, handoff to a representative, plus one locked capability.
+- Capability cards with an on/off switch and a Configure button. No capability is hard-coded in the UI.
+- Build a generic form renderer from config_fields (text, email, number, multi-select, a list editor for lead fields, and a weekly availability editor for days and hours). Forms are worded in business language.
+- Locked capabilities show a lock and "Available in an advanced plan" and cannot be toggled.
+- A "Ready-made behaviors" (Skills) picker: choose from a list with name and description, no free-form editing.
+- Never display technical names, schemas or identifiers.
+First outline a plan and wait for my approval.
+Acceptance criteria: adding a new capability to the mocked catalog makes it appear on screen with no code change; the form is built from the field definitions; locked capabilities cannot be enabled.
+8. Stage 5: Wizard Steps 4 and 5 (Test, Appearance, Publishing)
+Spec sections: 5.3 (Steps 4 and 5).
+Read docs/client-spec.md section 5.3 (Steps 4 and 5). Task: build wizard Step 4 (Test) and Step 5 (Appearance and Publishing).
+- Step 4: a live chat beside a settings summary, with a "New conversation" button and an Edit link per settings group. Use the existing chat endpoint with a test flag (define the contract) so test conversations are marked as tests.
+- Step 5: logo upload (PNG, JPG, SVG with a size limit; contract), a primary color picker with a contrast check against text, and a live widget preview.
+- Build the widget visual as a reusable component that will be shared with the real widget in the next task.
+- Publish button. After publishing show a short embed code with a copy button and brief instructions, and a link to the standalone chat page.
+First outline a plan and wait for my approval.
+Acceptance criteria: the test chat works; the contrast check warns about an unreadable color; after publishing, the embed code and the link are shown; the preview matches the final appearance.
+9. Stage 6: Widget and Standalone Chat Page
+Spec sections: 5.5, 9 (performance and security), 10.
+Read docs/client-spec.md sections 5.5, 9 and 10. Task: build the embeddable widget and the standalone chat page.
+- A separate package (packages/widget): a short loader script that injects an isolated iframe, and the chat UI inside it. Target size: up to 50KB gzipped.
+- Behavior per 5.5: floating button (side follows writing direction), full screen on mobile, logo, agent name, opening message, language detection from host page or browser, automatic text direction per message, typing indicator, and retryable errors.
+- In-chat flows: lead collection with a confirmation message, meeting slots as selection buttons, handoff message with a contact-preference question, an automated-reply note, and a paused-agent state.
+- Standalone page at /chat/:publicKey with the same look and behavior.
+- Public endpoints use a public key, not the owner's auth. Define the contracts and mock them. Sanitize all rendered message content.
+First outline a plan and wait for my approval.
+Acceptance criteria: the widget loads on a test page without disturbing the host site; the package size is within the target; it works properly on mobile and in both languages; message content is sanitized.
+10. Stage 7: Dashboard Shell, Overview, and Conversations
+Spec sections: 5.4 (navigation, Overview, Conversations), 8.
+Read docs/client-spec.md sections 5.4 (navigation, Overview, Conversations) and 8. Task: build the dashboard shell, the Overview page and the Conversations page.
+- Side navigation with all items from the spec; items for later tasks render a proper empty state.
+- Overview: active/paused switch, counts for 7 and 30 days, a conversations-per-day chart, and a "Recommended to complete" card.
+- Conversations: list with date, first message, message count and tags; search and filtering; full conversation view. Exclude test conversations.
+- Define contracts for usage stats and conversations and mock them. Support desktop and mobile layouts.
+First outline a plan and wait for my approval.
+Acceptance criteria: the redirect to the dashboard after publishing is correct; loading, empty, and error states appear; the screen works on mobile.
+11. Stage 8: Leads, Meetings, and Pending Requests
+Spec sections: 5.4 (Leads, Meetings, Pending requests).
+Read docs/client-spec.md section 5.4 (Leads, Meetings, Pending requests). Task: build these three pages.
+- Leads: a table of collected fields, date, link to the conversation and status (new, handled); CSV export.
+- Meetings: a list of scheduled meetings with a cancel action and a confirmation dialog.
+- Pending requests: customer details, handoff reason, time, link to the conversation, a "Handled" mark and an internal note.
+- Define contracts for each and mock them. Exclude test data. Handle loading, empty and error states on every page.
+First outline a plan and wait for my approval.
+Acceptance criteria: CSV export works in Hebrew and English; the "Handled" status is saved; cancelling a meeting requires confirmation.
+12. Stage 9: My Agent and Pausing
+Spec sections: 5.4 (My agent, Paused agent), 13.
+Read docs/client-spec.md section 5.4 (My agent, Paused agent). Task: build the My agent area and pause/resume.
+- Reuse the wizard step components as separate edit pages: business, information, capabilities, appearance, embedding.
+- Decision for this task: changes made after publishing are saved as a draft and take effect only when the owner presses "Publish". Show an unsaved/unpublished changes indicator and a leave warning.
+- Pause/resume with confirmation. While paused, the widget and chat page show the unavailable message.
+First outline a plan and wait for my approval.
+Acceptance criteria: there is no code duplication between the wizard and the edit pages; pausing affects the widget immediately; unpublished changes are marked.
+13. Stage 10: Polish and Edge-Case Testing
+Spec sections: 3, 8, 9.
+Read docs/client-spec.md sections 3, 8 and 9. Task: quality pass across the whole client.
+- Playwright end-to-end flow: register, choose a template, complete the wizard, test, publish, embed the widget on a sample page, send a message, and see the conversation in the dashboard. Run it in Hebrew (RTL) and English (LTR).
+- Automated accessibility checks (axe) on every screen, plus keyboard-navigation checks on the wizard and widget.
+- A copy review: find strings that contain exclamation marks or technical terms from the forbidden list, and any hard-coded text outside translation files.
+- Check loading, empty and error states on every data view, and session-expiry draft restoration.
+- List remaining mocked contracts so they can be replaced with real endpoints.
+First outline a plan and wait for my approval.
+Acceptance criteria: the full flow passes in both languages; there are no findings in the accessibility check; you have a list of the contracts that are still mocked, which is your work list for the backend.
