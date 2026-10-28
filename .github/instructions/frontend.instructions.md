@@ -9,14 +9,14 @@ The full product scope is in `Client-side-specification.txt` (also `docs/client-
 
 ## Progress
 
-- Stages 0-3 are complete: infrastructure, registration and login, starting point, wizard shell and Step 1, and Step 2 (Information). Reuse their code (`frontend/src/shared/ui`, `frontend/src/features/wizard`, `frontend/src/features/auth`) instead of duplicating it.
-- Remaining stages, in order: 4 capabilities (Step 3), 5 test and appearance/publishing (Steps 4-5), 6 widget and standalone chat page, 7 dashboard shell/overview/conversations, 8 leads/meetings/pending requests, 9 My agent and pausing, 10 polish and end-to-end testing. Do not start a later stage's work early.
+- Stages 0-5 are complete: infrastructure, registration and login, starting point, wizard shell and Steps 1-5, including Information, Capabilities, Test, Appearance, and Publishing. Stages 0-3 have been manually verified; preserve their behavior and add focused verification for Stages 4-5 before extending the client.
+- Remaining stages, in order: 6 widget and standalone chat page, 7 dashboard shell/overview/conversations, 8 leads/meetings/pending requests, 9 My agent and pausing, 10 polish and end-to-end testing. Do not start a later stage's work early.
 
 ## Workflow
 
 - Before writing code for a task, outline a plan and wait for approval. Keep changes scoped to the task, and at the end list every deviation from the specification and every assumption made.
 - Commands run from `frontend/`: `npm run dev`, `npm test` (Vitest), `npm run build` (type check + build), `npm run generate:api` (regenerates `src/api/generated/openapi.ts` from the running backend).
-- Add or update focused Vitest + Testing Library tests for behavior changes (forms, validation, states, i18n/direction), then run the relevant file and the full suite.
+- Add or update focused Vitest + Testing Library tests for behavior changes (forms, validation, states, i18n/direction, catalog-driven capability forms, locked capabilities, test chat, contrast warnings, publishing success and failure), then run the relevant file and the full suite.
 
 ## Product and copy
 
@@ -24,6 +24,8 @@ The full product scope is in `Client-side-specification.txt` (also `docs/client-
 - Business language only. Never show prompt, schema, embeddings, tool JSON, identifiers, or generated agent instructions. Map concepts per section 7: tool -> capability, skill -> ready-made behavior, documents/RAG -> business information, handoff -> request pending handling.
 - Copy is dignified and understated: no exclamation marks, no playful language; errors are clear and matter-of-fact.
 - Do not hard-code capabilities, skills, or templates in the UI; render them from the catalog/contract data.
+- For the capabilities step, adding a catalog item must be sufficient for it to appear in the UI. Build configuration forms from the catalog field definitions and prevent locked capabilities from being enabled.
+- Test conversations must be sent with the test flag and must not trigger notifications or usage metrics. Publishing must expose embed code and the standalone chat link only after a successful publish response.
 
 ## Internationalization and RTL
 
