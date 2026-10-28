@@ -9,6 +9,8 @@ const DRAFT_STORAGE_KEY = "mock-wizard-draft";
 const AGENTS_STORAGE_KEY = "mock-agents";
 const DOCUMENTS_STORAGE_KEY = "mock-documents";
 const SOURCES_STORAGE_KEY = "mock-information-sources";
+const APPEARANCE_STORAGE_KEY = "mock-agent-appearance";
+const CONVERSATIONS_STORAGE_KEY = "mock-conversations";
 
 function readStoredDraft(): WizardDraft | null {
   const stored = localStorage.getItem(DRAFT_STORAGE_KEY);
@@ -30,6 +32,19 @@ function sourceKey(agentId: string) {
 
 function documentKey(agentId: string) {
   return `${DOCUMENTS_STORAGE_KEY}:${agentId}`;
+}
+
+function appearanceKey(agentId: string) {
+  return `${APPEARANCE_STORAGE_KEY}:${agentId}`;
+}
+
+function conversationsKey(agentId: string) {
+  return `${CONVERSATIONS_STORAGE_KEY}:${agentId}`;
+}
+
+function readStoredValue<T>(key: string, fallback: T): T {
+  const stored = localStorage.getItem(key);
+  return stored ? (JSON.parse(stored) as T) : fallback;
 }
 
 const testOnly = import.meta.env.MODE === "test";
@@ -82,12 +97,42 @@ export const handlers: RequestHandler[] = [
       description: null,
       system_prompt: null,
       max_tokens: null,
+      is_published: false,
       ...input,
     };
     const agents = readStoredList<Record<string, unknown>>(AGENTS_STORAGE_KEY);
     agents.push(agent);
     writeStoredList(AGENTS_STORAGE_KEY, agents);
     return HttpResponse.json(agent, { status: 201 });
+  }),
+  http.patch(`${apiBaseUrl}/agents/:agentId`, async ({ params, request }) => {
+    if (!testOnly) return passthrough();
+    const changes = (await request.json()) as Record<string, unknown>;
+    const agents = readStoredList<Record<string, unknown>>(AGENTS_STORAGE_KEY);
+    let agent = agents.find((item) => item.id === params.agentId);
+    if (!agent) {
+      agent = {
+        id: String(params.agentId),
+        owner_id: "stage5-test-user",
+        description: null,
+        system_prompt: null,
+        model: "gpt-4o-mini",
+        temperature: 0.7,
+        max_tokens: null,
+        rag_top_k: 5,
+        rag_similarity_threshold: 0.3,
+        skills_top_k: 3,
+        skills_similarity_threshold: 0.75,
+        is_active: true,
+        is_published: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      agents.push(agent);
+    }
+    Object.assign(agent, changes, { updated_at: new Date().toISOString() });
+    writeStoredList(AGENTS_STORAGE_KEY, agents);
+    return HttpResponse.json(agent);
   }),
   http.get(`${apiBaseUrl}/agents/:agentId/documents`, ({ params }) => {
     if (!testOnly) return passthrough();
@@ -196,5 +241,96 @@ export const handlers: RequestHandler[] = [
       readStoredList<InformationSource>(key).filter((source) => source.id !== params.sourceId),
     );
     return new HttpResponse(null, { status: 204 });
+  }),
+  http.post(`${apiBaseUrl}/agents/:agentId/chat`, async ({ params, request }) => {
+    if (!testOnly) return passthrough();
+    const body = (await request.json()) as {
+      message: string;
+      conversation_id?: string;
+      is_test?: boolean;
+    };
+    if (!body.is_test) {
+      return HttpResponse.json({ detail: "Test conversations must be marked as tests" }, { status: 400 });
+    }
+
+    const agentId = String(params.agentId);
+    const conversations = readStoredList<Record<string, unknown>>(conversationsKey(agentId));
+    const conversation = body.conversation_id
+      ? conversations.find((item) => item.id === body.conversation_id)
+      : undefined;
+    if (conversation && conversation.is_test !== true) {
+      return HttpResponse.json({ detail: "Conversation test mode cannot be changed" }, { status: 400 });
+    }
+    const conversationId = typeof conversation?.id === "string" ? conversation.id : crypto.randomUUID();
+    if (!conversation) {
+      conversations.push({ id: conversationId, is_test: true });
+      writeStoredList(conversationsKey(agentId), conversations);
+    }
+    const responseMessage = {
+      id: crypto.randomUUID(),
+      role: "assistant",
+      content: "This is a test response from your assistant.",
+    };
+    return HttpResponse.json({ conversation_id: conversationId, message: responseMessage });
+  }),
+  http.get(`${apiBaseUrl}/agents/:agentId/appearance`, ({ params }) => {
+    if (!testOnly) return passthrough();
+    return HttpResponse.json(
+      readStoredValue(appearanceKey(String(params.agentId)), {
+        primary_color: "#2369a8",
+        logo_data: null,
+        is_published: false,
+        public_key: null,
+      }),
+    );
+  }),
+  http.put(`${apiBaseUrl}/agents/:agentId/appearance`, async ({ params, request }) => {
+    if (!testOnly) return passthrough();
+    const { primary_color } = (await request.json()) as { primary_color: string };
+    const key = appearanceKey(String(params.agentId));
+    const current = readStoredValue(key, {
+      primary_color: "#2369a8",
+      logo_data: null,
+      is_published: false,
+      public_key: null,
+    });
+    const updated = { ...current, primary_color };
+    localStorage.setItem(key, JSON.stringify(updated));
+    return HttpResponse.json(updated);
+  }),
+  http.post(`${apiBaseUrl}/agents/:agentId/appearance/logo`, ({ params }) => {
+    if (!testOnly) return passthrough();
+    const key = appearanceKey(String(params.agentId));
+    const current = readStoredValue(key, {
+      primary_color: "#2369a8",
+      logo_data: null,
+      is_published: false,
+      public_key: null,
+    });
+    const updated = { ...current, logo_data: "data:image/png;base64," };
+    localStorage.setItem(key, JSON.stringify(updated));
+    return HttpResponse.json(updated);
+  }),
+  http.post(`${apiBaseUrl}/agents/:agentId/publish`, ({ params }) => {
+    if (!testOnly) return passthrough();
+    const key = appearanceKey(String(params.agentId));
+    const current = readStoredValue(key, {
+      primary_color: "#2369a8",
+      logo_data: null,
+      is_published: false,
+      public_key: null,
+    });
+    const publicKey = current.public_key ?? crypto.randomUUID().replaceAll("-", "");
+    const updated = { ...current, is_published: true, public_key: publicKey };
+    localStorage.setItem(key, JSON.stringify(updated));
+    return HttpResponse.json({ public_key: publicKey, published_at: new Date().toISOString() });
+  }),
+  http.get(`${apiBaseUrl}/capabilities`, () => {
+    if (!testOnly) return passthrough();
+    return HttpResponse.json([]);
+  }),
+  http.get(`${apiBaseUrl}/agents/:agentId/capabilities`, () => {
+    if (!testOnly) return passthrough();
+    return HttpResponse.json([]);
   }),
 ];

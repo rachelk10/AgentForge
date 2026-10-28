@@ -39,6 +39,7 @@ class ChatService:
             user_id=user_id,
             conversation_id=request.conversation_id,
             user_message=request.message,
+            is_test=request.is_test,
         )
 
         return conversation, assistant_message

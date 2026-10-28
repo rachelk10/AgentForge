@@ -13,6 +13,7 @@ class ConversationResponse(BaseModel):
     title: str | None
     agent_id: uuid.UUID
     user_id: uuid.UUID
+    is_test: bool
     created_at: datetime
     updated_at: datetime
 
@@ -36,6 +37,7 @@ class ConversationWithMessages(ConversationResponse):
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1)
     conversation_id: uuid.UUID | None = None
+    is_test: bool = False
 
 
 class ChatResponse(BaseModel):

@@ -1,4 +1,6 @@
 import uuid
+import secrets
+from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
@@ -6,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.agent import Agent
 from app.schemas.agent import AgentCreate, AgentUpdate
+from app.schemas.agent import AppearanceUpdate
 
 
 class AgentService:
@@ -56,3 +59,29 @@ class AgentService:
         agent = await self.get(agent_id, owner_id)
         await self.db.delete(agent)
         await self.db.commit()
+
+    async def update_appearance(
+        self, agent_id: uuid.UUID, data: AppearanceUpdate, owner_id: uuid.UUID
+    ) -> Agent:
+        agent = await self.get(agent_id, owner_id)
+        agent.primary_color = data.primary_color
+        await self.db.commit()
+        await self.db.refresh(agent)
+        return agent
+
+    async def update_logo(self, agent_id: uuid.UUID, logo_data: str, owner_id: uuid.UUID) -> Agent:
+        agent = await self.get(agent_id, owner_id)
+        agent.logo_data = logo_data
+        await self.db.commit()
+        await self.db.refresh(agent)
+        return agent
+
+    async def publish(self, agent_id: uuid.UUID, owner_id: uuid.UUID) -> Agent:
+        agent = await self.get(agent_id, owner_id)
+        if not agent.public_key:
+            agent.public_key = secrets.token_urlsafe(24)
+        agent.is_published = True
+        agent.published_at = datetime.now(timezone.utc)
+        await self.db.commit()
+        await self.db.refresh(agent)
+        return agent

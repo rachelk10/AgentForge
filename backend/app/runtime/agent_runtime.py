@@ -71,6 +71,7 @@ class AgentRuntime:
         user_id: uuid.UUID,
         conversation_id: uuid.UUID | None,
         user_message: str,
+        is_test: bool = False,
     ) -> tuple[Conversation, Message]:
         """Process a user message and generate agent response.
         
@@ -100,7 +101,7 @@ class AgentRuntime:
 
         # Step 1: Get or create conversation
         conversation = await self._get_or_create_conversation(
-            agent, user_id, conversation_id
+            agent, user_id, conversation_id, is_test
         )
 
         # Step 2: Load conversation context
@@ -161,20 +162,23 @@ class AgentRuntime:
             for skill in active_skills
         ]
 
-        enabled_tools_result = await self.db.execute(
-            select(Tool).join(AgentTool).where(
-                AgentTool.agent_id == agent.id,
-                AgentTool.enabled.is_(True),
-                Tool.enabled.is_(True),
+        if is_test:
+            enabled_tools = []
+        else:
+            enabled_tools_result = await self.db.execute(
+                select(Tool).join(AgentTool).where(
+                    AgentTool.agent_id == agent.id,
+                    AgentTool.enabled.is_(True),
+                    Tool.enabled.is_(True),
+                )
             )
-        )
-        enabled_tools = [
-            tool
-            for tool in enabled_tools_result.scalars().all()
-            if is_valid_tool_schema(tool.input_schema)
-            and is_valid_tool_schema(tool.output_schema)
-            and tool_registry.get(tool.execution_logic) is not None
-        ]
+            enabled_tools = [
+                tool
+                for tool in enabled_tools_result.scalars().all()
+                if is_valid_tool_schema(tool.input_schema)
+                and is_valid_tool_schema(tool.output_schema)
+                and tool_registry.get(tool.execution_logic) is not None
+            ]
         tool_definitions = [
             {
                 "type": "function",
@@ -318,6 +322,7 @@ class AgentRuntime:
         agent: Agent,
         user_id: uuid.UUID,
         conversation_id: uuid.UUID | None,
+        is_test: bool = False,
     ) -> Conversation:
         """Get existing conversation or create new one.
         
@@ -355,12 +360,20 @@ class AgentRuntime:
                     detail="Conversation not found",
                 )
 
+            if conversation.is_test != is_test:
+                from fastapi import HTTPException, status
+
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Conversation test mode cannot be changed",
+                )
             return conversation
 
         # Create new conversation
         conversation = Conversation(
             agent_id=agent.id,
             user_id=user_id,
+            is_test=is_test,
         )
         self.db.add(conversation)
         await self.db.commit()

@@ -152,6 +152,58 @@ export interface paths {
         patch: operations["update_agent_api_v1_agents__agent_id__patch"];
         trace?: never;
     };
+    "/api/v1/agents/{agent_id}/appearance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Appearance */
+        get: operations["get_appearance_api_v1_agents__agent_id__appearance_get"];
+        /** Update Appearance */
+        put: operations["update_appearance_api_v1_agents__agent_id__appearance_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/agents/{agent_id}/appearance/logo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload Logo */
+        post: operations["upload_logo_api_v1_agents__agent_id__appearance_logo_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/agents/{agent_id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish Agent */
+        post: operations["publish_agent_api_v1_agents__agent_id__publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/agents/{agent_id}/conversations": {
         parameters: {
             query?: never;
@@ -520,10 +572,84 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Capabilities */
+        get: operations["list_capabilities_api_v1_capabilities_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/agents/{agent_id}/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Agent Capabilities */
+        get: operations["list_agent_capabilities_api_v1_agents__agent_id__capabilities_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/agents/{agent_id}/capabilities/{capability_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set Agent Capability */
+        put: operations["set_agent_capability_api_v1_agents__agent_id__capabilities__capability_id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AgentCapabilityResponse */
+        AgentCapabilityResponse: {
+            /**
+             * Capability Id
+             * Format: uuid
+             */
+            capability_id: string;
+            /** Enabled */
+            enabled: boolean;
+            /** Config */
+            config: {
+                [key: string]: unknown;
+            };
+        };
+        /** AgentCapabilityUpdate */
+        AgentCapabilityUpdate: {
+            /** Enabled */
+            enabled: boolean;
+            /** Config */
+            config?: {
+                [key: string]: unknown;
+            };
+        };
         /** AgentCreate */
         AgentCreate: {
             /** Name */
@@ -599,6 +725,8 @@ export interface components {
             skills_similarity_threshold: number;
             /** Is Active */
             is_active: boolean;
+            /** Is Published */
+            is_published: boolean;
             /**
              * Owner Id
              * Format: uuid
@@ -640,6 +768,31 @@ export interface components {
             /** Is Active */
             is_active?: boolean | null;
         };
+        /** AppearanceResponse */
+        AppearanceResponse: {
+            /** Primary Color */
+            primary_color: string;
+            /** Is Published */
+            is_published: boolean;
+            /** Public Key */
+            public_key: string | null;
+            /** Logo Data */
+            logo_data: string | null;
+        };
+        /** AppearanceSettingsResponse */
+        AppearanceSettingsResponse: {
+            /** Primary Color */
+            primary_color: string;
+            /** Is Published */
+            is_published: boolean;
+            /** Public Key */
+            public_key: string | null;
+        };
+        /** AppearanceUpdate */
+        AppearanceUpdate: {
+            /** Primary Color */
+            primary_color: string;
+        };
         /** Body_login_api_v1_auth_login_post */
         Body_login_api_v1_auth_login_post: {
             /** Grant Type */
@@ -669,12 +822,46 @@ export interface components {
             /** File */
             file: string;
         };
+        /** Body_upload_logo_api_v1_agents__agent_id__appearance_logo_post */
+        Body_upload_logo_api_v1_agents__agent_id__appearance_logo_post: {
+            /** File */
+            file: string;
+        };
+        /** CapabilityResponse */
+        CapabilityResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Key */
+            key: string;
+            /** Name */
+            name: {
+                [key: string]: string;
+            };
+            /** Description */
+            description: {
+                [key: string]: string;
+            };
+            /** Default Enabled */
+            default_enabled: boolean;
+            /** Locked */
+            locked: boolean;
+            /** Config Fields */
+            config_fields: components["schemas"]["ConfigField"][];
+        };
         /** ChatRequest */
         ChatRequest: {
             /** Message */
             message: string;
             /** Conversation Id */
             conversation_id?: string | null;
+            /**
+             * Is Test
+             * @default false
+             */
+            is_test: boolean;
         };
         /** ChatResponse */
         ChatResponse: {
@@ -684,6 +871,46 @@ export interface components {
              */
             conversation_id: string;
             message: components["schemas"]["MessageResponse"];
+        };
+        /** ConfigField */
+        ConfigField: {
+            /** Key */
+            key: string;
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "text" | "textarea" | "email" | "number" | "select" | "multiselect" | "lead_fields" | "weekly_availability";
+            /** Label */
+            label: {
+                [key: string]: string;
+            };
+            /** Help */
+            help?: {
+                [key: string]: string;
+            } | null;
+            /**
+             * Required
+             * @default false
+             */
+            required: boolean;
+            /** Options */
+            options?: components["schemas"]["ConfigFieldOption"][];
+            /** Min */
+            min?: number | null;
+            /** Max */
+            max?: number | null;
+            /** Default */
+            default?: unknown;
+        };
+        /** ConfigFieldOption */
+        ConfigFieldOption: {
+            /** Value */
+            value: string;
+            /** Label */
+            label: {
+                [key: string]: string;
+            };
         };
         /** ConversationCreate */
         ConversationCreate: {
@@ -709,6 +936,8 @@ export interface components {
              * Format: uuid
              */
             user_id: string;
+            /** Is Test */
+            is_test: boolean;
             /**
              * Created At
              * Format: date-time
@@ -739,6 +968,8 @@ export interface components {
              * Format: uuid
              */
             user_id: string;
+            /** Is Test */
+            is_test: boolean;
             /**
              * Created At
              * Format: date-time
@@ -823,6 +1054,16 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /** PublishResponse */
+        PublishResponse: {
+            /** Public Key */
+            public_key: string;
+            /**
+             * Published At
+             * Format: date-time
+             */
+            published_at: string;
         };
         /** SkillAssignmentResponse */
         SkillAssignmentResponse: {
@@ -1535,6 +1776,166 @@ export interface operations {
             };
             /** @description Agent not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_appearance_api_v1_agents__agent_id__appearance_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppearanceResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_appearance_api_v1_agents__agent_id__appearance_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AppearanceUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppearanceSettingsResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_logo_api_v1_agents__agent_id__appearance_logo_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_logo_api_v1_agents__agent_id__appearance_logo_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppearanceResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    publish_agent_api_v1_agents__agent_id__publish_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublishResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2855,6 +3256,135 @@ export interface operations {
             };
             /** @description Authentication required */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_capabilities_api_v1_capabilities_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CapabilityResponse"][];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    list_agent_capabilities_api_v1_agents__agent_id__capabilities_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentCapabilityResponse"][];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Agent not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_agent_capability_api_v1_agents__agent_id__capabilities__capability_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+                capability_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgentCapabilityUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentCapabilityResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Capability is not available in this plan */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Agent or capability not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

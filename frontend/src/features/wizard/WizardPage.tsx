@@ -10,6 +10,9 @@ import { Button, Skeleton } from "../../shared/ui";
 import { LanguageSwitcher } from "../shell/LanguageSwitcher";
 import { BUSINESS_FORM_ID, BusinessStep } from "./BusinessStep";
 import { InformationStep } from "./InformationStep";
+import { CapabilitiesStep } from "./capabilities/CapabilitiesStep";
+import { AppearanceStep } from "./AppearanceStep";
+import { TestStep } from "./TestStep";
 import { useAutosave } from "./useAutosave";
 import "./wizard.css";
 
@@ -74,7 +77,7 @@ function WizardShell({ initialDraft, token }: { initialDraft: WizardDraft; token
     setDraft((current) => ({ ...current, informationFailures }));
 
   useEffect(() => {
-    if (step !== 2 || draft.agentId) return;
+    if (step < 2 || draft.agentId) return;
     let active = true;
     setAgentSetupStatus("loading");
     agentCreationRef.current ??= getAgents(token).then(async (agents) => {
@@ -144,15 +147,19 @@ function WizardShell({ initialDraft, token }: { initialDraft: WizardDraft; token
 
         {step === 1 ? (
           <BusinessStep value={draft.business} onChange={updateBusiness} onValid={() => goToStep(2)} />
-        ) : step === 2 ? (
+        ) : step === 2 || step === 3 ? (
           agentSetupStatus === "ready" && draft.agentId ? (
-            <InformationStep
-              agentId={draft.agentId}
-              token={token}
-              failures={draft.informationFailures ?? []}
-              onFailuresChange={updateInformationFailures}
-              onSkip={() => goToStep(step + 1)}
-            />
+            step === 2 ? (
+              <InformationStep
+                agentId={draft.agentId}
+                token={token}
+                failures={draft.informationFailures ?? []}
+                onFailuresChange={updateInformationFailures}
+                onSkip={() => goToStep(step + 1)}
+              />
+            ) : (
+              <CapabilitiesStep agentId={draft.agentId} token={token} />
+            )
           ) : (
             <div className="wizard-agent-setup" role={agentSetupStatus === "error" ? "alert" : "status"}>
               <p>{t(agentSetupStatus === "error" ? "wizard.information.agentError" : "wizard.information.agentLoading")}</p>
@@ -163,8 +170,24 @@ function WizardShell({ initialDraft, token }: { initialDraft: WizardDraft; token
               ) : null}
             </div>
           )
+        ) : step === 4 && draft.agentId ? (
+          <TestStep
+            agentId={draft.agentId}
+            token={token}
+            business={draft.business}
+            onEdit={goToStep}
+          />
+        ) : step === 5 && draft.agentId ? (
+          <AppearanceStep agentId={draft.agentId} token={token} business={draft.business} />
         ) : (
-          <p className="wizard-placeholder">{t("wizard.laterStage")}</p>
+          <div className="wizard-agent-setup" role={agentSetupStatus === "error" ? "alert" : "status"}>
+            <p>{t(agentSetupStatus === "error" ? "wizard.information.agentError" : "wizard.information.agentLoading")}</p>
+            {agentSetupStatus === "error" ? (
+              <Button type="button" onClick={() => setAgentSetupAttempt((attempt) => attempt + 1)}>
+                {t("app.retry")}
+              </Button>
+            ) : null}
+          </div>
         )}
 
         <footer className="wizard-footer">
@@ -192,7 +215,7 @@ function WizardShell({ initialDraft, token }: { initialDraft: WizardDraft; token
               ) : (
                 <Button
                   type="button"
-                  disabled={step === 2 && agentSetupStatus !== "ready"}
+                  disabled={(step === 2 || step === 3) && agentSetupStatus !== "ready"}
                   onClick={() => goToStep(step + 1)}
                 >
                   {t("wizard.next")}

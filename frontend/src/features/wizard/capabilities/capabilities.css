@@ -1,0 +1,135 @@
+.capabilities-step {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.capability-list,
+.skills-list,
+.lead-fields__list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.capability-card,
+.skills-picker {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  border: 1px solid #d6dce1;
+  border-radius: 0.75rem;
+  background: #fff;
+}
+
+.capability-card h2,
+.skills-picker h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.capability-card p {
+  margin: 0;
+}
+
+.capability-card__header,
+.skills-list__item,
+.lead-fields__row,
+.availability__day,
+.availability__range {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.capability-card__header {
+  justify-content: space-between;
+}
+
+.capability-card__locked {
+  color: #4b5965;
+}
+
+.skills-list__item {
+  align-items: flex-start;
+}
+
+.skills-list__item p {
+  margin: 0;
+}
+
+.field input[type="checkbox"],
+.field input[type="time"] {
+  inline-size: auto;
+}
+
+.field-label {
+  color: #182c3a;
+  font-weight: 600;
+}
+
+.field-optional {
+  color: #4b5965;
+  font-weight: 400;
+}
+
+.config-options {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.config-options__item,
+.lead-fields__required,
+.availability__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+}
+
+.lead-fields,
+.availability {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.lead-fields__row input[type="text"],
+.lead-fields__row input:not([type]) {
+  flex: 1;
+}
+
+.lead-fields__add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.availability__day {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.availability__toggle {
+  min-inline-size: 6rem;
+}
+
+.availability__ranges {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.availability__closed {
+  color: #4b5965;
+}
+
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

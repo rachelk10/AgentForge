@@ -122,6 +122,80 @@
       "test": "נסו שיחה לפני הפרסום.",
       "appearance": "בחרו כיצד העוזר ייראה ופרסמו אותו."
     },
+    "capabilities": {
+      "sectionLabel": "מה העוזר יכול לעשות",
+      "loading": "טעינת היכולות",
+      "loadError": "לא ניתן לטעון את היכולות. בדקו את החיבור ונסו שוב.",
+      "empty": "אין יכולות זמינות כרגע.",
+      "toggleLabel": "הפעלת {{name}}",
+      "configure": "הגדרה",
+      "configureLabel": "הגדרת {{name}}",
+      "configureTitle": "הגדרת {{name}}",
+      "needsSetup": "נדרשת הגדרה",
+      "locked": "זמין בתוכנית מתקדמת",
+      "save": "שמירה",
+      "saving": "שומר",
+      "cancel": "ביטול",
+      "saveError": "לא ניתן לשמור את השינויים. נסו שוב.",
+      "optional": "אופציונלי",
+      "selectPlaceholder": "בחרו אפשרות",
+      "validation": {
+        "required": "שדה זה נדרש.",
+        "invalidEmail": "הזינו כתובת דוא\"ל תקינה.",
+        "invalidNumber": "הזינו מספר.",
+        "tooSmall": "הערך קטן מדי.",
+        "tooLarge": "הערך גדול מדי.",
+        "tooLong": "הטקסט ארוך מדי.",
+        "invalidOption": "בחרו אחת מהאפשרויות הזמינות.",
+        "invalidTime": "הזינו שעה תקינה.",
+        "rangeOrder": "שעת הסיום חייבת להיות אחרי שעת ההתחלה.",
+        "overlap": "טווחי שעות באותו יום לא יכולים לחפוף.",
+        "emptyLabel": "הזינו שם לכל פרט.",
+        "duplicate": "כל פרט יכול להופיע פעם אחת בלבד.",
+        "missingDays": "בחרו לפחות יום אחד וטווח שעות."
+      },
+      "leadFields": {
+        "empty": "עדיין לא נבחרו פרטים.",
+        "labelText": "שם הפרט",
+        "required": "חובה",
+        "remove": "הסרת {{name}}",
+        "add": "הוספה",
+        "addCustom": "הוספת פרט נוסף",
+        "customPlaceholder": "לדוגמה: שם החברה",
+        "suggestions": {
+          "name": "שם",
+          "phone": "טלפון",
+          "email": "דוא\"ל",
+          "message": "הודעה"
+        }
+      },
+      "availability": {
+        "open": "זמין",
+        "closed": "לא זמין",
+        "addRange": "הוספת שעות",
+        "from": "מ־",
+        "to": "עד",
+        "remove": "הסרת שעות ביום {{day}}",
+        "days": {
+          "sun": "ראשון",
+          "mon": "שני",
+          "tue": "שלישי",
+          "wed": "רביעי",
+          "thu": "חמישי",
+          "fri": "שישי",
+          "sat": "שבת"
+        }
+      },
+      "skills": {
+        "title": "התנהגויות מוכנות",
+        "description": "בחרו את ההתנהגויות שהעוזר יפעל לפיהן.",
+        "loading": "טעינת ההתנהגויות המוכנות",
+        "loadError": "לא ניתן לטעון את ההתנהגויות המוכנות. בדקו את החיבור ונסו שוב.",
+        "empty": "אין התנהגויות מוכנות זמינות כרגע.",
+        "saveError": "לא ניתן לשמור את השינוי. נסו שוב.",
+        "toggleLabel": "הפעלת {{name}}"
+      }
+    },
     "information": {
       "sectionLabel": "מידע על העסק",
       "tabsLabel": "סוג המידע",
@@ -230,6 +304,51 @@
         "openingMessageTooLong": "הודעת הפתיחה יכולה להכיל עד 300 תווים.",
         "guidelinesTooLong": "ניתן להשתמש בעד 1,000 תווים."
       }
+    },
+    "test": {
+        "settingsLabel": "סיכום הגדרות העוזר",
+        "settingsTitle": "סיכום ההגדרות",
+        "businessGroup": "העסק",
+        "informationGroup": "מידע על העסק",
+        "capabilitiesGroup": "יכולות",
+        "sourceCount": "{{count}} פריטי מידע",
+        "noCapabilities": "לא נבחרו יכולות.",
+        "edit": "עריכה",
+        "summaryError": "לא ניתן לטעון את סיכום ההגדרות.",
+        "chatLabel": "שיחת בדיקה",
+        "chatTitle": "בדיקת שיחה",
+        "newConversation": "שיחה חדשה",
+        "emptyChat": "שלחו הודעה כדי לבדוק את העוזר.",
+        "replying": "מכין תשובה",
+        "sendError": "לא ניתן לשלוח את ההודעה. נסו שוב.",
+        "messageLabel": "ההודעה שלכם",
+        "messagePlaceholder": "כתבו הודעה",
+        "send": "שליחה",
+        "testNotice": "השיחה מסומנת כבדיקה. יכולות לא יופעלו ולא יישלחו התראות."
+    },
+    "appearance": {
+        "controlsLabel": "מראה העוזר ופרסום",
+        "loading": "טוענים את הגדרות המראה",
+        "loadError": "לא ניתן לטעון את הגדרות המראה.",
+        "logo": "לוגו",
+        "logoHint": "PNG, JPG או SVG, עד 2MB.",
+        "logoError": "יש לבחור קובץ PNG, JPG או SVG בגודל של עד 2MB.",
+        "primaryColor": "צבע ראשי",
+        "contrastWarning": "הצבע אינו מספק ניגודיות מספקת עם טקסט לבן. בחרו צבע כהה יותר.",
+        "saveError": "לא ניתן לשמור את שינוי המראה.",
+        "previewLabel": "תצוגה מקדימה של העוזר",
+        "messagePlaceholder": "כתבו הודעה",
+        "previewButton": "פתיחת שיחה",
+        "publish": "פרסום",
+        "publishing": "מפרסמים",
+        "publishError": "לא ניתן לפרסם את העוזר. בדקו את החיבור ונסו שוב.",
+        "publishedTitle": "העוזר פורסם",
+        "embedInstructions": "העתיקו את הקוד לאתר שלכם במקום שבו תרצו שהשיחה תופיע.",
+        "embedCode": "קוד לאתר",
+        "copyCode": "העתקת הקוד",
+        "copied": "הקוד הועתק",
+        "copyError": "לא ניתן להעתיק את הקוד. סמנו אותו והעתיקו ידנית.",
+        "standaloneLink": "פתיחת עמוד שיחה עצמאי"
     }
   },
   "ui": {

@@ -79,8 +79,9 @@ Step 4: Test
 • A live chat window beside a summary of the settings, and a "New conversation" button.
 • Conversations, leads, and requests created during testing are marked as tests, are not sent as notifications, and are not counted in usage data (an assumption).
 • An "Edit" link beside each group of settings.
+• Test conversations are stored with a test marker and do not execute capabilities, so test interactions cannot trigger external actions.
 Step 5: Appearance and Publishing
-• Personalization: logo (PNG, JPG, or SVG, with a size limit), primary color (with a contrast check against text), and a live preview of the widget.
+• Personalization: logo (PNG, JPG, or SVG, up to 2 MB), primary color (with a contrast check against text), and a live preview of the widget.
 • A "Publish" button. After publishing, the following are shown: a short embed code with a copy button and brief instructions, and a link to a standalone chat page.
 5.4 Dashboard
 Side navigation: Overview, Conversations, Leads, Meetings (an assumption), Pending requests, My agent, Account.

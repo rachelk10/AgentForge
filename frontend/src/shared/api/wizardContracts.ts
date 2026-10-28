@@ -20,6 +20,7 @@ import type { components } from "../../api/generated/openapi";
 
 type Agent = components["schemas"]["AgentResponse"];
 type NewAgent = components["schemas"]["AgentCreate"];
+type AgentChanges = components["schemas"]["AgentUpdate"];
 type Document = components["schemas"]["DocumentResponse"];
 
 export function getTemplates(token: string): Promise<Template[]> {
@@ -49,6 +50,15 @@ export function createAgent(token: string, agent: NewAgent): Promise<Agent> {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(agent),
+  });
+}
+
+export function updateAgent(token: string, agentId: string, changes: AgentChanges): Promise<Agent> {
+  return apiFetch<Agent>(`/agents/${encodeURIComponent(agentId)}`, {
+    token,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(changes),
   });
 }
 

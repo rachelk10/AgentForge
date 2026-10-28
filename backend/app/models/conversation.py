@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import Boolean, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -17,6 +17,7 @@ class Conversation(Base, TimestampMixin):
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
+    is_test: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     agent: Mapped["Agent"] = relationship("Agent", back_populates="conversations")
     user: Mapped["User"] = relationship("User", back_populates="conversations")

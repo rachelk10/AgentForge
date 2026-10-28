@@ -122,6 +122,80 @@
       "test": "Try a conversation before you publish.",
       "appearance": "Choose how your assistant looks and publish it."
     },
+    "capabilities": {
+      "sectionLabel": "What your assistant can do",
+      "loading": "Loading capabilities",
+      "loadError": "The capabilities could not be loaded. Check your connection and try again.",
+      "empty": "No capabilities are available at the moment.",
+      "toggleLabel": "Turn on {{name}}",
+      "configure": "Configure",
+      "configureLabel": "Configure {{name}}",
+      "configureTitle": "Set up {{name}}",
+      "needsSetup": "Setup required",
+      "locked": "Available in an advanced plan",
+      "save": "Save",
+      "saving": "Saving",
+      "cancel": "Cancel",
+      "saveError": "Your changes could not be saved. Try again.",
+      "optional": "optional",
+      "selectPlaceholder": "Choose an option",
+      "validation": {
+        "required": "This field is required.",
+        "invalidEmail": "Enter a valid email address.",
+        "invalidNumber": "Enter a number.",
+        "tooSmall": "The value is too small.",
+        "tooLarge": "The value is too large.",
+        "tooLong": "The text is too long.",
+        "invalidOption": "Choose one of the available options.",
+        "invalidTime": "Enter a valid time.",
+        "rangeOrder": "The end time must be after the start time.",
+        "overlap": "Time ranges on the same day cannot overlap.",
+        "emptyLabel": "Enter a name for each detail.",
+        "duplicate": "Each detail can appear only once.",
+        "missingDays": "Choose at least one day and hour range."
+      },
+      "leadFields": {
+        "empty": "No details selected yet.",
+        "labelText": "Detail name",
+        "required": "Required",
+        "remove": "Remove {{name}}",
+        "add": "Add",
+        "addCustom": "Add another detail",
+        "customPlaceholder": "For example: company name",
+        "suggestions": {
+          "name": "Name",
+          "phone": "Phone",
+          "email": "Email",
+          "message": "Message"
+        }
+      },
+      "availability": {
+        "open": "Available",
+        "closed": "Not available",
+        "addRange": "Add hours",
+        "from": "From",
+        "to": "Until",
+        "remove": "Remove hours on {{day}}",
+        "days": {
+          "sun": "Sunday",
+          "mon": "Monday",
+          "tue": "Tuesday",
+          "wed": "Wednesday",
+          "thu": "Thursday",
+          "fri": "Friday",
+          "sat": "Saturday"
+        }
+      },
+      "skills": {
+        "title": "Ready-made behaviors",
+        "description": "Choose the behaviors your assistant should follow.",
+        "loading": "Loading ready-made behaviors",
+        "loadError": "The ready-made behaviors could not be loaded. Check your connection and try again.",
+        "empty": "No ready-made behaviors are available at the moment.",
+        "saveError": "The change could not be saved. Try again.",
+        "toggleLabel": "Use {{name}}"
+      }
+    },
     "information": {
       "sectionLabel": "Business information",
       "tabsLabel": "Information source type",
@@ -230,6 +304,51 @@
         "openingMessageTooLong": "The opening message must be 300 characters or fewer.",
         "guidelinesTooLong": "Use 1,000 characters or fewer."
       }
+    },
+    "test": {
+        "settingsLabel": "Assistant settings summary",
+        "settingsTitle": "Settings summary",
+        "businessGroup": "Business",
+        "informationGroup": "Business information",
+        "capabilitiesGroup": "Capabilities",
+        "sourceCount": "{{count}} information sources",
+        "noCapabilities": "No capabilities selected.",
+        "edit": "Edit",
+        "summaryError": "The settings summary could not be loaded.",
+        "chatLabel": "Test conversation",
+        "chatTitle": "Try a conversation",
+        "newConversation": "New conversation",
+        "emptyChat": "Send a message to try your assistant.",
+        "replying": "Preparing a reply",
+        "sendError": "The message could not be sent. Try again.",
+        "messageLabel": "Your message",
+        "messagePlaceholder": "Write a message",
+        "send": "Send",
+        "testNotice": "This conversation is marked as a test. It does not run capabilities or send notifications."
+    },
+    "appearance": {
+        "controlsLabel": "Assistant appearance and publishing",
+        "loading": "Loading appearance settings",
+        "loadError": "Appearance settings could not be loaded.",
+        "logo": "Logo",
+        "logoHint": "PNG, JPG or SVG, up to 2 MB.",
+        "logoError": "Choose a PNG, JPG or SVG file up to 2 MB.",
+        "primaryColor": "Primary color",
+        "contrastWarning": "This color does not provide enough contrast with white text. Choose a darker color.",
+        "saveError": "The appearance change could not be saved.",
+        "previewLabel": "Live assistant preview",
+        "messagePlaceholder": "Write a message",
+        "previewButton": "Open chat",
+        "publish": "Publish",
+        "publishing": "Publishing",
+        "publishError": "The assistant could not be published. Check your connection and try again.",
+        "publishedTitle": "Your assistant is published",
+        "embedInstructions": "Copy this code into your website where the chat should appear.",
+        "embedCode": "Website code",
+        "copyCode": "Copy code",
+        "copied": "Copied",
+        "copyError": "The code could not be copied. Select it and copy it manually.",
+        "standaloneLink": "Open the standalone chat page"
     }
   },
   "ui": {

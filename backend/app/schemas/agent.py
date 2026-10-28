@@ -45,8 +45,32 @@ class AgentResponse(BaseModel):
     skills_top_k: int
     skills_similarity_threshold: float
     is_active: bool
+    is_published: bool
     owner_id: uuid.UUID
     created_at: datetime
     updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AppearanceUpdate(BaseModel):
+    primary_color: str = Field(pattern=r"^#[0-9a-fA-F]{6}$")
+
+
+class AppearanceSettingsResponse(BaseModel):
+    primary_color: str
+    is_published: bool
+    public_key: str | None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AppearanceResponse(AppearanceSettingsResponse):
+    logo_data: str | None
+
+
+class PublishResponse(BaseModel):
+    public_key: str
+    published_at: datetime
 
     model_config = ConfigDict(from_attributes=True)

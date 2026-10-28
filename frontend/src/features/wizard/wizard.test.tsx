@@ -286,7 +286,7 @@ describe("Stage 2 starting point and wizard", () => {
 
   it("warns before continuing without information", async () => {
     await goToInformation();
-    fireEvent.click(screen.getByRole("button", { name: "Continue without adding information" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Continue without adding information" }));
 
     expect(await screen.findByText("Without business information, your assistant can only answer in general terms."))
       .toBeInTheDocument();

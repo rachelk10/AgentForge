@@ -1,6 +1,7 @@
 import uuid
+from datetime import datetime
 
-from sqlalchemy import Boolean, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -21,6 +22,11 @@ class Agent(Base, TimestampMixin):
     skills_top_k: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
     skills_similarity_threshold: Mapped[float] = mapped_column(Float, default=0.75, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    primary_color: Mapped[str] = mapped_column(String(7), default="#2369a8", nullable=False)
+    logo_data: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_published: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    public_key: Mapped[str | None] = mapped_column(String(64), unique=True, index=True, nullable=True)
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     owner_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
@@ -40,4 +46,7 @@ class Agent(Base, TimestampMixin):
     )
     skill_links: Mapped[list["AgentSkill"]] = relationship(
         "AgentSkill", back_populates="agent", cascade="all, delete-orphan"
+    )
+    capability_links: Mapped[list["AgentCapability"]] = relationship(
+        "AgentCapability", back_populates="agent", cascade="all, delete-orphan"
     )

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api import agents, auth, chat, conversations, documents, skills, tools
+from app.api import account, agents, auth, capabilities, chat, conversations, documents, information_sources, skills, tools
 
 
 def create_router() -> APIRouter:
@@ -11,11 +11,14 @@ def create_router() -> APIRouter:
         return {"status": "ok"}
 
     router.include_router(auth.router, prefix="/api/v1")
+    router.include_router(account.router, prefix="/api/v1")
     router.include_router(agents.router, prefix="/api/v1")
     router.include_router(conversations.router, prefix="/api/v1")
     router.include_router(chat.router, prefix="/api/v1")
     router.include_router(documents.router, prefix="/api/v1")
+    router.include_router(information_sources.router, prefix="/api/v1")
     router.include_router(tools.router, prefix="/api/v1")
     router.include_router(skills.router, prefix="/api/v1")
+    router.include_router(capabilities.router, prefix="/api/v1")
 
     return router
