@@ -38,11 +38,40 @@ button:disabled {
   outline-offset: 2px;
 }
 
+.public-chat-page {
+  min-block-size: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: #f6f7f8;
+}
+
+.public-chat-standalone-frame {
+  inline-size: min(100%, 28rem);
+  block-size: min(44rem, calc(100dvh - 2rem));
+  border: 0;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 0.75rem 2.5rem rgb(22 38 52 / 16%);
+}
+
 .stage-shell {
   min-height: 100vh;
   display: grid;
   place-items: center;
   padding: 1.5rem;
+}
+
+@media (max-width: 40rem) {
+  .public-chat-page {
+    padding: 0;
+  }
+
+  .public-chat-standalone-frame {
+    inline-size: 100%;
+    block-size: 100dvh;
+    border-radius: 0;
+  }
 }
 
 .stage-card {

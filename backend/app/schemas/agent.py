@@ -20,6 +20,9 @@ class AgentCreate(BaseModel):
 
 class AgentUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=1, max_length=100)
+    business_name: str | None = Field(default=None, max_length=200)
+    opening_message: str | None = Field(default=None, max_length=1000)
+    conversation_language: str | None = Field(default=None, pattern=r"^(he|en)$")
     description: str | None = None
     system_prompt: str | None = None
     model: str | None = None
@@ -35,6 +38,9 @@ class AgentUpdate(BaseModel):
 class AgentResponse(BaseModel):
     id: uuid.UUID
     name: str
+    business_name: str | None
+    opening_message: str
+    conversation_language: str
     description: str | None
     system_prompt: str | None
     model: str

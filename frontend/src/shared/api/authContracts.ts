@@ -26,6 +26,14 @@ export function requestPasswordRecovery(email: string): Promise<PasswordRecovery
   });
 }
 
+export function resetPassword(token: string, password: string): Promise<void> {
+  return apiFetch<void>(authContractPaths.passwordReset, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, password }),
+  });
+}
+
 export function getAgentState(token: string): Promise<AgentState> {
   return apiFetch<unknown>(authContractPaths.agentState, { token }).then((state) => {
     if (state === "none" || state === "draft" || state === "published") return state;

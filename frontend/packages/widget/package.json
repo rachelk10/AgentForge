@@ -1,0 +1,9 @@
+{
+  "name": "@agentforge/widget",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build": "vite build --config vite.config.ts"
+  }
+}

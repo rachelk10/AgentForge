@@ -147,7 +147,7 @@ Recommendations only; they can be replaced:
 • The widget as a separate, lightweight package: a short script that adds an isolated iframe.
 • Testing: Vitest with Testing Library, and Playwright for the full flow from registration to publishing.
 11. Backend Dependencies
-Gaps identified against the existing system:
+The following backend capabilities are required for the in-scope product. If an endpoint or integration is not yet available, it must be implemented before the corresponding feature is considered complete; a frontend mock is not a production substitute.
 • Wiring the existing registration endpoint, adding Google OAuth, and password recovery.
 • Website scanning with a processing status for each source, and support for a free-text source type.
 • A capabilities catalog with business-friendly names and descriptions, field definitions for rendering forms, and a plan flag.
@@ -168,6 +168,7 @@ Gaps identified against the existing system:
 4. Dashboard: overview, conversations, leads, meetings, and pending requests.
 5. Templates, accessibility, polish, and edge-case testing.
 Future extensions: Google Calendar connection, plans and payment, multiple agents per account, external channels, live chat, an AI-assistant interview inside the wizard, and expanded personalization.
+If the frontend for Stages 0–6 has already been implemented before these backend dependencies are complete, insert an interim backend-completion stage after Stage 6 and before dashboard work. This stage completes the real backend and replaces runtime mocks for in-scope features without redoing the completed frontend stages.
 13. Assumptions and Open Questions
 • The interface term: "agent" or "digital assistant".
 • Whether changes after publishing take effect immediately, or require an additional "Publish" action.
@@ -177,3 +178,9 @@ Future extensions: Google Calendar connection, plans and payment, multiple agent
 • Names and descriptions of the capabilities in the full catalog.
 • Data deletion policy and lead privacy.
 • Showing meetings as a separate tab in the dashboard, and a note about automated replies in the widget (assumptions marked above).
+14. Real-Backend Completion
+• Every in-scope feature must use a real backend endpoint or configured provider in development, staging, and production. Data that the specification describes as saved or reportable must persist on the backend and remain available after reloads.
+• A missing backend endpoint is implementation work, not permission to leave a mock in the running product. Implement the necessary API, persistence, validation, authorization/ownership checks, migrations, and tests, then generate client types from the backend OpenAPI schema.
+• Mock Service Worker (MSW), fixtures, and fake providers may be used for isolated frontend/unit tests only. They must not be used by the running application or counted as evidence that an end-to-end feature works.
+• Verify complete user flows against the real backend with application mocks disabled. Verify external provider flows using configured test services. If required credentials or services are unavailable, report the feature as blocked or unverified rather than claiming it works.
+• This requirement does not add the future extensions listed in sections 1 and 12 to the MVP scope. In particular, Google Calendar, payment, external channels, live human chat, and multiple-agent UI remain out of scope.

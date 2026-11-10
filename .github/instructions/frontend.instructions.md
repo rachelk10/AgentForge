@@ -9,8 +9,8 @@ The full product scope is in `Client-side-specification.txt` (also `docs/client-
 
 ## Progress
 
-- Stages 0-5 are complete: infrastructure, registration and login, starting point, wizard shell and Steps 1-5, including Information, Capabilities, Test, Appearance, and Publishing. Stages 0-3 have been manually verified; preserve their behavior and add focused verification for Stages 4-5 before extending the client.
-- Remaining stages, in order: 6 widget and standalone chat page, 7 dashboard shell/overview/conversations, 8 leads/meetings/pending requests, 9 My agent and pausing, 10 polish and end-to-end testing. Do not start a later stage's work early.
+- Stages 0-6 are complete: infrastructure, registration and login, starting point, wizard shell and Steps 1-5, widget package, and standalone chat page. Stages 0-3 have been manually verified; preserve their behavior and keep focused automated verification for later stages.
+- Remaining stages, in order: 7 dashboard shell/overview/conversations, 8 leads/meetings/pending requests, 9 My agent and pausing, 10 polish and end-to-end testing. Do not start a later stage's work early.
 
 ## Workflow
 
@@ -41,6 +41,7 @@ The full product scope is in `Client-side-specification.txt` (also `docs/client-
 - Server state uses TanStack Query; forms use `react-hook-form` with `zod`. Types come from `frontend/src/api/generated/openapi.ts`; do not hand-write types for existing endpoints.
 - Use the auth-aware fetch wrapper in `frontend/src/shared/api/client.ts`. Keep token storage behind `frontend/src/shared/auth/authStorage.ts`.
 - For backend endpoints that do not exist yet, define the contract in `frontend/src/api/contracts/` and mock it with MSW (`frontend/src/shared/api/mocks/`). Never call an endpoint that is in neither the OpenAPI schema nor the contracts folder. Keep a record of mocked contracts so they can be replaced later.
+- Stage 6 public chat remains a mocked backend contract: `GET /public/agents/{publicKey}` and `POST /public/agents/{publicKey}/chat`. The standalone page and iframe widget use the package under `frontend/packages/widget/`; its full shipped assets must remain under 50KB gzipped.
 - Every data view handles loading (skeletons, not full-screen spinners), empty (short explanation plus one clear action), and error (message with retry, no data loss) states. Destructive actions require explicit confirmation.
 - Sanitize any rendered message content against XSS; restrict file type and size on uploads.
 

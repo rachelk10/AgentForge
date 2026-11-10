@@ -28,6 +28,13 @@
     "registerTitle": "יצירת חשבון",
     "loginTitle": "טוב שחזרת",
     "recoveryTitle": "איפוס סיסמה",
+    "resetPasswordTitle": "בחירת סיסמה חדשה",
+    "resetPasswordDescription": "בחרו סיסמה חדשה לחשבון שלכם.",
+    "newPassword": "סיסמה חדשה",
+    "confirmPassword": "אישור הסיסמה החדשה",
+    "resetPasswordAction": "שמירת הסיסמה החדשה",
+    "resetPasswordSuccess": "הסיסמה עודכנה. עכשיו אפשר להתחבר.",
+    "resetPasswordError": "הקישור לאיפוס הסיסמה אינו תקף או שפג תוקפו. בקשו קישור חדש.",
     "registerDescription": "יצירת חשבון תאפשר לך להקים עוזר דיגיטלי לעסק.",
     "loginDescription": "יש להתחבר כדי להמשיך לסביבת העבודה.",
     "recoveryDescription": "יש להזין את כתובת הדוא״ל לקבלת הנחיות לאיפוס הסיסמה.",
@@ -70,6 +77,7 @@
       "nameRequired": "יש להזין שם מלא באורך של שלושה תווים לפחות.",
       "nameTooLong": "השם יכול להכיל עד 100 תווים.",
       "passwordTooShort": "יש להשתמש בשמונה תווים לפחות.",
+      "passwordsDoNotMatch": "הסיסמאות אינן תואמות.",
       "passwordRequired": "יש להזין סיסמה.",
       "termsRequired": "יש לאשר את תנאי השימוש כדי ליצור חשבון."
     }
@@ -350,6 +358,23 @@
         "copyError": "לא ניתן להעתיק את הקוד. סמנו אותו והעתיקו ידנית.",
         "standaloneLink": "פתיחת עמוד שיחה עצמאי"
     }
+  },
+  "publicChat": {
+    "loading": "טוענים את השיחה",
+    "loadError": "לא ניתן לטעון את השיחה.",
+    "retry": "ניסיון נוסף",
+    "chatLabel": "שיחה עם העסק",
+    "open": "פתיחת שיחה",
+    "close": "סגירת השיחה",
+    "messageLabel": "ההודעה שלכם",
+    "messagePlaceholder": "כתבו הודעה",
+    "send": "שליחה",
+    "typing": "מכינים תשובה",
+    "sendError": "לא ניתן לשלוח את ההודעה.",
+    "automatedNote": "התשובות ניתנות באופן אוטומטי.",
+    "paused": "השירות אינו זמין כעת.",
+    "submitDetails": "שליחת הפרטים",
+    "meetingTimes": "מועדים זמינים לפגישה"
   },
   "ui": {
     "close": "סגירה",

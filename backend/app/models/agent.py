@@ -12,6 +12,9 @@ class Agent(Base, TimestampMixin):
     __tablename__ = "agents"
 
     name: Mapped[str] = mapped_column(String(100), nullable=False)
+    business_name: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    opening_message: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    conversation_language: Mapped[str] = mapped_column(String(2), default="en", nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     system_prompt: Mapped[str | None] = mapped_column(Text, nullable=True)
     model: Mapped[str] = mapped_column(String(100), default="gpt-4o-mini", nullable=False)

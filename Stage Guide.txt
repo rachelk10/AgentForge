@@ -6,7 +6,7 @@ October 22, 2026 · Based on the Client-Side Specification, version 1.0 · Engli
 • Plan before code: every prompt asks for a work plan and waits for your approval.
 • At the end of each stage ask Copilot: "List every deviation from the spec and every assumption you made." Then review the list.
 • Do not move to the next stage until the acceptance criteria are met and the tests pass.
-• Capabilities that do not yet exist in the backend are built against an API contract defined in code and mocked with MSW, and are replaced with real calls once the endpoint is ready.
+• Stages 0–6 are already implemented in this project. Do not redo or change their stage prompts; use the interim stage after Stage 6 to complete missing real backend functionality for their existing user flows.
 • Before Stage 9, decide whether changes after publishing take effect immediately or require "Publish". The prompt assumes "Publish" is required; change its wording if you decide otherwise.
 2. Preparation: Permanent Instructions for Copilot
 Create the file .github/copilot-instructions.md and paste the following into it. It applies to all stages.
@@ -20,7 +20,7 @@ Rules:
 - Forms: react-hook-form + zod. Server state: TanStack Query. Types generated from the backend OpenAPI schema.
 - Every data view handles loading (skeletons), empty and error states.
 - The existing developer panel (App.jsx) must not be modified or exposed to business owners.
-- For backend endpoints that do not exist yet, define the contract in src/api/contracts and mock it with MSW. Never call an endpoint that is not in the OpenAPI schema or the contracts folder.
+- For the interim stage after Stage 6 and all subsequent stages, keep API types synchronized with backend OpenAPI and implement missing endpoints in the backend rather than mocking them in the running application. MSW may be used for isolated tests, not to simulate completed product functionality.
 - Before writing code for a task, outline a plan and wait for approval. Keep changes scoped to the task.
 3. Stage 0: Infrastructure
 Spec sections: 3, 9, 10.
@@ -91,39 +91,59 @@ Read docs/client-spec.md sections 5.5, 9 and 10. Task: build the embeddable widg
 - Public endpoints use a public key, not the owner's auth. Define the contracts and mock them. Sanitize all rendered message content.
 First outline a plan and wait for my approval.
 Acceptance criteria: the widget loads on a test page without disturbing the host site; the package size is within the target; it works properly on mobile and in both languages; message content is sanitized.
+
+Interim Stage (after Stage 6): Complete the Real Backend for Stages 0–6
+This additional stage is for a project whose frontend Stages 0–6 are already implemented. Do not redo or redesign those stages. Preserve their existing screens and behavior; make only the necessary backend and API integration changes to make the existing in-scope flows real.
+Read docs/client-spec.md sections 1, 2, 5, 6, 8, 9, 11 and 14. Task: make every in-scope feature already presented by Stages 0–6 work through real backend endpoints and persistent data.
+- Audit the completed frontend's API calls/contracts and MSW handlers against the actual FastAPI OpenAPI schema and the dependency checklist in section 11. Map each in-scope feature to its real endpoint and persisted data.
+- Implement missing backend endpoints and supporting schemas, services, database models/migrations, validation, ownership/authorization, and tests. Regenerate frontend API types from OpenAPI and wire the existing screens to these real endpoints.
+- Complete the real flows represented in Stages 0–6: agent state and draft autosave/resume; template catalog and applying a template; free-text information sources and website scanning with real processing statuses/retry; capability and ready-made behavior catalogs/configuration; generated agent instructions; test conversations marked and excluded from business data; logo upload; publication and public key; widget and standalone chat APIs; real message processing; and lead collection, meeting availability/booking, and handoff request creation where offered by the existing UI.
+- Implement Google sign-in and password recovery with actual provider-backed flows and required configuration if those controls are present in the completed UI. Do not report these as working unless the real provider flow is configured and verified.
+- Remove MSW from application runtime paths for these in-scope features. MSW and test fakes may remain only in isolated frontend tests. Do not use hard-coded fixtures, seeded success responses, local-only storage, or fake provider responses as substitutes for backend functionality.
+- Preserve the existing UI and the specification's out-of-scope decisions. Do not add Google Calendar, payment, external channels, live human chat, or other future extensions.
+- Document required environment variables and provider setup. Missing configuration must produce an explicit actionable error; never silently claim a real operation succeeded.
+First outline a plan and wait for my approval.
+Acceptance criteria: the already implemented Stages 0–6 work against the real backend with application MSW disabled; drafts and created data persist across reloads; real chat-created conversations and enabled business actions are stored and retrievable; backend tests cover validation and ownership; frontend integration tests verify real API wiring; provider-dependent flows are verified with configured test providers or explicitly reported as blocked rather than working.
+
 10. Stage 7: Dashboard Shell, Overview, and Conversations
 Spec sections: 5.4 (navigation, Overview, Conversations), 8.
 Read docs/client-spec.md sections 5.4 (navigation, Overview, Conversations) and 8. Task: build the dashboard shell, the Overview page and the Conversations page.
+- Start by auditing the existing frontend contracts and MSW handlers against the backend OpenAPI schema. For every endpoint needed by this stage, use the real API; implement any missing backend endpoint, persistence, migration, authorization/ownership checks, and tests before wiring the screen. Regenerate client types from OpenAPI.
 - Side navigation with all items from the spec; items for later tasks render a proper empty state.
-- Overview: active/paused switch, counts for 7 and 30 days, a conversations-per-day chart, and a "Recommended to complete" card.
-- Conversations: list with date, first message, message count and tags; search and filtering; full conversation view. Exclude test conversations.
-- Define contracts for usage stats and conversations and mock them. Support desktop and mobile layouts.
+- Overview: active/paused switch backed by persisted API state, real counts for 7 and 30 days, a conversations-per-day chart, and a "Recommended to complete" card based on the saved agent and source data.
+- Conversations: list with date, first message, message count and tags; search and filtering; full conversation view. Read persisted conversations and exclude test conversations.
+- Do not use mock handlers, seeded success responses, or fabricated dashboard data in the running app. Support desktop and mobile layouts.
 First outline a plan and wait for my approval.
-Acceptance criteria: the redirect to the dashboard after publishing is correct; loading, empty, and error states appear; the screen works on mobile.
+Acceptance criteria: dashboard metrics and conversations reflect persisted data created through the real application; the redirect to the dashboard after publishing is correct; loading, empty, and error states appear; the screen works on mobile; tests verify authorization and exclude test conversations.
 11. Stage 8: Leads, Meetings, and Pending Requests
 Spec sections: 5.4 (Leads, Meetings, Pending requests).
 Read docs/client-spec.md section 5.4 (Leads, Meetings, Pending requests). Task: build these three pages.
-- Leads: a table of collected fields, date, link to the conversation and status (new, handled); CSV export.
-- Meetings: a list of scheduled meetings with a cancel action and a confirmation dialog.
-- Pending requests: customer details, handoff reason, time, link to the conversation, a "Handled" mark and an internal note.
-- Define contracts for each and mock them. Exclude test data. Handle loading, empty and error states on every page.
+- Implement or complete the real backend APIs and persistence for leads, meetings, and handoff requests, then wire the pages to those APIs. Enforce agent ownership and exclude test data from business lists.
+- Leads: a table of actually collected fields, date, link to the conversation and persisted status (new, handled); CSV export.
+- Meetings: list real bookings created through the agent's configured availability, with a persisted cancel action and a confirmation dialog. Use the in-product availability model; Google Calendar integration is out of scope.
+- Pending requests: persisted customer details, handoff reason, time, link to the conversation, a saved "Handled" status and internal note. Send the specified email notification through the configured email provider; do not simulate successful delivery.
+- Handle loading, empty and error states on every page. Do not use mock handlers or fabricated data in the running app.
 First outline a plan and wait for my approval.
-Acceptance criteria: CSV export works in Hebrew and English; the "Handled" status is saved; cancelling a meeting requires confirmation.
+Acceptance criteria: a lead, booking, and handoff request created through a real chat are visible with their actual data; CSV export works in Hebrew and English; handled status and notes persist; cancelling a meeting requires confirmation and is persisted; the notification is verifiably delivered in the configured test mailbox/provider; tests cover ownership and error cases.
 12. Stage 9: My Agent and Pausing
 Spec sections: 5.4 (My agent, Paused agent), 13.
 Read docs/client-spec.md section 5.4 (My agent, Paused agent). Task: build the My agent area and pause/resume.
 - Reuse the wizard step components as separate edit pages: business, information, capabilities, appearance, embedding.
 - Decision for this task: changes made after publishing are saved as a draft and take effect only when the owner presses "Publish". Show an unsaved/unpublished changes indicator and a leave warning.
-- Pause/resume with confirmation. While paused, the widget and chat page show the unavailable message.
+- Pause/resume with confirmation and a persisted backend state. While paused, the public widget and chat page must read that state from the real public API and immediately show the unavailable message.
+- Keep draft settings separate from published settings. Publishing must persist and atomically activate the saved version; verify that the widget and standalone page use the published version and that a pause takes effect without republishing.
 First outline a plan and wait for my approval.
-Acceptance criteria: there is no code duplication between the wizard and the edit pages; pausing affects the widget immediately; unpublished changes are marked.
+Acceptance criteria: there is no code duplication between the wizard and edit pages; edits, publication, and pause/resume persist across reloads; unpublished changes are marked and do not leak to public clients; publishing updates the public widget; pausing affects the widget and chat page immediately.
 13. Stage 10: Polish and Edge-Case Testing
 Spec sections: 3, 8, 9.
 Read docs/client-spec.md sections 3, 8 and 9. Task: quality pass across the whole client.
-- Playwright end-to-end flow: register, choose a template, complete the wizard, test, publish, embed the widget on a sample page, send a message, and see the conversation in the dashboard. Run it in Hebrew (RTL) and English (LTR).
+- First audit every frontend API call, contract, and MSW handler. For each in-scope feature in the specification, verify that the application uses a real backend endpoint and persisted state; implement any remaining backend work. There must be no mocked production path or fake success response for an in-scope feature.
+- Playwright end-to-end flow against the real FastAPI backend and persistent integration database: register/log in, choose a template, complete the wizard with real information sources and capabilities, test, publish, embed the widget on a sample page, send a message through the configured agent runtime, and see the persisted conversation in the dashboard. Run it in Hebrew (RTL) and English (LTR), with MSW disabled.
+- Verify real lead submission, meeting booking/cancellation, handoff request and email notification, logo upload, pause/resume, published-versus-draft behavior, and session-expiry draft restoration. Use safe test accounts and configured test services; do not substitute mocks to make the flow pass.
 - Automated accessibility checks (axe) on every screen, plus keyboard-navigation checks on the wizard and widget.
 - A copy review: find strings that contain exclamation marks or technical terms from the forbidden list, and any hard-coded text outside translation files.
 - Check loading, empty and error states on every data view, and session-expiry draft restoration.
-- List remaining mocked contracts so they can be replaced with real endpoints.
+- Run backend and frontend regression tests, including API authorization/ownership checks and migrations. Verify that API errors are surfaced to the user and that no feature reports success when its operation failed.
+- Report the verification environment and external services used, the real end-to-end results, and any remaining blockers or required configuration. List any remaining mocks only if they are confined to isolated tests or explicitly out-of-scope future extensions; none may remain on an in-scope application path.
 First outline a plan and wait for my approval.
-Acceptance criteria: the full flow passes in both languages; there are no findings in the accessibility check; you have a list of the contracts that are still mocked, which is your work list for the backend.
+Acceptance criteria: the full flow passes in both languages against the real backend and configured integrations with MSW disabled; in-scope data survives reloads; there are no accessibility findings; every in-scope API call uses a real implementation, and any unverified provider or configuration dependency is reported as a blocker rather than presented as working.

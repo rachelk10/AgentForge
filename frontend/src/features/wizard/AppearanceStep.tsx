@@ -29,7 +29,8 @@ export function contrastRatio(hexColor: string): number {
 }
 
 function getEmbedCode(publicKey: string): string {
-  return `<script src="${window.location.origin}/widget.js" data-public-key="${publicKey}" async></script>`;
+  const loaderPath = import.meta.env.DEV ? "/packages/widget/src/loader.ts" : "/packages/widget/widget.js";
+  return `<script type="module" src="${window.location.origin}${loaderPath}" data-public-key="${publicKey}" async></script>`;
 }
 
 export function AppearanceStep({
@@ -105,6 +106,9 @@ export function AppearanceStep({
     try {
       await updateAgent(token, agentId, {
         name: business.agentName,
+        business_name: business.businessName,
+        opening_message: business.openingMessage,
+        conversation_language: business.language,
         description: business.businessDescription,
         system_prompt: buildAgentInstructions(business),
       });

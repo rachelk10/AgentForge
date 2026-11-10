@@ -31,6 +31,9 @@ async def test_openapi_contains_all_api_groups() -> None:
     expected_paths = {
         "/api/v1/auth/register",
         "/api/v1/auth/login",
+        "/api/v1/auth/google",
+        "/api/v1/auth/password-recovery",
+        "/api/v1/auth/password-reset",
         "/api/v1/agents",
         "/api/v1/tools",
         "/api/v1/skills",
@@ -41,6 +44,9 @@ async def test_openapi_contains_all_api_groups() -> None:
         "/api/v1/agents/{agent_id}/appearance",
         "/api/v1/agents/{agent_id}/appearance/logo",
         "/api/v1/agents/{agent_id}/publish",
+        "/api/v1/templates",
+        "/api/v1/public/agents/{public_key}",
+        "/api/v1/public/agents/{public_key}/chat",
     }
     assert expected_paths <= paths.keys()
 

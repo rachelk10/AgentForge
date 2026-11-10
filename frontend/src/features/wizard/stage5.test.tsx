@@ -81,7 +81,7 @@ describe("Stage 5 wizard steps", () => {
     });
     await waitFor(() => {
       expect(JSON.parse(localStorage.getItem(`mock-agent-appearance:${agentId}`) ?? "{}").logo_data)
-        .toBe("data:image/png;base64,");
+        .toMatch(/^data:image\/png;base64,/);
     });
     const preview = screen.getByLabelText("Live assistant preview");
     expect(preview).toHaveTextContent("Dana");
@@ -92,7 +92,7 @@ describe("Stage 5 wizard steps", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Publish" }));
     expect(await screen.findByRole("heading", { name: "Your assistant is published" })).toBeInTheDocument();
-    expect((screen.getByLabelText("Website code") as HTMLTextAreaElement).value).toContain("/widget.js");
+    expect((screen.getByLabelText("Website code") as HTMLTextAreaElement).value).toContain("/packages/widget/");
     expect(screen.getByRole("link", { name: "Open the standalone chat page" }).getAttribute("href")).toContain("/chat/");
     await waitFor(() => {
       expect(JSON.parse(localStorage.getItem(`mock-agent-appearance:${agentId}`) ?? "{}")).toMatchObject({

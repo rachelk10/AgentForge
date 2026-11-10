@@ -6,6 +6,7 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 
 from app.api.routes import create_router
+from app.config import settings
 from app.runtime.builtin_tools import register_builtin_tools
 
 logging.basicConfig(
@@ -54,6 +55,7 @@ def create_app() -> FastAPI:
     )
     app.add_middleware(
         CORSMiddleware,
+        allow_origins=settings.cors_origins,
         allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$",
         allow_credentials=True,
         allow_methods=["*"],

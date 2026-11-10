@@ -7,6 +7,8 @@ from app.models.user import User
 from app.models.tool import AgentTool, Tool
 from app.models.skill import AgentSkill, Skill
 from app.models.capability import AgentCapability, Capability
+from app.models.lead import HandoffRequest, Lead
+from app.models.meeting import MeetingBooking
 
 __all__ = [
     "Base",
@@ -23,4 +25,7 @@ __all__ = [
     "AgentSkill",
     "Capability",
     "AgentCapability",
+    "Lead",
+    "HandoffRequest",
+    "MeetingBooking",
 ]

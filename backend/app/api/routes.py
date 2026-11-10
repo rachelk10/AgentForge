@@ -1,6 +1,19 @@
 from fastapi import APIRouter
 
-from app.api import account, agents, auth, capabilities, chat, conversations, documents, information_sources, skills, tools
+from app.api import (
+    account,
+    agents,
+    auth,
+    capabilities,
+    chat,
+    conversations,
+    documents,
+    information_sources,
+    public_chat,
+    skills,
+    templates,
+    tools,
+)
 
 
 def create_router() -> APIRouter:
@@ -20,5 +33,7 @@ def create_router() -> APIRouter:
     router.include_router(tools.router, prefix="/api/v1")
     router.include_router(skills.router, prefix="/api/v1")
     router.include_router(capabilities.router, prefix="/api/v1")
+    router.include_router(public_chat.router, prefix="/api/v1")
+    router.include_router(templates.router, prefix="/api/v1")
 
     return router

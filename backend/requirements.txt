@@ -19,4 +19,6 @@ pytest
 pytest-asyncio
 httpx
 httpcore>=1.0,<2
+google-auth
 schemathesis
+tzdata>=2024.1

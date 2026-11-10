@@ -1,0 +1,20 @@
+{
+  "chatTitle": "שיחה עם העסק",
+  "loading": "טוענים את השיחה",
+  "loadError": "לא ניתן לטעון את השיחה.",
+  "retry": "ניסיון נוסף",
+  "chatLabel": "שיחה עם העסק",
+  "open": "פתיחת שיחה",
+  "close": "סגירת השיחה",
+  "messageLabel": "ההודעה שלכם",
+  "messagePlaceholder": "כתבו הודעה",
+  "send": "שליחה",
+  "typing": "מכינים תשובה",
+  "sendError": "לא ניתן לשלוח את ההודעה.",
+  "automatedNote": "התשובות ניתנות באופן אוטומטי.",
+  "paused": "השירות אינו זמין כעת.",
+  "submitDetails": "שליחת הפרטים",
+  "emailAddress": "כתובת דוא״ל",
+  "phoneNumber": "מספר טלפון",
+  "name": "שם"
+}

@@ -1,0 +1,20 @@
+{
+  "chatTitle": "Chat with this business",
+  "loading": "Loading chat",
+  "loadError": "This chat could not be loaded.",
+  "retry": "Try again",
+  "chatLabel": "Chat with the business",
+  "open": "Open chat",
+  "close": "Close chat",
+  "messageLabel": "Your message",
+  "messagePlaceholder": "Write a message",
+  "send": "Send",
+  "typing": "Preparing a reply",
+  "sendError": "Your message could not be sent.",
+  "automatedNote": "Replies are provided automatically.",
+  "paused": "This service is currently unavailable.",
+  "submitDetails": "Send details",
+  "emailAddress": "Email address",
+  "phoneNumber": "Phone number",
+  "name": "Name"
+}

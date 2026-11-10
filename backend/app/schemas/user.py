@@ -26,3 +26,20 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     user_id: str | None = None
+
+
+class PasswordRecoveryRequest(BaseModel):
+    email: EmailStr
+
+
+class PasswordRecoveryResponse(BaseModel):
+    accepted: bool = True
+
+
+class PasswordResetRequest(BaseModel):
+    token: str = Field(min_length=32, max_length=128)
+    password: str = Field(min_length=8)
+
+
+class GoogleAuthRequest(BaseModel):
+    credential: str = Field(min_length=1, max_length=8192)

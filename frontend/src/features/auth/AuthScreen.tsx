@@ -14,6 +14,40 @@ import { Button, Card, Input } from "../../shared/ui";
 import { LanguageSwitcher } from "../shell/LanguageSwitcher";
 import "./auth.css";
 
+type GoogleCredentialResponse = { credential?: string };
+type GoogleIdConfiguration = {
+  client_id: string;
+  callback: (response: GoogleCredentialResponse) => void;
+};
+
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize: (configuration: GoogleIdConfiguration) => void;
+          prompt: () => void;
+        };
+      };
+    };
+  }
+}
+
+let googleScriptLoad: Promise<void> | null = null;
+
+function loadGoogleIdentityScript(): Promise<void> {
+  if (window.google) return Promise.resolve();
+  googleScriptLoad ??= new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Google sign-in could not be loaded"));
+    document.head.append(script);
+  });
+  return googleScriptLoad;
+}
+
 type AuthMode = "register" | "login" | "recovery";
 
 const destinations: Record<AgentState, string> = {
@@ -174,13 +208,28 @@ export function AuthScreen() {
   async function continueWithGoogle() {
     setGoogleUnavailable(false);
     setSubmitError("");
-    if (!import.meta.env.DEV) {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    if (!clientId) {
       setGoogleUnavailable(true);
       return;
     }
     try {
-      const response = await signInWithGoogle("development-mock-google-credential");
-      await finishSignIn(response.access_token);
+      await loadGoogleIdentityScript();
+      const google = window.google;
+      if (!google) throw new Error("Google sign-in is unavailable");
+      google.accounts.id.initialize({
+        client_id: clientId,
+        callback: (response) => {
+          if (!response.credential) {
+            setGoogleUnavailable(true);
+            return;
+          }
+          void signInWithGoogle(response.credential)
+            .then((result) => finishSignIn(result.access_token))
+            .catch((error: unknown) => setSubmitError(getHumanError(error, mode, t)));
+        },
+      });
+      google.accounts.id.prompt();
     } catch (error) {
       setSubmitError(getHumanError(error, mode, t));
     }

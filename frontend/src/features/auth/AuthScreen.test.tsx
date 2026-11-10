@@ -170,13 +170,14 @@ describe("Stage 1 authentication", () => {
     );
   });
 
-  it("routes mock Google sign-in to the starting point", async () => {
+  it("does not simulate Google sign-in when no client ID is configured", async () => {
     renderAuthScreen();
     fireEvent.click(screen.getByRole("button", { name: "Continue with Google" }));
 
-    await waitFor(() => {
-      expect(screen.getByRole("heading", { name: "Starting point" })).toBeInTheDocument();
-    });
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "Google sign-in is not connected yet.",
+    );
+    expect(screen.queryByRole("heading", { name: "Starting point" })).not.toBeInTheDocument();
   });
 
   it("renders the authentication screen in Hebrew and switches document direction", async () => {

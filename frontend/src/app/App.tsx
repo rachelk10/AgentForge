@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AdminAccess } from "../features/admin/AdminAccess";
 import { AuthDestination } from "../features/auth/AuthDestination";
 import { AuthScreen } from "../features/auth/AuthScreen";
+import { PasswordResetPage } from "../features/auth/PasswordResetPage";
 import { AuthenticatedRoute } from "../features/auth/AuthenticatedRoute";
 import { StartPage } from "../features/start/StartPage";
 import { WizardPage } from "../features/wizard/WizardPage";
@@ -10,6 +11,7 @@ import AdminApp from "../admin/App";
 import { QueryProvider } from "./QueryProvider";
 import { LanguageProvider } from "./LanguageProvider";
 import { MswProvider } from "./MswProvider";
+import { PublicChatRoute } from "../features/public-chat/PublicChatRoute";
 
 export default function App() {
   return (
@@ -18,7 +20,9 @@ export default function App() {
         <QueryProvider>
           <BrowserRouter>
             <Routes>
+              <Route path="/chat/:publicKey" element={<PublicChatRoute />} />
               <Route path="/" element={<AuthScreen />} />
+              <Route path="/reset-password" element={<PasswordResetPage />} />
               <Route
                 path="/app/start"
                 element={

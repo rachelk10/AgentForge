@@ -1,6 +1,11 @@
 import { http, HttpResponse, passthrough, type RequestHandler } from "msw";
 
 import type { InformationSource } from "../../../api/contracts/informationSources";
+import type {
+  PublicAgentProfile,
+  PublicChatInteraction,
+  PublicChatRequest,
+} from "../../../api/contracts/publicChat";
 import type { WizardDraft } from "../../../api/contracts/wizardDraft";
 import { mockTemplates } from "./templates";
 
@@ -38,6 +43,10 @@ function appearanceKey(agentId: string) {
   return `${APPEARANCE_STORAGE_KEY}:${agentId}`;
 }
 
+function publicAgentKey(publicKey: string) {
+  return `mock-public-agent:${publicKey}`;
+}
+
 function conversationsKey(agentId: string) {
   return `${CONVERSATIONS_STORAGE_KEY}:${agentId}`;
 }
@@ -48,6 +57,22 @@ function readStoredValue<T>(key: string, fallback: T): T {
 }
 
 const testOnly = import.meta.env.MODE === "test";
+
+function getPublicProfile(publicKey: string): PublicAgentProfile | null {
+  const stored = localStorage.getItem(publicAgentKey(publicKey));
+  if (stored) return JSON.parse(stored) as PublicAgentProfile;
+  if (testOnly) return null;
+  return {
+    public_key: publicKey,
+    agent_name: "Business assistant",
+    opening_message: "How can I help you today?",
+    language: "en",
+    primary_color: "#2369a8",
+    logo_data: null,
+    is_active: true,
+    paused_message: null,
+  };
+}
 
 export const handlers: RequestHandler[] = [
   http.get(`${apiBaseUrl}/auth/me`, ({ request }) => {
@@ -307,7 +332,10 @@ export const handlers: RequestHandler[] = [
       is_published: false,
       public_key: null,
     });
-    const updated = { ...current, logo_data: "data:image/png;base64," };
+    const updated = {
+      ...current,
+      logo_data: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jAwQAAAAASUVORK5CYII=",
+    };
     localStorage.setItem(key, JSON.stringify(updated));
     return HttpResponse.json(updated);
   }),
@@ -323,7 +351,117 @@ export const handlers: RequestHandler[] = [
     const publicKey = current.public_key ?? crypto.randomUUID().replaceAll("-", "");
     const updated = { ...current, is_published: true, public_key: publicKey };
     localStorage.setItem(key, JSON.stringify(updated));
+    const draft = readStoredDraft();
+    const business = draft && draft.agentId === params.agentId ? draft.business : null;
+    const publicProfile: PublicAgentProfile = {
+      public_key: publicKey,
+      agent_name: business?.agentName || "Digital assistant",
+      opening_message: business?.openingMessage || "How can I help you today?",
+      language: business?.language === "he" ? "he" : "en",
+      primary_color: updated.primary_color,
+      logo_data: updated.logo_data,
+      is_active: true,
+      paused_message: null,
+    };
+    localStorage.setItem(publicAgentKey(publicKey), JSON.stringify(publicProfile));
     return HttpResponse.json({ public_key: publicKey, published_at: new Date().toISOString() });
+  }),
+  http.get(`${apiBaseUrl}/public/agents/:publicKey`, ({ params }) => {
+    const profile = getPublicProfile(String(params.publicKey));
+    if (!profile) return HttpResponse.json({ detail: "This chat is not available" }, { status: 404 });
+    return HttpResponse.json(profile);
+  }),
+  http.post(`${apiBaseUrl}/public/agents/:publicKey/chat`, async ({ params, request }) => {
+    const profile = getPublicProfile(String(params.publicKey));
+    if (!profile) return HttpResponse.json({ detail: "This chat is not available" }, { status: 404 });
+    if (!profile.is_active) {
+      return HttpResponse.json({ detail: "This assistant is temporarily unavailable" }, { status: 403 });
+    }
+
+    const input = (await request.json()) as PublicChatRequest;
+    if (typeof input.message === "string" && input.message.length > 4000) {
+      return HttpResponse.json({ detail: "The message is too long" }, { status: 413 });
+    }
+
+    const language = input.language === "he" ? "he" : "en";
+    let responseContent: string;
+    let interaction: PublicChatInteraction | null = null;
+    if (input.action_response?.type === "lead_collection") {
+      responseContent = language === "he"
+        ? "תודה, הפרטים נשלחו ונציג העסק יוכל לחזור אליכם."
+        : "Thank you. Your details have been sent to the business.";
+    } else if (input.action_response?.type === "meeting_slots") {
+      responseContent = language === "he"
+        ? "המועד נבחר. פרטי הפגישה יישלחו אליכם."
+        : "The time has been selected. Meeting details will be sent to you.";
+    } else if (input.action_response?.type === "handoff") {
+      responseContent = language === "he"
+        ? "הבקשה הועברה לעסק בהתאם להעדפת הקשר שבחרתם."
+        : "Your request has been passed to the business using your preferred contact method.";
+    } else {
+      const message = (input.message ?? "").toLowerCase();
+      if (/\b(meeting|appointment|schedule)\b|פגיש|תור/.test(message)) {
+        responseContent = language === "he" ? "אלה המועדים הזמינים:" : "These times are available:";
+        interaction = {
+          type: "meeting_slots",
+          prompt: language === "he" ? "בחרו מועד לפגישה" : "Choose an available meeting time",
+          slots: language === "he"
+            ? [
+                { id: "slot-1", label: "מחר, 10:00" },
+                { id: "slot-2", label: "מחר, 14:30" },
+              ]
+            : [
+                { id: "slot-1", label: "Tomorrow, 10:00" },
+                { id: "slot-2", label: "Tomorrow, 14:30" },
+              ],
+        };
+      } else if (/\b(contact|call|email|lead)\b|פרטים|קשר|לחזור אליי/.test(message)) {
+        responseContent = language === "he"
+          ? "אפשר להשאיר פרטים ונחזור אליכם."
+          : "You can leave your details and the business will get back to you.";
+        interaction = {
+          type: "lead_collection",
+          fields: language === "he"
+            ? [
+                { id: "name", label: "שם", type: "text", required: true },
+                { id: "email", label: "כתובת דוא״ל", type: "email", required: true },
+                { id: "message", label: "במה נוכל לעזור", type: "text", required: false },
+              ]
+            : [
+                { id: "name", label: "Name", type: "text", required: true },
+                { id: "email", label: "Email address", type: "email", required: true },
+                { id: "message", label: "How can we help", type: "text", required: false },
+              ],
+        };
+      } else if (/\b(person|representative|human|staff)\b|נציג|אדם/.test(message)) {
+        responseContent = language === "he"
+          ? "העברתי את הבקשה לצוות."
+          : "I have passed your request to the team.";
+        interaction = {
+          type: "handoff",
+          prompt: language === "he" ? "איך נוח לכם שניצור קשר?" : "How would you prefer us to contact you?",
+          contact_methods: language === "he"
+            ? [
+                { id: "email", label: "דוא״ל" },
+                { id: "phone", label: "טלפון" },
+              ]
+            : [
+                { id: "email", label: "Email" },
+                { id: "phone", label: "Phone" },
+              ],
+        };
+      } else {
+        responseContent = language === "he"
+          ? "תודה על ההודעה. איך אוכל לעזור?"
+          : "Thank you for your message. How can I help?";
+      }
+    }
+
+    return HttpResponse.json({
+      conversation_id: input.conversation_id ?? crypto.randomUUID(),
+      message: { id: crypto.randomUUID(), role: "assistant", content: responseContent },
+      interaction,
+    });
   }),
   http.get(`${apiBaseUrl}/capabilities`, () => {
     if (!testOnly) return passthrough();

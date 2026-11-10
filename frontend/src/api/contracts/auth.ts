@@ -20,5 +20,6 @@ export type PasswordRecoveryResponse = {
 export const authContractPaths = {
   google: "/auth/google",
   passwordRecovery: "/auth/password-recovery",
+  passwordReset: "/auth/password-reset",
   agentState: "/account/agent-state",
 } as const;

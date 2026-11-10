@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "build": "tsc --noEmit -p tsconfig.json && vite build && npm run build:widget",
+    "build:widget": "npm --prefix packages/widget run typecheck && npm --prefix packages/widget run build && node -e \"const fs=require('node:fs');const path=require('node:path');const zlib=require('node:zlib');const root='dist/packages/widget';const files=[];const walk=d=>fs.readdirSync(d,{withFileTypes:true}).forEach(e=>e.isDirectory()?walk(path.join(d,e.name)):files.push(path.join(d,e.name)));walk(root);const size=files.filter(f=>f.endsWith('.js')||f.endsWith('.css')||f.endsWith('.html')).reduce((n,f)=>n+zlib.gzipSync(fs.readFileSync(f)).length,0);if(size>50*1024){console.error('Widget package exceeds 50KB gzipped: '+size+' bytes');process.exit(1)}console.log('Widget package: '+size+' bytes gzipped (50KB maximum)')\"",
     "preview": "vite preview",
     "test": "vitest run",
     "generate:api": "openapi-typescript http://127.0.0.1:8000/openapi.json -o src/api/generated/openapi.ts"
