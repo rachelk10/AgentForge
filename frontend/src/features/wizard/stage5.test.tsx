@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LanguageProvider } from "../../app/LanguageProvider";
@@ -15,7 +16,9 @@ function renderStep(element: ReactNode) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={queryClient}>
-      <LanguageProvider>{element}</LanguageProvider>
+      <LanguageProvider>
+        <MemoryRouter>{element}</MemoryRouter>
+      </LanguageProvider>
     </QueryClientProvider>,
   );
 }
@@ -94,6 +97,7 @@ describe("Stage 5 wizard steps", () => {
     expect(await screen.findByRole("heading", { name: "Your assistant is published" })).toBeInTheDocument();
     expect((screen.getByLabelText("Website code") as HTMLTextAreaElement).value).toContain("/packages/widget/");
     expect(screen.getByRole("link", { name: "Open the standalone chat page" }).getAttribute("href")).toContain("/chat/");
+    expect(screen.getByRole("link", { name: "Go to dashboard" }).getAttribute("href")).toBe("/dashboard");
     await waitFor(() => {
       expect(JSON.parse(localStorage.getItem(`mock-agent-appearance:${agentId}`) ?? "{}")).toMatchObject({
         primary_color: "#ffffff",

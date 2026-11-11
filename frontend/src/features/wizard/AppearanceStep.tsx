@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import type { AgentAppearance, PublishResult } from "../../api/contracts/wizardStage5";
 import type { BusinessData } from "../../api/contracts/wizardDraft";
 import {
@@ -202,6 +203,9 @@ export function AppearanceStep({
           {copyError ? <p className="field-error" role="alert">{t("wizard.appearance.copyError")}</p> : null}
           <p>
             <a href={standaloneUrl} target="_blank" rel="noreferrer">{t("wizard.appearance.standaloneLink")}</a>
+          </p>
+          <p>
+            <Link to="/dashboard">{t("wizard.appearance.dashboardLink")}</Link>
           </p>
         </section>
       ) : null}

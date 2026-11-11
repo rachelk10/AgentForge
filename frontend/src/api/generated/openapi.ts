@@ -367,6 +367,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/agents/{agent_id}/dashboard/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Overview */
+        get: operations["get_overview_api_v1_agents__agent_id__dashboard_overview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/agents/{agent_id}/dashboard/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Dashboard Conversations */
+        get: operations["list_dashboard_conversations_api_v1_agents__agent_id__dashboard_conversations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/agents/{agent_id}/chat": {
         parameters: {
             query?: never;
@@ -1209,6 +1243,75 @@ export interface components {
             updated_at: string;
             /** Messages */
             messages: components["schemas"]["MessageResponse"][];
+        };
+        /** DailyConversationCount */
+        DailyConversationCount: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Count */
+            count: number;
+        };
+        /** DashboardConversationPage */
+        DashboardConversationPage: {
+            /** Conversations */
+            conversations: components["schemas"]["DashboardConversationResponse"][];
+            /** Total */
+            total: number;
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+        };
+        /** DashboardConversationResponse */
+        DashboardConversationResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Title */
+            title: string | null;
+            /** First Message */
+            first_message: string | null;
+            /** Message Count */
+            message_count: number;
+            /** Tags */
+            tags: ("lead" | "meeting" | "handed_off")[];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** DashboardMetricCounts */
+        DashboardMetricCounts: {
+            /** Conversations */
+            conversations: number;
+            /** Messages */
+            messages: number;
+            /** Leads */
+            leads: number;
+            /** Meetings */
+            meetings: number;
+        };
+        /** DashboardOverviewResponse */
+        DashboardOverviewResponse: {
+            /** Is Active */
+            is_active: boolean;
+            counts_7_days: components["schemas"]["DashboardMetricCounts"];
+            counts_30_days: components["schemas"]["DashboardMetricCounts"];
+            /** Conversations By Day */
+            conversations_by_day: components["schemas"]["DailyConversationCount"][];
+            /** Recommendations */
+            recommendations: ("completeBusiness" | "addInformation" | "enableCapability" | "publishAgent")[];
         };
         /** DocumentMetadata */
         DocumentMetadata: {
@@ -2761,6 +2864,87 @@ export interface operations {
             };
             /** @description Agent or conversation not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_overview_api_v1_agents__agent_id__dashboard_overview_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DashboardOverviewResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_dashboard_conversations_api_v1_agents__agent_id__dashboard_conversations_get: {
+        parameters: {
+            query?: {
+                search?: string | null;
+                tag?: ("lead" | "meeting" | "handed_off") | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DashboardConversationPage"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

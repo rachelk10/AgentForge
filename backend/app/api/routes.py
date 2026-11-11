@@ -7,6 +7,7 @@ from app.api import (
     capabilities,
     chat,
     conversations,
+    dashboard,
     documents,
     information_sources,
     public_chat,
@@ -27,6 +28,7 @@ def create_router() -> APIRouter:
     router.include_router(account.router, prefix="/api/v1")
     router.include_router(agents.router, prefix="/api/v1")
     router.include_router(conversations.router, prefix="/api/v1")
+    router.include_router(dashboard.router, prefix="/api/v1")
     router.include_router(chat.router, prefix="/api/v1")
     router.include_router(documents.router, prefix="/api/v1")
     router.include_router(information_sources.router, prefix="/api/v1")

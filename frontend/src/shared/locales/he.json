@@ -356,7 +356,8 @@
         "copyCode": "העתקת הקוד",
         "copied": "הקוד הועתק",
         "copyError": "לא ניתן להעתיק את הקוד. סמנו אותו והעתיקו ידנית.",
-        "standaloneLink": "פתיחת עמוד שיחה עצמאי"
+        "standaloneLink": "פתיחת עמוד שיחה עצמאי",
+        "dashboardLink": "מעבר ללוח הבקרה"
     }
   },
   "publicChat": {
@@ -375,6 +376,94 @@
     "paused": "השירות אינו זמין כעת.",
     "submitDetails": "שליחת הפרטים",
     "meetingTimes": "מועדים זמינים לפגישה"
+  },
+  "dashboard": {
+    "loading": "טוענים את לוח הבקרה",
+    "loadErrorTitle": "לא ניתן לטעון את לוח הבקרה",
+    "loadError": "לא ניתן לטעון את לוח הבקרה. בדקו את החיבור ונסו שוב.",
+    "retry": "ניסיון נוסף",
+    "noAgentTitle": "העוזר עדיין אינו מוכן",
+    "noAgentDescription": "השלימו את ההקמה כדי לראות כאן את פעילות העסק.",
+    "startSetup": "המשך ההקמה",
+    "navigationLabel": "ניווט בלוח הבקרה",
+    "nav": {
+      "overview": "סקירה",
+      "conversations": "שיחות",
+      "leads": "פניות",
+      "meetings": "פגישות",
+      "pendingRequests": "בקשות לטיפול",
+      "myAgent": "העוזר שלי",
+      "account": "חשבון"
+    },
+    "overview": {
+      "title": "סקירה",
+      "description": "סיכום הפעילות של העוזר.",
+      "active": "פעיל",
+      "paused": "מושהה",
+      "statusLabel": "מצב העוזר",
+      "statusError": "לא ניתן לשנות את מצב העוזר. נסו שוב.",
+      "metrics": {
+        "conversations": "שיחות",
+        "messages": "הודעות",
+        "leads": "פניות",
+        "meetings": "פגישות"
+      },
+      "periods": {
+        "7Days": "7 הימים האחרונים",
+        "30Days": "30 הימים האחרונים"
+      },
+      "chartTitle": "שיחות לפי יום",
+      "chartDescription": "מספר השיחות בכל יום במהלך 30 הימים האחרונים.",
+      "chartAccessibleLabel": "מספר השיחות בכל יום במהלך 30 הימים האחרונים",
+      "chartDay": "{{date}}: {{count}} שיחות",
+      "recommendationsTitle": "מומלץ להשלים",
+      "recommendationsComplete": "ההקמה של העוזר מעודכנת.",
+      "completeRecommendation": "בדיקה",
+      "recommendations": {
+        "completeBusiness": "השלימו את פרטי העסק החסרים.",
+        "addInformation": "הוסיפו מידע שהעוזר יוכל להיעזר בו.",
+        "enableCapability": "בחרו יכולת עבור העוזר.",
+        "publishAgent": "פרסמו את העוזר."
+      }
+    },
+    "conversations": {
+      "title": "שיחות",
+      "description": "עיינו בשיחות עם הלקוחות.",
+      "searchLabel": "חיפוש שיחות",
+      "searchPlaceholder": "חיפוש לפי הודעה",
+      "filterLabel": "סינון לפי פעילות",
+      "allTags": "כל השיחות",
+      "loadError": "לא ניתן לטעון את השיחות. בדקו את החיבור ונסו שוב.",
+      "emptyTitle": "עדיין אין שיחות",
+      "emptyDescription": "שיחות עם לקוחות יופיעו כאן.",
+      "noMatches": "לא נמצאו שיחות התואמות למסננים.",
+      "untitled": "שיחה",
+      "messageCount": "{{count}} הודעות",
+      "messageCount_one": "{{count}} הודעה",
+      "messageCount_other": "{{count}} הודעות",
+      "resultCount": "{{count}} שיחות",
+      "resultCount_one": "{{count}} שיחה",
+      "resultCount_other": "{{count}} שיחות",
+      "previous": "הקודמות",
+      "next": "הבאות",
+      "backToList": "חזרה לשיחות",
+      "detailTitle": "שיחה",
+      "detailError": "לא ניתן לטעון את השיחה. בדקו את החיבור ונסו שוב.",
+      "startedAt": "התחילה {{date}}",
+      "detailEmpty": "אין הודעות בשיחה הזו.",
+      "customer": "לקוח",
+      "assistant": "עוזר"
+    },
+    "tags": {
+      "lead": "פנייה",
+      "meeting": "פגישה",
+      "handed_off": "הועברה לטיפול"
+    },
+    "comingSoon": {
+      "title": "האזור הזה עדיין אינו זמין",
+      "description": "אפשר לעיין בפעילות העוזר בעמודי הסקירה והשיחות.",
+      "overviewLink": "מעבר לסקירה"
+    }
   },
   "ui": {
     "close": "סגירה",

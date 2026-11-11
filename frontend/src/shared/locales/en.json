@@ -356,7 +356,8 @@
         "copyCode": "Copy code",
         "copied": "Copied",
         "copyError": "The code could not be copied. Select it and copy it manually.",
-        "standaloneLink": "Open the standalone chat page"
+        "standaloneLink": "Open the standalone chat page",
+        "dashboardLink": "Go to dashboard"
     }
   },
   "publicChat": {
@@ -375,6 +376,94 @@
     "paused": "This service is currently unavailable.",
     "submitDetails": "Send details",
     "meetingTimes": "Available meeting times"
+  },
+  "dashboard": {
+    "loading": "Loading your dashboard",
+    "loadErrorTitle": "The dashboard could not be loaded",
+    "loadError": "Your dashboard could not be loaded. Check your connection and try again.",
+    "retry": "Try again",
+    "noAgentTitle": "Your assistant is not ready yet",
+    "noAgentDescription": "Complete the setup to see your business activity here.",
+    "startSetup": "Continue setup",
+    "navigationLabel": "Dashboard navigation",
+    "nav": {
+      "overview": "Overview",
+      "conversations": "Conversations",
+      "leads": "Leads",
+      "meetings": "Meetings",
+      "pendingRequests": "Pending requests",
+      "myAgent": "My assistant",
+      "account": "Account"
+    },
+    "overview": {
+      "title": "Overview",
+      "description": "A summary of your assistant's activity.",
+      "active": "Active",
+      "paused": "Paused",
+      "statusLabel": "Assistant status",
+      "statusError": "The assistant status could not be changed. Try again.",
+      "metrics": {
+        "conversations": "Conversations",
+        "messages": "Messages",
+        "leads": "Leads",
+        "meetings": "Meetings"
+      },
+      "periods": {
+        "7Days": "Last 7 days",
+        "30Days": "Last 30 days"
+      },
+      "chartTitle": "Conversations by day",
+      "chartDescription": "Daily conversations over the last 30 days.",
+      "chartAccessibleLabel": "Daily conversation counts for the last 30 days",
+      "chartDay": "{{date}}: {{count}} conversations",
+      "recommendationsTitle": "Recommended to complete",
+      "recommendationsComplete": "Your assistant setup is up to date.",
+      "completeRecommendation": "Review",
+      "recommendations": {
+        "completeBusiness": "Add the missing business details.",
+        "addInformation": "Add information your assistant can use.",
+        "enableCapability": "Choose a capability for your assistant.",
+        "publishAgent": "Publish your assistant."
+      }
+    },
+    "conversations": {
+      "title": "Conversations",
+      "description": "Review conversations with your customers.",
+      "searchLabel": "Search conversations",
+      "searchPlaceholder": "Search by message",
+      "filterLabel": "Filter by activity",
+      "allTags": "All conversations",
+      "loadError": "Conversations could not be loaded. Check your connection and try again.",
+      "emptyTitle": "No conversations yet",
+      "emptyDescription": "Customer conversations will appear here.",
+      "noMatches": "No conversations match these filters.",
+      "untitled": "Conversation",
+      "messageCount": "{{count}} messages",
+      "messageCount_one": "{{count}} message",
+      "messageCount_other": "{{count}} messages",
+      "resultCount": "{{count}} conversations",
+      "resultCount_one": "{{count}} conversation",
+      "resultCount_other": "{{count}} conversations",
+      "previous": "Previous",
+      "next": "Next",
+      "backToList": "Back to conversations",
+      "detailTitle": "Conversation",
+      "detailError": "This conversation could not be loaded. Check your connection and try again.",
+      "startedAt": "Started {{date}}",
+      "detailEmpty": "This conversation has no messages.",
+      "customer": "Customer",
+      "assistant": "Assistant"
+    },
+    "tags": {
+      "lead": "Lead",
+      "meeting": "Meeting",
+      "handed_off": "Handed off"
+    },
+    "comingSoon": {
+      "title": "This area is not available yet",
+      "description": "You can review your assistant's activity in the overview and conversations pages.",
+      "overviewLink": "Go to overview"
+    }
   },
   "ui": {
     "close": "Close",

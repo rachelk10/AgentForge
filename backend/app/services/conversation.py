@@ -37,7 +37,11 @@ class ConversationService:
     ) -> list[Conversation]:
         result = await self.db.execute(
             select(Conversation)
-            .where(Conversation.agent_id == agent_id, Conversation.user_id == user_id)
+            .where(
+                Conversation.agent_id == agent_id,
+                Conversation.user_id == user_id,
+                Conversation.is_test.is_(False),
+            )
             .order_by(Conversation.created_at.desc())
         )
         return list(result.scalars().all())
@@ -54,6 +58,7 @@ class ConversationService:
                 Conversation.id == conversation_id,
                 Conversation.agent_id == agent_id,
                 Conversation.user_id == user_id,
+                Conversation.is_test.is_(False),
             )
             .options(selectinload(Conversation.messages))
         )
@@ -99,6 +104,7 @@ class ConversationService:
                 Conversation.id == conversation_id,
                 Conversation.agent_id == agent_id,
                 Conversation.user_id == user_id,
+                Conversation.is_test.is_(False),
             )
         )
         if result.scalar_one_or_none() is None:

@@ -44,6 +44,8 @@ async def test_openapi_contains_all_api_groups() -> None:
         "/api/v1/agents/{agent_id}/appearance",
         "/api/v1/agents/{agent_id}/appearance/logo",
         "/api/v1/agents/{agent_id}/publish",
+        "/api/v1/agents/{agent_id}/dashboard/overview",
+        "/api/v1/agents/{agent_id}/dashboard/conversations",
         "/api/v1/templates",
         "/api/v1/public/agents/{public_key}",
         "/api/v1/public/agents/{public_key}/chat",
@@ -72,6 +74,8 @@ async def test_openapi_contains_all_api_groups() -> None:
         ("PUT", "/api/v1/agents/00000000-0000-0000-0000-000000000001/appearance"),
         ("POST", "/api/v1/agents/00000000-0000-0000-0000-000000000001/appearance/logo"),
         ("POST", "/api/v1/agents/00000000-0000-0000-0000-000000000001/publish"),
+        ("GET", "/api/v1/agents/00000000-0000-0000-0000-000000000001/dashboard/overview"),
+        ("GET", "/api/v1/agents/00000000-0000-0000-0000-000000000001/dashboard/conversations"),
     ],
 )
 async def test_skill_endpoints_require_authentication(method: str, path: str) -> None:

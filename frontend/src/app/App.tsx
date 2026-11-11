@@ -1,9 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AdminAccess } from "../features/admin/AdminAccess";
-import { AuthDestination } from "../features/auth/AuthDestination";
 import { AuthScreen } from "../features/auth/AuthScreen";
 import { PasswordResetPage } from "../features/auth/PasswordResetPage";
 import { AuthenticatedRoute } from "../features/auth/AuthenticatedRoute";
+import { DashboardLayout } from "../features/dashboard/DashboardLayout";
 import { StartPage } from "../features/start/StartPage";
 import { WizardPage } from "../features/wizard/WizardPage";
 import { AdminDenied, AdminRoute } from "../features/admin/AdminRoute";
@@ -40,10 +40,10 @@ export default function App() {
                 }
               />
               <Route
-                path="/dashboard"
+                path="/dashboard/*"
                 element={
                   <AuthenticatedRoute>
-                    <AuthDestination destination="dashboard" />
+                    <DashboardLayout />
                   </AuthenticatedRoute>
                 }
               />
